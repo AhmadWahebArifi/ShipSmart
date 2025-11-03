@@ -14,7 +14,8 @@ import {
   HiCog6Tooth,
   HiArrowRightOnRectangle,
   HiMoon,
-  HiSun
+  HiSun,
+  HiUser
 } from 'react-icons/hi2';
 
 const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
@@ -223,26 +224,55 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
               isDark ? 'border-gray-800' : 'border-gray-200'
             }`}>
               <div className="flex items-center gap-3 mb-3">
+                {user.profile_pic ? (
+                  <img
+                    src={user.profile_pic}
+                    alt={user.name || user.username || 'User'}
+                    className="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
+                  />
+                ) : (
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
+                    isDark
+                      ? 'bg-blue-600/20 text-blue-400'
+                      : 'bg-blue-100 text-blue-600'
+                  }`}>
+                    {(user.name || user.username)?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className={`font-medium text-sm truncate capitalize ${
+                    isDark ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    {user.name || user.username || 'User'}
+                  </p>
+                  <p className={`text-xs truncate capitalize ${
+                    isDark ? 'text-gray-500' : 'text-gray-500'
+                  }`}>
+                    {user.role || 'User'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* User Info (Collapsed) */}
+          {isCollapsed && user && (
+            <div className="flex justify-center mb-2">
+              {user.profile_pic ? (
+                <img
+                  src={user.profile_pic}
+                  alt={user.name || user.username || 'User'}
+                  className="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
+                />
+              ) : (
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
                   isDark
                     ? 'bg-blue-600/20 text-blue-400'
                     : 'bg-blue-100 text-blue-600'
                 }`}>
-                  {user.username?.charAt(0).toUpperCase() || 'U'}
+                  {(user.name || user.username)?.charAt(0).toUpperCase() || 'U'}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className={`font-medium text-sm truncate ${
-                    isDark ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    {user.username}
-                  </p>
-                  <p className={`text-xs truncate ${
-                    isDark ? 'text-gray-500' : 'text-gray-500'
-                  }`}>
-                    {user.role}
-                  </p>
-                </div>
-              </div>
+              )}
             </div>
           )}
 
