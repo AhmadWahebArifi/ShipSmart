@@ -7,10 +7,12 @@ const models = {
   sequelize
 };
 
-// Sync models with database (optional - can be done manually or via migrations)
-// sequelize.sync({ alter: true }).then(() => {
-//   console.log('✅ Database models synchronized');
-// });
+// Sync models with database (adds missing columns without dropping data)
+sequelize.sync({ alter: true }).then(() => {
+  console.log('✅ Database models synchronized');
+}).catch((error) => {
+  console.error('❌ Error syncing database:', error);
+});
 
 module.exports = models;
 
