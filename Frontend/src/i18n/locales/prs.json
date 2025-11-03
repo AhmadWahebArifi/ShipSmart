@@ -1,0 +1,65 @@
+{
+  "app": {
+    "name": "ShipSmart",
+    "title": "سیستم مدیریت انتقال کالاهای ولایتی"
+  },
+  "login": {
+    "title": "به حساب خود وارد شوید",
+    "email": "آدرس ایمیل",
+    "password": "رمز عبور",
+    "signIn": "ورود",
+    "signingIn": "در حال ورود...",
+    "noAccount": "حساب ندارید؟",
+    "contactAdmin": "با مدیر تماس بگیرید",
+    "testCredentials": "اعتبارات تست",
+    "testEmail": "admin@test.com / admin123"
+  },
+  "dashboard": {
+    "title": "داشبورد",
+    "welcome": "خوش آمدید، {{username}}!",
+    "overview": "در اینجا نمای کلی از عملیات لجستیک شما آمده است",
+    "totalShipments": "مجموع محموله‌ها",
+    "activeRoutes": "مسیرهای فعال",
+    "vehicles": "وسایل نقلیه",
+    "deliveriesToday": "تحویل‌های امروز",
+    "recentActivity": "فعالیت اخیر",
+    "newShipment": "محموله جدید ایجاد شد",
+    "deliveryCompleted": "تحویل تکمیل شد",
+    "routeUpdated": "مسیر به‌روزرسانی شد",
+    "active": "فعال",
+    "delivered": "تحویل شده",
+    "updated": "به‌روزرسانی شده",
+    "hoursAgo": "{{count}} ساعت پیش",
+    "dayAgo": "{{count}} روز پیش",
+    "daysAgo": "{{count}} روز پیش"
+  },
+  "settings": {
+    "title": "تنظیمات",
+    "language": "زبان",
+    "languageDescription": "زبان مورد نظر خود را انتخاب کنید",
+    "selectLanguage": "انتخاب زبان",
+    "backToDashboard": "بازگشت به داشبورد",
+    "managePreferences": "تنظیمات و ترجیحات حساب خود را مدیریت کنید",
+    "moreSettings": "تنظیمات بیشتر",
+    "additionalSettingsComingSoon": "تنظیمات اضافی به زودی..."
+  },
+  "sidebar": {
+    "dashboard": "داشبورد",
+    "shipments": "محموله‌ها",
+    "routes": "مسیرها",
+    "vehicles": "وسایل نقلیه",
+    "analytics": "تحلیل‌ها",
+    "settings": "تنظیمات",
+    "toggleTheme": "تغییر تم",
+    "logout": "خروج"
+  },
+  "notFound": {
+    "title": "404",
+    "heading": "صفحه پیدا نشد",
+    "message": "متأسفانه! صفحه‌ای که به دنبال آن هستید وجود ندارد یا منتقل شده است.",
+    "goToDashboard": "برو به داشبورد",
+    "goBack": "بازگشت",
+    "errorMessage": "اگر فکر می‌کنید این یک خطا است، لطفاً با پشتیبانی تماس بگیرید."
+  }
+}
+
