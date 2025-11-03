@@ -1,0 +1,65 @@
+{
+  "app": {
+    "name": "ShipSmart",
+    "title": "Provincial Goods Transfer Management System"
+  },
+  "login": {
+    "title": "Sign in to your account",
+    "email": "Email Address",
+    "password": "Password",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "contactAdmin": "Contact admin",
+    "testCredentials": "Test Credentials",
+    "testEmail": "admin@test.com / admin123"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back, {{username}}!",
+    "overview": "Here's an overview of your logistics operations",
+    "totalShipments": "Total Shipments",
+    "activeRoutes": "Active Routes",
+    "vehicles": "Vehicles",
+    "deliveriesToday": "Deliveries Today",
+    "recentActivity": "Recent Activity",
+    "newShipment": "New shipment created",
+    "deliveryCompleted": "Delivery completed",
+    "routeUpdated": "Route updated",
+    "active": "Active",
+    "delivered": "Delivered",
+    "updated": "Updated",
+    "hoursAgo": "{{count}} hours ago",
+    "dayAgo": "{{count}} day ago",
+    "daysAgo": "{{count}} days ago"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "languageDescription": "Choose your preferred language",
+    "selectLanguage": "Select Language",
+    "backToDashboard": "Back to Dashboard",
+    "managePreferences": "Manage your account settings and preferences",
+    "moreSettings": "More Settings",
+    "additionalSettingsComingSoon": "Additional settings coming soon..."
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "shipments": "Shipments",
+    "routes": "Routes",
+    "vehicles": "Vehicles",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "toggleTheme": "Toggle Theme",
+    "logout": "Logout"
+  },
+  "notFound": {
+    "title": "404",
+    "heading": "Page Not Found",
+    "message": "Oops! The page you're looking for doesn't exist or has been moved.",
+    "goToDashboard": "Go to Dashboard",
+    "goBack": "Go Back",
+    "errorMessage": "If you believe this is an error, please contact support."
+  }
+}
+
