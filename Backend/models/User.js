@@ -42,6 +42,21 @@ const User = sequelize.define('User', {
     type: DataTypes.ENUM('admin', 'driver', 'client'),
     defaultValue: 'client',
     allowNull: false
+  },
+  name: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
+    defaultValue: null
+  },
+  address: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    defaultValue: null
+  },
+  profile_pic: {
+    type: DataTypes.STRING(500),
+    allowNull: true,
+    defaultValue: null
   }
 }, {
   tableName: 'users',
