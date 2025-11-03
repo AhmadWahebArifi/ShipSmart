@@ -1,0 +1,65 @@
+{
+  "app": {
+    "name": "ShipSmart",
+    "title": "د ولایتي توکو د لېږد د مدیریت سیسټم"
+  },
+  "login": {
+    "title": "ستاسو حساب ته ننوځئ",
+    "email": "بریښنالیک پته",
+    "password": "رمز",
+    "signIn": "ننوتل",
+    "signingIn": "ننوتل کیږي...",
+    "noAccount": "حساب نلرئ؟",
+    "contactAdmin": "د مدیر سره اړیکه ونیسئ",
+    "testCredentials": "د ازمائښت اعتبار",
+    "testEmail": "admin@test.com / admin123"
+  },
+  "dashboard": {
+    "title": "داشبورد",
+    "welcome": "بېرته ښه راغلئ، {{username}}!",
+    "overview": "دلته ستاسو د سامان د لېږد عملیاتو لنډیز دی",
+    "totalShipments": "ټول بریښناک",
+    "activeRoutes": "فعال لارې",
+    "vehicles": "موټرونه",
+    "deliveriesToday": "نن ورکړل شوي",
+    "recentActivity": "تازه فعالیت",
+    "newShipment": "نوی بریښناک جوړ شو",
+    "deliveryCompleted": "ورکړه بشپړه شوه",
+    "routeUpdated": "لاره تازه شوه",
+    "active": "فعال",
+    "delivered": "ورکړل شوی",
+    "updated": "تازه شوی",
+    "hoursAgo": "{{count}} ساعت دمخه",
+    "dayAgo": "{{count}} ورځ دمخه",
+    "daysAgo": "{{count}} ورځې دمخه"
+  },
+  "settings": {
+    "title": "تنظیمات",
+    "language": "ژبه",
+    "languageDescription": "خپله غوره ژبه وټاکئ",
+    "selectLanguage": "ژبه وټاکئ",
+    "backToDashboard": "بیرته داشبورد ته",
+    "managePreferences": "خپل حساب تنظیمات او غوره توبونه اداره کړئ",
+    "moreSettings": "نور تنظیمات",
+    "additionalSettingsComingSoon": "اضافي تنظیمات ژر..."
+  },
+  "sidebar": {
+    "dashboard": "داشبورد",
+    "shipments": "بریښناک",
+    "routes": "لارې",
+    "vehicles": "موټرونه",
+    "analytics": "تحلیلونه",
+    "settings": "تنظیمات",
+    "toggleTheme": "تم بدلول",
+    "logout": "وتل"
+  },
+  "notFound": {
+    "title": "404",
+    "heading": "پاڼه ونه موندل شوه",
+    "message": "افسوس! هغه پاڼه چې تاسو یې لټه کوئ شتون نلري یا لېږدول شوی.",
+    "goToDashboard": "داشبورد ته لاړ شئ",
+    "goBack": "بیرته",
+    "errorMessage": "که تاسو فکر کوئ چې دا یو خطا دی، مهرباني وکړئ د ملاتړ سره اړیکه ونیسئ."
+  }
+}
+
