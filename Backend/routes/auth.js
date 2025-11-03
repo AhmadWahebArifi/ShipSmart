@@ -191,9 +191,7 @@ router.post('/login', async (req, res) => {
 // @access  Private
 router.get('/me', authenticateToken, async (req, res) => {
   try {
-    const user = await User.findByPk(req.user.userId, {
-      attributes: ['id', 'username', 'email', 'role', 'created_at']
-    });
+    const user = await User.findByPk(req.user.userId);
 
     if (!user) {
       return res.status(404).json({
@@ -202,15 +200,67 @@ router.get('/me', authenticateToken, async (req, res) => {
       });
     }
 
+    // Get user data without password
+    const userData = user.toJSON();
+    
+    // Ensure new fields exist (set to null if column doesn't exist yet)
+    if (!userData.hasOwnProperty('name')) userData.name = null;
+    if (!userData.hasOwnProperty('address')) userData.address = null;
+    if (!userData.hasOwnProperty('profile_pic')) userData.profile_pic = null;
+
     res.json({
       success: true,
-      user: user.toJSON()
+      user: userData
     });
   } catch (error) {
     console.error('Get user error:', error);
     res.status(500).json({
       success: false,
       message: 'Error fetching user',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// @route   PUT /api/auth/profile
+// @desc    Update user profile (name, address, profile_pic)
+// @access  Private
+router.put('/profile', authenticateToken, async (req, res) => {
+  try {
+    const { name, address, profile_pic } = req.body;
+
+    const user = await User.findByPk(req.user.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Update only provided fields (email cannot be changed)
+    const updateData = {};
+    if (name !== undefined) updateData.name = name;
+    if (address !== undefined) updateData.address = address;
+    if (profile_pic !== undefined) updateData.profile_pic = profile_pic;
+
+    await user.update(updateData);
+
+    // Fetch updated user
+    const updatedUser = await User.findByPk(req.user.userId, {
+      attributes: ['id', 'username', 'email', 'role', 'name', 'address', 'profile_pic', 'created_at']
+    });
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+      user: updatedUser.toJSON()
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error updating profile',
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
