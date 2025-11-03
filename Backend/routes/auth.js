@@ -258,10 +258,40 @@ router.put('/profile', authenticateToken, async (req, res) => {
     });
   } catch (error) {
     console.error('Update profile error:', error);
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    
+    // Handle Sequelize validation errors
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation error',
+        error: error.errors.map(e => e.message).join(', ')
+      });
+    }
+    
+    // Handle Sequelize database errors (like missing columns)
+    if (error.name === 'SequelizeDatabaseError') {
+      console.error('Database error - possibly missing columns. Run: npm run add-profile-columns');
+      return res.status(500).json({
+        success: false,
+        message: 'Database error. Please make sure all profile columns exist.',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
+    }
+    
+    // Return detailed error in development
+    const errorMessage = process.env.NODE_ENV === 'production' 
+      ? 'Error updating profile' 
+      : error.message || 'Error updating profile';
+
     res.status(500).json({
       success: false,
-      message: 'Error updating profile',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      message: errorMessage,
+      error: process.env.NODE_ENV !== 'production' ? {
+        message: error.message,
+        name: error.name
+      } : undefined
     });
   }
 });
