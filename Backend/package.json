@@ -8,6 +8,7 @@
     "dev": "nodemon server.js",
     "create-user": "node scripts/createUser.js",
     "add-profile-columns": "node scripts/addProfileColumns.js",
+    "check-columns": "node scripts/checkColumns.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
