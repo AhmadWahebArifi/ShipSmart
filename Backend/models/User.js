@@ -54,7 +54,7 @@ const User = sequelize.define('User', {
     defaultValue: null
   },
   profile_pic: {
-    type: DataTypes.STRING(500),
+    type: DataTypes.TEXT('long'),
     allowNull: true,
     defaultValue: null
   }
