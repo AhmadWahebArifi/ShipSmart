@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext';
+import { useSidebar } from '../context/SidebarContext';
 import Sidebar from '../components/Sidebar';
 import MobileMenuButton from '../components/MobileMenuButton';
 import { 
@@ -13,8 +14,13 @@ function Settings() {
   const { t, i18n } = useTranslation();
   const { isDark } = useTheme();
   const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  const {
+    sidebarOpen,
+    sidebarCollapsed,
+    toggleSidebar,
+    closeSidebar,
+    toggleSidebarCollapse,
+  } = useSidebar();
 
   const languages = [
     { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧' },
@@ -28,14 +34,6 @@ function Settings() {
     localStorage.setItem('language', langCode);
   };
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
-  const toggleSidebarCollapse = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
-
   return (
     <div className={`min-h-screen flex transition-colors duration-300 ${
       isDark ? 'bg-gray-950' : 'bg-gray-50'
@@ -43,7 +41,7 @@ function Settings() {
       {/* Sidebar */}
       <Sidebar 
         isOpen={sidebarOpen} 
-        onClose={() => setSidebarOpen(false)}
+        onClose={closeSidebar}
         isCollapsed={sidebarCollapsed}
         onToggleCollapse={toggleSidebarCollapse}
       />
