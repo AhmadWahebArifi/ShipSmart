@@ -35,9 +35,14 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
     { id: 'admin', label: 'Profile', icon: HiUser, path: '/admin' },
   ];
 
-  const handleNavigation = (path) => {
+  const handleNavigation = (path, e) => {
+    // Prevent event propagation to avoid closing sidebar on mobile
+    if (e) {
+      e.stopPropagation();
+    }
     setActiveItem(path);
     navigate(path);
+    // Don't close sidebar - only menu button should close it
   };
 
   const handleLogout = () => {
@@ -47,10 +52,9 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
 
   return (
     <>
-      {/* Overlay for mobile */}
+      {/* Overlay for mobile - removed onClick to prevent closing on click */}
       {isOpen && (
         <div
-          onClick={onClose}
           className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300 ${
             isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
@@ -59,6 +63,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
 
       {/* Sidebar */}
       <aside
+        onClick={(e) => e.stopPropagation()}
         className={`fixed left-0 top-0 h-full z-50 transition-all duration-300 ease-in-out ${
           isOpen
             ? 'translate-x-0'
@@ -132,7 +137,8 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
               return (
                 <li key={item.id}>
                   <button
-                    onClick={() => handleNavigation(item.path)}
+                    onClick={(e) => handleNavigation(item.path, e)}
+                    onMouseDown={(e) => e.stopPropagation()}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
               isCollapsed ? 'justify-center' : ''
             } ${
@@ -198,7 +204,8 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
 
           {/* Settings */}
           <button
-            onClick={() => handleNavigation('/settings')}
+            onClick={(e) => handleNavigation('/settings', e)}
+            onMouseDown={(e) => e.stopPropagation()}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
               isCollapsed ? 'justify-center' : ''
             } ${
@@ -224,11 +231,25 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
               isDark ? 'border-gray-800' : 'border-gray-200'
             }`}>
               <div className="flex items-center gap-3 mb-3">
-                {user.profile_pic ? (
+                {user.profile_pic && user.profile_pic.trim() !== '' && user.profile_pic !== 'null' ? (
                   <img
+                    key={user.profile_pic} // Force re-render when profile_pic changes
                     src={user.profile_pic}
                     alt={user.name || user.username || 'User'}
                     className="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
+                    onError={(e) => {
+                      // Hide broken image and show fallback
+                      e.target.style.display = 'none';
+                      const parent = e.target.parentElement;
+                      if (!parent.querySelector('.profile-fallback')) {
+                        const fallback = document.createElement('div');
+                        fallback.className = `profile-fallback w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
+                          isDark ? 'bg-blue-600/20 text-blue-400' : 'bg-blue-100 text-blue-600'
+                        }`;
+                        fallback.textContent = (user.name || user.username)?.charAt(0).toUpperCase() || 'U';
+                        parent.appendChild(fallback);
+                      }
+                    }}
                   />
                 ) : (
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
@@ -258,11 +279,25 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
           {/* User Info (Collapsed) */}
           {isCollapsed && user && (
             <div className="flex justify-center mb-2">
-              {user.profile_pic ? (
+              {user.profile_pic && user.profile_pic.trim() !== '' && user.profile_pic !== 'null' ? (
                 <img
+                  key={user.profile_pic} // Force re-render when profile_pic changes
                   src={user.profile_pic}
                   alt={user.name || user.username || 'User'}
                   className="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
+                  onError={(e) => {
+                    // Hide broken image and show fallback
+                    e.target.style.display = 'none';
+                    const parent = e.target.parentElement;
+                    if (!parent.querySelector('.profile-fallback')) {
+                      const fallback = document.createElement('div');
+                      fallback.className = `profile-fallback w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
+                        isDark ? 'bg-blue-600/20 text-blue-400' : 'bg-blue-100 text-blue-600'
+                      }`;
+                      fallback.textContent = (user.name || user.username)?.charAt(0).toUpperCase() || 'U';
+                      parent.appendChild(fallback);
+                    }
+                  }}
                 />
               ) : (
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
