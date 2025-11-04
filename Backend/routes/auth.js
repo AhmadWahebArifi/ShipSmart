@@ -240,21 +240,33 @@ router.put('/profile', authenticateToken, async (req, res) => {
 
     // Update only provided fields (email cannot be changed)
     const updateData = {};
-    if (name !== undefined) updateData.name = name;
-    if (address !== undefined) updateData.address = address;
-    if (profile_pic !== undefined) updateData.profile_pic = profile_pic;
+    if (name !== undefined && name !== null && name.trim() !== '') {
+      updateData.name = name.trim();
+    }
+    if (address !== undefined && address !== null && address.trim() !== '') {
+      updateData.address = address.trim();
+    }
+    if (profile_pic !== undefined) {
+      if (profile_pic === '' || profile_pic === null) {
+        // Allow clearing profile_pic by sending empty string
+        updateData.profile_pic = null;
+      } else if (profile_pic !== null) {
+        updateData.profile_pic = profile_pic;
+      }
+    }
 
-    await user.update(updateData);
+    // Only update if there's something to update
+    if (Object.keys(updateData).length > 0) {
+      await user.update(updateData);
+    }
 
-    // Fetch updated user
-    const updatedUser = await User.findByPk(req.user.userId, {
-      attributes: ['id', 'username', 'email', 'role', 'name', 'address', 'profile_pic', 'created_at']
-    });
+    // Fetch updated user (use reload to get latest data)
+    await user.reload();
 
     res.json({
       success: true,
       message: 'Profile updated successfully',
-      user: updatedUser.toJSON()
+      user: user.toJSON()
     });
   } catch (error) {
     console.error('Update profile error:', error);
