@@ -231,9 +231,13 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
               isDark ? 'border-gray-800' : 'border-gray-200'
             }`}>
               <div className="flex items-center gap-3 mb-3">
-                {user.profile_pic && user.profile_pic.trim() !== '' && user.profile_pic !== 'null' ? (
+                {user.profile_pic && 
+                 user.profile_pic.trim() !== '' && 
+                 user.profile_pic !== 'null' && 
+                 user.profile_pic !== 'undefined' &&
+                 (user.profile_pic.startsWith('data:image') || user.profile_pic.startsWith('data:') || user.profile_pic.length > 50) ? (
                   <img
-                    key={user.profile_pic} // Force re-render when profile_pic changes
+                    key={`sidebar-profile-${user.profile_pic?.substring(0, 50)}`} // Force re-render when profile_pic changes
                     src={user.profile_pic}
                     alt={user.name || user.username || 'User'}
                     className="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
@@ -279,9 +283,13 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
           {/* User Info (Collapsed) */}
           {isCollapsed && user && (
             <div className="flex justify-center mb-2">
-              {user.profile_pic && user.profile_pic.trim() !== '' && user.profile_pic !== 'null' ? (
+              {user.profile_pic && 
+               user.profile_pic.trim() !== '' && 
+               user.profile_pic !== 'null' && 
+               user.profile_pic !== 'undefined' &&
+               (user.profile_pic.startsWith('data:image') || user.profile_pic.startsWith('data:') || user.profile_pic.length > 50) ? (
                 <img
-                  key={user.profile_pic} // Force re-render when profile_pic changes
+                  key={`sidebar-collapsed-${user.profile_pic?.substring(0, 50)}`} // Force re-render when profile_pic changes
                   src={user.profile_pic}
                   alt={user.name || user.username || 'User'}
                   className="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
