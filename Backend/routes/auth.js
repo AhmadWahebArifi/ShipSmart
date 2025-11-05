@@ -229,6 +229,14 @@ router.put('/profile', authenticateToken, async (req, res) => {
   try {
     const { name, address, profile_pic } = req.body;
 
+    console.log('Profile update request:', {
+      name: name ? `${name.substring(0, 20)}...` : name,
+      address: address ? `${address.substring(0, 20)}...` : address,
+      profile_pic: profile_pic 
+        ? `data:image/${profile_pic.substring(0, 50)}... (length: ${profile_pic.length})` 
+        : profile_pic
+    });
+
     const user = await User.findByPk(req.user.userId);
 
     if (!user) {
@@ -240,28 +248,64 @@ router.put('/profile', authenticateToken, async (req, res) => {
 
     // Update only provided fields (email cannot be changed)
     const updateData = {};
-    if (name !== undefined && name !== null && name.trim() !== '') {
-      updateData.name = name.trim();
+    if (name !== undefined) {
+      if (name === null || name === '' || name.trim() === '') {
+        updateData.name = null;
+      } else {
+        updateData.name = name.trim();
+      }
     }
-    if (address !== undefined && address !== null && address.trim() !== '') {
-      updateData.address = address.trim();
+    if (address !== undefined) {
+      if (address === null || address === '' || address.trim() === '') {
+        updateData.address = null;
+      } else {
+        updateData.address = address.trim();
+      }
     }
     if (profile_pic !== undefined) {
       if (profile_pic === '' || profile_pic === null) {
-        // Allow clearing profile_pic by sending empty string
+        // Allow clearing profile_pic by sending empty string or null
         updateData.profile_pic = null;
-      } else if (profile_pic !== null) {
+      } else if (profile_pic && profile_pic.trim() !== '') {
+        // Send the profile_pic as is (base64 string)
         updateData.profile_pic = profile_pic;
       }
     }
 
+    console.log('Update data:', {
+      name: updateData.name ? `${updateData.name.substring(0, 20)}...` : updateData.name,
+      address: updateData.address ? `${updateData.address.substring(0, 20)}...` : updateData.address,
+      profile_pic: updateData.profile_pic 
+        ? `data:image/${updateData.profile_pic.substring(0, 50)}... (length: ${updateData.profile_pic.length})` 
+        : updateData.profile_pic
+    });
+
     // Only update if there's something to update
     if (Object.keys(updateData).length > 0) {
-      await user.update(updateData);
+      try {
+        console.log('Attempting to update user with:', Object.keys(updateData));
+        await user.update(updateData);
+        console.log('✅ User updated successfully');
+      } catch (updateError) {
+        console.error('❌ Error updating user:', updateError);
+        console.error('Error name:', updateError.name);
+        console.error('Error message:', updateError.message);
+        console.error('Error stack:', updateError.stack);
+        console.error('Update data keys:', Object.keys(updateData));
+        if (updateError.original) {
+          console.error('Original error:', updateError.original);
+          console.error('SQL state:', updateError.original?.sqlState);
+          console.error('SQL message:', updateError.original?.sqlMessage);
+        }
+        throw updateError;
+      }
+    } else {
+      console.log('⚠️  No data to update - updateData is empty');
     }
 
     // Fetch updated user (use reload to get latest data)
     await user.reload();
+    console.log('✅ User reloaded successfully');
 
     res.json({
       success: true,
@@ -269,9 +313,17 @@ router.put('/profile', authenticateToken, async (req, res) => {
       user: user.toJSON()
     });
   } catch (error) {
-    console.error('Update profile error:', error);
+    console.error('❌ Update profile error:', error);
     console.error('Error name:', error.name);
     console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    
+    if (error.original) {
+      console.error('Original database error:', error.original);
+      console.error('SQL state:', error.original?.sqlState);
+      console.error('SQL message:', error.original?.sqlMessage);
+      console.error('SQL code:', error.original?.code);
+    }
     
     // Handle Sequelize validation errors
     if (error.name === 'SequelizeValidationError') {
@@ -283,12 +335,18 @@ router.put('/profile', authenticateToken, async (req, res) => {
     }
     
     // Handle Sequelize database errors (like missing columns)
-    if (error.name === 'SequelizeDatabaseError') {
-      console.error('Database error - possibly missing columns. Run: npm run add-profile-columns');
+    if (error.name === 'SequelizeDatabaseError' || error.original?.code === 'ER_BAD_FIELD_ERROR') {
+      console.error('❌ Database error - possibly missing columns or wrong column type.');
+      console.error('💡 Run: npm run add-profile-columns');
       return res.status(500).json({
         success: false,
         message: 'Database error. Please make sure all profile columns exist.',
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        error: process.env.NODE_ENV === 'development' ? {
+          message: error.message,
+          sqlMessage: error.original?.sqlMessage,
+          sqlState: error.original?.sqlState,
+          code: error.original?.code
+        } : undefined
       });
     }
     
