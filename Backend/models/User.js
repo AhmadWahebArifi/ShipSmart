@@ -57,6 +57,11 @@ const User = sequelize.define('User', {
     type: DataTypes.TEXT('long'),
     allowNull: true,
     defaultValue: null
+  },
+  province: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
+    defaultValue: null
   }
 }, {
   tableName: 'users',
