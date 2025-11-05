@@ -14,8 +14,14 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' })); // Increased limit for base64 images (5MB image becomes ~6.7MB base64)
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Test database connection
-testConnection();
+// Test database connection (non-blocking)
+testConnection().catch((error) => {
+  // Error already handled in testConnection, just prevent unhandled rejection
+  console.warn('⚠️  Database connection test completed with errors');
+});
+
+// Initialize models (this will sync the database schema)
+require('./models');
 
 // Routes
 app.get('/', (req, res) => {
@@ -25,9 +31,10 @@ app.get('/', (req, res) => {
   });
 });
 
-// API Routes (to be implemented)
+// API Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/shipments', require('./routes/shipments'));
+app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/routes', require('./routes/routes'));
 app.use('/api/vehicles', require('./routes/vehicles'));
 
