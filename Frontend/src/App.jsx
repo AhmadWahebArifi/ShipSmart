@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
 import Admin from './pages/Admin';
+import Shipments from './pages/Shipments';
 import NotFound from './pages/NotFound';
 
 // Protected Route Component
@@ -57,6 +58,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Admin />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/shipments"
+                element={
+                  <ProtectedRoute>
+                    <Shipments />
                   </ProtectedRoute>
                 }
               />
