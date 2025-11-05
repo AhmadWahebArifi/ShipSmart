@@ -41,6 +41,13 @@ function Admin() {
 
   const [previewImage, setPreviewImage] = useState("");
 
+  // Refresh user data when component mounts to ensure latest profile picture is shown
+  useEffect(() => {
+    if (refreshUser) {
+      refreshUser();
+    }
+  }, []); // Only run on mount
+
   const openEditModal = () => {
     // Load current user data into form
     if (authUser) {
@@ -121,15 +128,34 @@ function Admin() {
     setSaving(true);
 
     try {
-      const response = await axiosInstance.put("/auth/profile", formData);
+      // Prepare data to send - ensure profile_pic is included if it exists
+      const dataToSend = {
+        name: formData.name || null,
+        address: formData.address || null,
+        profile_pic: formData.profile_pic || null, // Send null if empty, otherwise send the base64 string
+      };
+
+      // Log the data being sent (without the full base64 string for brevity)
+      console.log("Sending profile update:", {
+        name: dataToSend.name,
+        address: dataToSend.address,
+        profile_pic: dataToSend.profile_pic 
+          ? `data:image/${dataToSend.profile_pic.substring(0, 50)}...` 
+          : null,
+        profile_pic_length: dataToSend.profile_pic ? dataToSend.profile_pic.length : 0
+      });
+
+      const response = await axiosInstance.put("/auth/profile", dataToSend);
 
       if (response.data && response.data.success) {
         setSuccess("Profile updated successfully!");
-        // Update user context first
+        // Update user context with response data immediately
+        if (response.data.user && setUser) {
+          setUser(response.data.user);
+        }
+        // Also refresh from server to ensure we have latest data
         if (refreshUser) {
           await refreshUser();
-        } else if (setUser && response.data.user) {
-          setUser(response.data.user);
         }
         // Close modal after 2 seconds
         setTimeout(() => {
@@ -143,6 +169,7 @@ function Admin() {
       console.error("Update profile error:", err);
       if (err.response?.data) {
         setError(err.response.data.message || "Failed to update profile");
+        console.error("Error details:", err.response.data);
       } else if (err.request) {
         setError("No response from server. Please check backend connection.");
       } else {
@@ -239,9 +266,10 @@ function Admin() {
                 {authUser?.profile_pic && 
                  authUser.profile_pic.trim() !== "" && 
                  authUser.profile_pic !== 'null' && 
-                 authUser.profile_pic.startsWith('data:image') ? (
+                 authUser.profile_pic !== 'undefined' &&
+                 (authUser.profile_pic.startsWith('data:image') || authUser.profile_pic.startsWith('data:') || authUser.profile_pic.length > 50) ? (
                   <img
-                    key={authUser.profile_pic} // Force re-render when profile_pic changes
+                    key={`profile-${authUser.profile_pic?.substring(0, 50)}`} // Force re-render when profile_pic changes
                     src={authUser.profile_pic}
                     alt={authUser.name || authUser.username || "User"}
                     className="w-32 h-32 rounded-full object-cover border-4 border-gray-300 dark:border-gray-600"
