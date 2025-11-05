@@ -26,8 +26,16 @@ const testConnection = async () => {
   try {
     await sequelize.authenticate();
     console.log('✅ MySQL Database connected successfully (Sequelize)');
+    return true;
   } catch (error) {
-    console.error('❌ Database connection error:', error.message);
+    console.error('❌ Database connection error:');
+    console.error('❌ Error syncing database:', error);
+    if (error.parent) {
+      console.error('Error details:', error.parent.message || error.message);
+    }
+    console.warn('⚠️  Server will continue running without database connection');
+    console.warn('💡 Make sure MySQL is running and connection settings are correct');
+    return false;
   }
 };
 
