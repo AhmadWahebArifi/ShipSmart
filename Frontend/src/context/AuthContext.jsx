@@ -44,30 +44,43 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      console.log('🔐 Attempting login with email:', email.trim().toLowerCase());
+      
       const response = await axiosInstance.post('/auth/login', { 
         email: email.trim().toLowerCase(), 
         password 
       });
       
+      console.log('✅ Login response received:', response.data);
+      
       if (response.data && response.data.success) {
         const { token: newToken, user: userData } = response.data;
         
+        console.log('✅ Login successful, setting token and user');
         localStorage.setItem('token', newToken);
         setToken(newToken);
         setUser(userData);
         
         return { success: true };
       } else {
+        console.error('❌ Login failed:', response.data);
         return {
           success: false,
           message: response.data?.message || 'Login failed'
         };
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('❌ Login error:', error);
+      console.error('Error details:', {
+        message: error.message,
+        code: error.code,
+        response: error.response?.data,
+        status: error.response?.status,
+        request: error.request ? 'Request made but no response' : null
+      });
       
       // Handle network errors
-      if (error.code === 'ECONNREFUSED' || error.message?.includes('Network Error')) {
+      if (error.code === 'ECONNREFUSED' || error.message?.includes('Network Error') || error.code === 'ERR_NETWORK') {
         return {
           success: false,
           message: 'Cannot connect to server. Make sure the backend is running on http://localhost:5000'
@@ -97,12 +110,14 @@ export const AuthProvider = ({ children }) => {
         };
       } else if (error.request) {
         // Request made but no response
+        console.error('No response from server. Request:', error.request);
         return {
           success: false,
-          message: 'No response from server. Please check if the backend is running.'
+          message: 'No response from server. Please check if the backend is running on http://localhost:5000'
         };
       } else {
         // Something else happened
+        console.error('Unexpected error:', error);
         return {
           success: false,
           message: error.message || 'An unexpected error occurred'
