@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
+import axiosInstance from "../config/axios";
 import { HiCube } from "react-icons/hi2";
 
 const Shipment = () => {
@@ -16,39 +17,69 @@ const Shipment = () => {
     toggleSidebarCollapse,
   } = useSidebar();
 
-  const [shipments, setShipments] = useState([
-    {
-      id: 1,
-      trackingId: "TRK123456",
-      destination: "New York, USA",
-      status: "In Transit",
-      date: "2025-11-05",
-    },
-    {
-      id: 2,
-      trackingId: "TRK987654",
-      destination: "Berlin, Germany",
-      status: "Delivered",
-      date: "2025-11-03",
-    },
-  ]);
-
+  const [shipments, setShipments] = useState([]);
+  const [provinces, setProvinces] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [newShipment, setNewShipment] = useState({
-    trackingId: "",
-    destination: "",
-    status: "",
-    date: "",
+    from_province: "",
+    to_province: "",
+    description: "",
   });
+
+  // Fetch shipments and provinces when component mounts
+  useEffect(() => {
+    fetchShipments();
+    fetchProvinces();
+  }, []);
+
+  const fetchShipments = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.get("/shipments");
+      if (response.data && response.data.success) {
+        setShipments(response.data.shipments);
+      }
+    } catch (err) {
+      setError("Failed to fetch shipments");
+      console.error("Error fetching shipments:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchProvinces = async () => {
+    try {
+      const response = await axiosInstance.get("/shipments/provinces");
+      if (response.data && response.data.success) {
+        setProvinces(response.data.provinces);
+      }
+    } catch (err) {
+      setError("Failed to fetch provinces");
+      console.error("Error fetching provinces:", err);
+    }
+  };
 
   const handleChange = (e) => {
     setNewShipment({ ...newShipment, [e.target.name]: e.target.value });
   };
 
-  const handleAddShipment = (e) => {
+  const handleAddShipment = async (e) => {
     e.preventDefault();
-    if (!newShipment.trackingId || !newShipment.destination) return;
-    setShipments([...shipments, { ...newShipment, id: shipments.length + 1 }]);
-    setNewShipment({ trackingId: "", destination: "", status: "", date: "" });
+    if (!newShipment.from_province || !newShipment.to_province) return;
+
+    try {
+      const response = await axiosInstance.post("/shipments", newShipment);
+      if (response.data && response.data.success) {
+        // Refresh the shipments list
+        fetchShipments();
+        // Reset form
+        setNewShipment({ from_province: "", to_province: "", description: "" });
+      }
+    } catch (err) {
+      setError("Failed to create shipment");
+      console.error("Error creating shipment:", err);
+    }
   };
 
   return (
@@ -97,6 +128,19 @@ const Shipment = () => {
             </div>
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <div
+              className={`mb-6 p-4 rounded-lg border ${
+                isDark
+                  ? "bg-red-900/30 border-red-700 text-red-300"
+                  : "bg-red-50 border-red-200 text-red-700"
+              }`}
+            >
+              {error}
+            </div>
+          )}
+
           {/* Add Shipment Form */}
           <form
             onSubmit={handleAddShipment}
@@ -113,57 +157,82 @@ const Shipment = () => {
             >
               Add New Shipment
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <input
-                type="text"
-                name="trackingId"
-                value={newShipment.trackingId}
-                onChange={handleChange}
-                placeholder="Tracking ID"
-                className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
-                  isDark
-                    ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                    : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
-                }`}
-              />
-              <input
-                type="text"
-                name="destination"
-                value={newShipment.destination}
-                onChange={handleChange}
-                placeholder="Destination"
-                className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
-                  isDark
-                    ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                    : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
-                }`}
-              />
-              <select
-                name="status"
-                value={newShipment.status}
-                onChange={handleChange}
-                className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
-                  isDark
-                    ? "bg-gray-700 border-gray-600 text-white"
-                    : "bg-white border-gray-300 text-gray-900"
-                }`}
-              >
-                <option value="">Select Status</option>
-                <option value="Pending">Pending</option>
-                <option value="In Transit">In Transit</option>
-                <option value="Delivered">Delivered</option>
-              </select>
-              <input
-                type="date"
-                name="date"
-                value={newShipment.date}
-                onChange={handleChange}
-                className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
-                  isDark
-                    ? "bg-gray-700 border-gray-600 text-white"
-                    : "bg-white border-gray-300 text-gray-900"
-                }`}
-              />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label
+                  className={`block text-sm font-medium mb-2 ${
+                    isDark ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  From Province
+                </label>
+                <select
+                  name="from_province"
+                  value={newShipment.from_province}
+                  onChange={handleChange}
+                  required
+                  className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
+                    isDark
+                      ? "bg-gray-700 border-gray-600 text-white"
+                      : "bg-white border-gray-300 text-gray-900"
+                  }`}
+                >
+                  <option value="">Select Province</option>
+                  {provinces.map((province) => (
+                    <option key={province} value={province}>
+                      {province}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label
+                  className={`block text-sm font-medium mb-2 ${
+                    isDark ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  To Province
+                </label>
+                <select
+                  name="to_province"
+                  value={newShipment.to_province}
+                  onChange={handleChange}
+                  required
+                  className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
+                    isDark
+                      ? "bg-gray-700 border-gray-600 text-white"
+                      : "bg-white border-gray-300 text-gray-900"
+                  }`}
+                >
+                  <option value="">Select Province</option>
+                  {provinces.map((province) => (
+                    <option key={province} value={province}>
+                      {province}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="md:col-span-3">
+                <label
+                  className={`block text-sm font-medium mb-2 ${
+                    isDark ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  value={newShipment.description}
+                  onChange={handleChange}
+                  placeholder="Shipment description"
+                  rows={3}
+                  className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none resize-none ${
+                    isDark
+                      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                      : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+                  }`}
+                />
+              </div>
             </div>
             <button
               type="submit"
@@ -181,81 +250,125 @@ const Shipment = () => {
                 : "bg-white border-gray-200"
             }`}
           >
-            <table className="min-w-full border-collapse">
-              <thead
-                className={`uppercase text-sm ${
-                  isDark
-                    ? "bg-gray-700 text-gray-300"
-                    : "bg-gray-200 text-gray-700"
-                }`}
-              >
-                <tr>
-                  <th className="p-3 text-left">#</th>
-                  <th className="p-3 text-left">Tracking ID</th>
-                  <th className="p-3 text-left">Destination</th>
-                  <th className="p-3 text-left">Status</th>
-                  <th className="p-3 text-left">Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {shipments.map((shipment) => (
-                  <tr
-                    key={shipment.id}
-                    className={`border-t transition ${
-                      isDark
-                        ? "border-gray-700 hover:bg-gray-700/50"
-                        : "border-gray-200 hover:bg-gray-50"
+            {loading ? (
+              <div className="p-8 text-center">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <p
+                  className={`mt-4 ${
+                    isDark ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
+                  Loading shipments...
+                </p>
+              </div>
+            ) : (
+              <>
+                <div
+                  className={`px-6 py-4 border-b ${
+                    isDark ? "border-gray-700" : "border-gray-200"
+                  }`}
+                >
+                  <h2
+                    className={`text-lg font-semibold ${
+                      isDark ? "text-white" : "text-gray-800"
                     }`}
                   >
-                    <td
-                      className={`p-3 ${
-                        isDark ? "text-gray-300" : "text-gray-700"
+                    Shipments ({shipments.length})
+                  </h2>
+                </div>
+                {shipments.length === 0 ? (
+                  <div className="p-8 text-center">
+                    <p
+                      className={`${
+                        isDark ? "text-gray-400" : "text-gray-600"
                       }`}
                     >
-                      {shipment.id}
-                    </td>
-                    <td
-                      className={`p-3 font-medium ${
-                        isDark ? "text-blue-400" : "text-blue-600"
-                      }`}
-                    >
-                      {shipment.trackingId}
-                    </td>
-                    <td
-                      className={`p-3 ${
-                        isDark ? "text-gray-300" : "text-gray-700"
-                      }`}
-                    >
-                      {shipment.destination}
-                    </td>
-                    <td
-                      className={`p-3 font-semibold ${
-                        shipment.status === "Delivered"
-                          ? isDark
-                            ? "text-green-400"
-                            : "text-green-600"
-                          : shipment.status === "Pending"
-                          ? isDark
-                            ? "text-yellow-400"
-                            : "text-yellow-600"
-                          : isDark
-                          ? "text-blue-400"
-                          : "text-blue-600"
-                      }`}
-                    >
-                      {shipment.status}
-                    </td>
-                    <td
-                      className={`p-3 ${
-                        isDark ? "text-gray-300" : "text-gray-700"
-                      }`}
-                    >
-                      {shipment.date}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      No shipments found. Add a new shipment to get started.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full border-collapse">
+                      <thead
+                        className={`uppercase text-sm ${
+                          isDark
+                            ? "bg-gray-700 text-gray-300"
+                            : "bg-gray-200 text-gray-700"
+                        }`}
+                      >
+                        <tr>
+                          <th className="p-3 text-left">Tracking #</th>
+                          <th className="p-3 text-left">From</th>
+                          <th className="p-3 text-left">To</th>
+                          <th className="p-3 text-left">Status</th>
+                          <th className="p-3 text-left">Created</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {shipments.map((shipment) => (
+                          <tr
+                            key={shipment.id}
+                            className={`border-t transition ${
+                              isDark
+                                ? "border-gray-700 hover:bg-gray-700/50"
+                                : "border-gray-200 hover:bg-gray-50"
+                            }`}
+                          >
+                            <td
+                              className={`p-3 font-medium ${
+                                isDark ? "text-blue-400" : "text-blue-600"
+                              }`}
+                            >
+                              {shipment.tracking_number}
+                            </td>
+                            <td
+                              className={`p-3 ${
+                                isDark ? "text-gray-300" : "text-gray-700"
+                              }`}
+                            >
+                              {shipment.from_province}
+                            </td>
+                            <td
+                              className={`p-3 ${
+                                isDark ? "text-gray-300" : "text-gray-700"
+                              }`}
+                            >
+                              {shipment.to_province}
+                            </td>
+                            <td
+                              className={`p-3 font-semibold ${
+                                shipment.status === "delivered"
+                                  ? isDark
+                                    ? "text-green-400"
+                                    : "text-green-600"
+                                  : shipment.status === "in_progress"
+                                  ? isDark
+                                    ? "text-yellow-400"
+                                    : "text-yellow-600"
+                                  : isDark
+                                  ? "text-blue-400"
+                                  : "text-blue-600"
+                              }`}
+                            >
+                              {shipment.status.replace("_", " ")}
+                            </td>
+                            <td
+                              className={`p-3 ${
+                                isDark ? "text-gray-300" : "text-gray-700"
+                              }`}
+                            >
+                              {new Date(
+                                shipment.created_at
+                              ).toLocaleDateString()}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
