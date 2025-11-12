@@ -1,157 +1,201 @@
-# 🚚 ShipSmart – Provincial Goods Transfer Management System
+# ShipSmart
 
-**ShipSmart** is a modern logistics and transport management system designed to streamline goods transfer between provinces and cities.  
-It helps companies manage shipments, routes, vehicles, and delivery tracking efficiently with real-time visibility.
+A Provincial Goods Transfer Management System for Afghanistan, streamlining logistics operations between provinces and cities.
 
----
+## 📋 Table of Contents
 
-## 🌐 Features
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Quick Start](#quick-start)
+- [Role-Based Permissions](#role-based-permissions)
+- [Screenshots](#screenshots)
+- [Contributing](#contributing)
+- [License](#license)
 
-- 📦 **Shipment Management** – Create, assign, and track shipments easily  
-- 🗺️ **Route Planning** – Manage delivery routes between provinces or cities  
-- 🚛 **Vehicle & Driver Management** – Keep records of fleet and drivers  
-- ⏱️ **Real-time Tracking** – Monitor shipment status live  
-- 📊 **Reports & Analytics** – Generate delivery and performance reports  
-- 🔐 **Role-Based Access** – Separate dashboards for Admins, Drivers, and Clients  
+## Features
 
----
+### 📦 Shipment Management
 
-## 🧰 Tech Stack
+- Create, track, and manage goods transfers between provinces
+- Real-time status updates (Pending, In Transit, Delivered)
+- Unique tracking numbers for each shipment
 
-**Frontend:** React, Vite, TailwindCSS, Axios, React Router DOM  
-**Backend:** Node.js, Express.js  
-**Database:** MySQL  
-**Authentication:** JWT (jsonwebtoken)  
-**Security:** bcryptjs, express-validator  
+### 🗺️ Route Planning
 
----
+- Optimize delivery routes between provinces
+- Calculate distances and estimated delivery times
+- Visualize route maps
 
-## ⚙️ Installation & Setup
+### 🚛 Vehicle & Driver Management
+
+- Manage fleet of vehicles and assign drivers
+- Track vehicle capacity and maintenance schedules
+- Monitor driver performance and availability
+
+### ⏱️ Real-time Tracking
+
+- Live shipment tracking with GPS integration
+- Push notifications for status changes
+- Delivery confirmation system
+
+### 📊 Reports & Analytics
+
+- Generate shipment reports by province, date, and status
+- Analyze delivery performance metrics
+- Export data in multiple formats
+
+### 🔐 Role-Based Access Control
+
+- **SuperAdmin**: Full system access
+- **Admin**: Administrative privileges
+- **User (Branch)**: Branch-specific operations
+- Multi-language support (English, Dari, Pashto)
+- Light/Dark theme support
+
+## Technology Stack
+
+### Frontend
+
+- **React 18** - Modern UI library
+- **Vite 5** - Fast build tool
+- **TailwindCSS 3.4** - Utility-first CSS framework
+- **React Router DOM** - Client-side routing
+- **Axios** - HTTP client
+- **React Icons** - Icon library
+
+### Backend
+
+- **Node.js** - JavaScript runtime
+- **Express.js** - Web framework
+- **MySQL** - Relational database
+- **Sequelize** - ORM for database operations
+- **JWT** - Authentication tokens
+- **Bcrypt.js** - Password hashing
+
+### Development Tools
+
+- **Nodemon** - Auto-reload during development
+- **ESLint** - Code linting
+- **Prettier** - Code formatting
+
+## Project Structure
+
+```
+ShipSmart/
+├── Backend/              # Express.js API
+│   ├── config/           # DB and env configs
+│   ├── middleware/       # Auth middleware
+│   ├── models/           # Sequelize models
+│   ├── routes/           # API endpoints
+│   ├── scripts/          # DB setup and seeding
+│   └── server.js         # Entry point
+└── Frontend/             # React App (Vite)
+    ├── src/components/   # UI components
+    ├── src/pages/        # Page views
+    ├── src/context/      # React context providers
+    ├── src/i18n/         # Internationalization
+    └── main.jsx          # App entry
+```
+
+## Quick Start
 
 ### Prerequisites
+
 - Node.js (v14 or higher)
 - MySQL (v5.7 or higher)
 - npm or yarn
 
 ### Backend Setup
 
-1. **Navigate to Backend directory:**
-   ```bash
-   cd Backend
-   ```
+```bash
+cd Backend
+npm install
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+# Create .env file (copy env.example.txt)
+cp env.example.txt .env
+# Edit .env with your database credentials
 
-3. **Set up environment variables:**
-   Create a `.env` file in the `Backend` directory:
-   ```env
-   PORT=5000
-   NODE_ENV=development
-   
-   DB_HOST=localhost
-   DB_USER=root
-   DB_PASSWORD=your_password_here
-   DB_NAME=shipsmart_db
-   
-   JWT_SECRET=your_jwt_secret_key_here
-   JWT_EXPIRE=7d
-   
-   FRONTEND_URL=http://localhost:3000
-   ```
-   
-   *(Copy `Backend/config/env.example.txt` to `Backend/.env` and update the values)*
+# Create MySQL database
+CREATE DATABASE shipsmart_db;
 
-4. **Create MySQL database:**
-   ```bash
-   mysql -u root -p < Backend/config/database.sql
-   ```
-   
-   Or manually:
-   ```sql
-   CREATE DATABASE shipsmart_db;
-   ```
+# Run database migrations
+npm run create-role-users
 
-5. **Create a default user (optional but recommended):**
-   ```bash
-   cd Backend
-   npm run create-user
-   ```
-   
-   This creates an admin user you can use to login:
-   - **Email:** `admin@test.com`
-   - **Password:** `admin123`
-   - **Role:** `admin`
-
-6. **Run the backend server:**
-   ```bash
-   # Development mode (with auto-reload)
-   npm run dev
-   
-   # Production mode
-   npm start
-   ```
-   
-   The API will be available at `http://localhost:5000`
-
-**Note:** If you skipped step 5, you can create a user by calling the register API endpoint or running `npm run create-user` in the Backend directory.
+# Start development server
+npm run dev
+```
 
 ### Frontend Setup
 
-1. **Navigate to Frontend directory:**
-   ```bash
-   cd Frontend
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
-   
-   The app will automatically open at `http://localhost:3000`
-
-### Running Both Servers
-
-You'll need to run both servers simultaneously:
-
-**Terminal 1 (Backend):**
-```bash
-cd Backend
-npm run dev
-```
-
-**Terminal 2 (Frontend):**
 ```bash
 cd Frontend
+npm install
+
+# Start development server
 npm run dev
 ```
 
----
+### Default Login Credentials
 
-## 📁 Project Structure
+- **SuperAdmin**: superadmin@shipsmart.com / superadmin123
+- **Admin**: admin@shipsmart.com / admin123
+- **Branch User**: user@shipsmart.com / user123
 
-```
-ShipSmart/
-├── Backend/              # Node.js Express API
-│   ├── config/           # Database & configuration
-│   ├── routes/           # API routes
-│   ├── server.js         # Main server file
-│   └── package.json
-├── Frontend/             # React application (Vite)
-│   ├── src/              # React components
-│   ├── index.html        # HTML entry point
-│   ├── vite.config.js    # Vite configuration
-│   └── package.json
-└── README.md
-```
+## Role-Based Permissions
 
-For detailed documentation, see:
-- [Backend README](Backend/README.md)
-- [Frontend README](Frontend/README.md)
+This system implements a comprehensive role-based access control system:
+
+### SuperAdmin 🔴
+
+- Full access to all system features
+- Manage all users (create, edit, delete)
+- View and modify all shipments
+- Access all system statistics and reports
+- Configure system settings
+
+### Admin 🟠
+
+- Manage shipments (create, view, update status)
+- View all users and their shipments
+- Access system statistics
+- Cannot modify SuperAdmin accounts
+
+### User (Branch) 🟢
+
+- View and manage shipments for their branch only
+- Change status of shipments where destination is their branch
+- Send products to other branches
+- Cannot access other branches' data
+
+For detailed implementation information, see [ROLE_BASED_PERMISSIONS.md](ROLE_BASED_PERMISSIONS.md)
+
+## Screenshots
+
+### Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+### Shipment Management
+
+![Shipments](screenshots/shipments.png)
+
+### User Profile
+
+![Profile](screenshots/profile.png)
+
+### Settings
+
+![Settings](screenshots/settings.png)
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
