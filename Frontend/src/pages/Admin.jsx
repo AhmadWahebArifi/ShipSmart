@@ -29,6 +29,7 @@ function Admin() {
     toggleSidebarCollapse,
   } = useSidebar();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingField, setEditingField] = useState(null); // Track which field is being edited
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
@@ -48,7 +49,7 @@ function Admin() {
     }
   }, []); // Only run on mount
 
-  const openEditModal = () => {
+  const openEditModal = (field = null) => {
     // Load current user data into form
     if (authUser) {
       setFormData({
@@ -58,6 +59,7 @@ function Admin() {
       });
       setPreviewImage(authUser.profile_pic || "");
     }
+    setEditingField(field); // Set which field to focus on
     setError("");
     setSuccess("");
     setIsEditModalOpen(true);
@@ -65,6 +67,7 @@ function Admin() {
 
   const closeEditModal = () => {
     setIsEditModalOpen(false);
+    setEditingField(null);
     setError("");
     setSuccess("");
   };
