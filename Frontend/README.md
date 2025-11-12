@@ -1,83 +1,121 @@
 # ShipSmart Frontend
 
-React frontend application for ShipSmart logistics management system.
+React frontend for the ShipSmart logistics management system.
 
-## 🚀 Quick Start
+## Role-Based Permissions System
 
-### Prerequisites
-- Node.js (v14 or higher)
-- npm or yarn
+This frontend implements a role-based permissions system that works with the backend API:
 
-### Installation
+### 1. SuperAdmin 🔴
 
-1. **Install dependencies:**
+- Full access to all features
+- User management capabilities
+- System-wide analytics and reporting
+
+### 2. Admin 🟠
+
+- Manage shipments and routes
+- View all users and their shipments
+- Access system statistics
+
+### 3. User (Branch) 🟢
+
+- Manage shipments for their branch only
+- Change status of shipments where destination is their branch
+- Send products to other branches
+
+## Key Features
+
+### Authentication
+
+- Login/logout functionality
+- Role-based access control
+- JWT token management
+
+### Dashboard
+
+- Overview of shipment statistics
+- Recent activity feed
+- Quick access to common actions
+
+### Shipment Management
+
+- Create and track shipments
+- Update shipment status
+- View shipment history
+
+### User Management (Admin/SuperAdmin only)
+
+- Create, edit, and delete users
+- Assign roles and permissions
+- Manage branch assignments
+
+### Profile Management
+
+- Update personal information
+- Change profile picture
+- Update contact details
+
+### Settings
+
+- Language selection (English, Dari, Pashto)
+- Theme switching (Light/Dark mode)
+
+## Setup Instructions
+
+1. Install dependencies:
+
    ```bash
-   cd Frontend
    npm install
    ```
 
-2. **Start the development server:**
+2. Start the development server:
+
    ```bash
    npm run dev
    ```
 
-3. **Open your browser:**
-   The app will automatically open at http://localhost:3000
+3. Access the application at `http://localhost:3000`
 
-## 📁 Project Structure
+## Available Scripts
 
-```
-Frontend/
-├── index.html              # HTML template (Vite entry point)
-├── src/
-│   ├── App.jsx             # Main App component
-│   ├── App.css             # App styles (minimal, uses TailwindCSS)
-│   ├── main.jsx            # Entry point
-│   └── index.css           # Global styles (TailwindCSS directives)
-├── vite.config.js          # Vite configuration
-├── tailwind.config.js      # TailwindCSS configuration
-├── postcss.config.js       # PostCSS configuration
-├── package.json            # Dependencies
-└── README.md               # This file
-```
-
-## 🛠️ Tech Stack
-
-- **Framework:** React 18
-- **Build Tool:** Vite 5
-- **Styling:** TailwindCSS 3.4
-- **Routing:** React Router DOM
-- **HTTP Client:** Axios
-
-## 📝 Available Scripts
-
-- `npm run dev` - Start development server (runs on port 3000)
+- `npm run dev` - Start development server
 - `npm run build` - Build for production
-- `npm run preview` - Preview production build locally
+- `npm run preview` - Preview production build
 
-## 🔌 API Configuration
+## Folder Structure
 
-The app is configured to proxy API requests to the backend at `http://localhost:5000`. This is set in `vite.config.js`:
-
-```js
-server: {
-  proxy: {
-    '/api': {
-      target: 'http://localhost:5000',
-      changeOrigin: true,
-    },
-  },
-}
+```
+src/
+├── components/     # Reusable UI components
+├── config/         # Configuration files (axios, etc.)
+├── context/        # React context providers
+├── i18n/           # Internationalization files
+├── pages/          # Page components
+└── main.jsx        # Application entry point
 ```
 
-Make sure the backend server is running before starting the frontend.
+## Role-Based Navigation
 
-## 📝 Next Steps
+The sidebar navigation dynamically adjusts based on the user's role:
 
-1. Set up React Router for navigation
-2. Create components for different pages
-3. Implement authentication context
-4. Create API service layer
-5. Add form validation
-6. Implement state management (if needed)
+- SuperAdmin/Admin: See all menu items including User Management
+- User (Branch): Limited menu items relevant to their role
 
+## Theme Support
+
+The application supports both light and dark themes:
+
+- Theme preference is saved in localStorage
+- Respects system preference by default
+- Toggle available in sidebar
+
+## Internationalization
+
+The application supports multiple languages:
+
+- English (default)
+- Dari (prs)
+- Pashto (pbt)
+
+Language preference is saved in localStorage.
