@@ -7,7 +7,7 @@ import MobileMenuButton from "../components/MobileMenuButton";
 import axiosInstance from "../config/axios";
 import {
   HiUserGroup,
-  HiUserAdd,
+  HiUserPlus,
   HiPencil,
   HiTrash,
   HiEye,
@@ -200,7 +200,7 @@ function UserManagement() {
                     : "bg-blue-600 text-white hover:bg-blue-700"
                 } shadow-lg`}
               >
-                <HiUserAdd className="w-5 h-5" />
+                <HiUserPlus className="w-5 h-5" />
                 <span>Add User</span>
               </button>
             </div>
