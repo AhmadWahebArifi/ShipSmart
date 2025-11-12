@@ -10,10 +10,18 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role ENUM('admin', 'driver', 'client') DEFAULT 'client',
+    role ENUM('admin', 'superadmin', 'user', 'driver', 'client') DEFAULT 'user',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
+
+-- Add columns for user profile and branch information
+ALTER TABLE users 
+ADD COLUMN IF NOT EXISTS name VARCHAR(100) NULL DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS address TEXT NULL DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS profile_pic LONGTEXT NULL DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS province VARCHAR(100) NULL DEFAULT NULL,
+ADD COLUMN IF NOT EXISTS branch VARCHAR(100) NULL DEFAULT NULL;
 
 -- Vehicles table
 CREATE TABLE IF NOT EXISTS vehicles (
@@ -63,4 +71,3 @@ CREATE TABLE IF NOT EXISTS shipments (
 INSERT INTO users (username, email, password, role) VALUES
 ('admin', 'admin@shipsmart.com', '$2a$10$YourHashedPasswordHere', 'admin'),
 ('driver1', 'driver1@shipsmart.com', '$2a$10$YourHashedPasswordHere', 'driver');
-
