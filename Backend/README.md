@@ -1,107 +1,108 @@
-# ShipSmart Backend API
+# ShipSmart Backend
 
-Node.js Express backend with MySQL database for ShipSmart logistics management system.
+## Role-Based Permissions System
 
-## 🚀 Quick Start
+This system implements three distinct user roles with specific permissions:
 
-### Prerequisites
-- Node.js (v14 or higher)
-- MySQL (v5.7 or higher)
-- npm or yarn
+### 1. SuperAdmin 🔴
 
-### Installation
+- **Permissions**: Full access to all system features
+- **Capabilities**:
+  - Manage all users (create, edit, delete)
+  - View and modify all shipments
+  - Access all system statistics and reports
+  - Configure system settings
 
-1. **Install dependencies:**
-   ```bash
-   cd Backend
-   npm install
-   ```
+### 2. Admin 🟠
 
-2. **Set up environment variables:**
-   Create a `.env` file in the Backend directory:
-   ```env
-   PORT=5000
-   NODE_ENV=development
-   
-   DB_HOST=localhost
-   DB_USER=root
-   DB_PASSWORD=your_password_here
-   DB_NAME=shipsmart_db
-   
-   JWT_SECRET=your_jwt_secret_key_here
-   JWT_EXPIRE=7d
-   
-   FRONTEND_URL=http://localhost:3000
-   ```
+- **Permissions**: Administrative access with some limitations
+- **Capabilities**:
+  - Manage shipments (create, view, update status)
+  - View all users and their shipments
+  - Access system statistics
+  - Cannot modify SuperAdmin accounts
 
-3. **Create MySQL database:**
-   ```sql
-   CREATE DATABASE shipsmart_db;
-   ```
+### 3. User (Branch) 🟢
 
-4. **Create a default user (optional but recommended):**
-   ```bash
-   npm run create-user
-   ```
-   This will create an admin user:
-   - Email: `admin@test.com`
-   - Password: `admin123`
-   - Role: `admin`
+- **Permissions**: Limited to branch-specific operations
+- **Capabilities**:
+  - View and manage shipments for their branch only
+  - Change status of shipments where destination is their branch
+  - Send products to other branches
+  - Cannot access other branches' data
 
-5. **Run the server:**
-   ```bash
-   # Development mode (with nodemon)
-   npm run dev
-   
-   # Production mode
-   npm start
-   ```
+## Setup Instructions
 
-6. **Test the API:**
-   Open http://localhost:5000 in your browser or use:
-   ```bash
-   curl http://localhost:5000
-   ```
+### 1. Create Role-Based Users
 
-## 📁 Project Structure
-
-```
-Backend/
-├── config/
-│   └── database.js       # MySQL connection configuration
-├── routes/
-│   ├── auth.js           # Authentication routes
-│   ├── shipments.js      # Shipment management routes
-│   ├── routes.js         # Route planning routes
-│   └── vehicles.js       # Vehicle management routes
-├── server.js             # Main server file
-├── package.json          # Dependencies
-└── .env                  # Environment variables (create this)
+```bash
+npm run create-role-users
 ```
 
-## 🔌 API Endpoints
+This creates:
 
-### Test Endpoints
-- `GET /` - API status
-- `GET /api/auth/test` - Test auth route
-- `GET /api/shipments/test` - Test shipments route
-- `GET /api/routes/test` - Test routes route
-- `GET /api/vehicles/test` - Test vehicles route
+- SuperAdmin: superadmin@shipsmart.com / superadmin123
+- Admin: admin@shipsmart.com / admin123
+- Branch Users: user@shipsmart.com / user123, user2@shipsmart.com / user123
 
-## 🛠️ Tech Stack
+### 2. Update User Branches
 
-- **Runtime:** Node.js
-- **Framework:** Express.js
-- **Database:** MySQL (mysql2)
-- **Authentication:** JWT (jsonwebtoken)
-- **Security:** bcryptjs, express-validator
-- **Development:** nodemon
+```bash
+npm run update-user-branches
+```
 
-## 📝 Next Steps
+This assigns branch information to existing users.
 
-1. Implement authentication middleware
-2. Create database models/schemas
-3. Implement CRUD operations for all routes
-4. Add validation and error handling
-5. Set up database migrations
+### 3. Create Sample Shipments
 
+```bash
+npm run create-sample-shipments
+```
+
+This creates sample shipments for testing the role-based permissions.
+
+## API Endpoints
+
+### Authentication
+
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login user
+- `GET /api/auth/me` - Get current user info
+- `PUT /api/auth/profile` - Update user profile
+
+### Shipments
+
+- `GET /api/shipments` - Get all shipments (filtered by role)
+- `GET /api/shipments/:id` - Get specific shipment
+- `POST /api/shipments` - Create new shipment
+- `PUT /api/shipments/:id/status` - Update shipment status
+- `GET /api/shipments/stats/overview` - Get shipment statistics (Admin only)
+
+### Users
+
+- `GET /api/users` - Get all users (Admin only)
+- `GET /api/users/:id` - Get specific user (Admin only)
+- `PUT /api/users/:id` - Update user (Admin only)
+- `DELETE /api/users/:id` - Delete user (Admin only)
+
+## Role-Based Access Control Logic
+
+### Shipment Creation
+
+- SuperAdmin/Admin: Can create shipments from any province
+- User: Can only create shipments from their branch's province
+
+### Shipment Status Updates
+
+- SuperAdmin: Can update any shipment status
+- Admin: Can update any shipment status
+- User:
+  - Can mark shipments as "in progress" if they sent it or if it originates from their branch
+  - Can mark shipments as "delivered" if they are the receiver or if destination is their branch
+  - Can reset to "pending" only for shipments they sent
+
+### Data Visibility
+
+- SuperAdmin: Can see all shipments and users
+- Admin: Can see all shipments and users
+- User: Can only see shipments they sent or received
