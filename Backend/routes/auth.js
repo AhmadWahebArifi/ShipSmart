@@ -247,7 +247,10 @@ router.put('/profile', authenticateToken, async (req, res) => {
     }
 
     // Update only provided fields (email cannot be changed)
+    // Separate profile_pic from other fields to avoid database issues
     const updateData = {};
+    const profilePicData = {};
+    
     if (name !== undefined) {
       if (name === null || name === '' || name.trim() === '') {
         updateData.name = null;
@@ -265,47 +268,69 @@ router.put('/profile', authenticateToken, async (req, res) => {
     if (profile_pic !== undefined) {
       if (profile_pic === '' || profile_pic === null) {
         // Allow clearing profile_pic by sending empty string or null
-        updateData.profile_pic = null;
+        profilePicData.profile_pic = null;
       } else if (profile_pic && profile_pic.trim() !== '') {
         // Send the profile_pic as is (base64 string)
-        updateData.profile_pic = profile_pic;
+        profilePicData.profile_pic = profile_pic;
       }
     }
 
     console.log('Update data:', {
       name: updateData.name ? `${updateData.name.substring(0, 20)}...` : updateData.name,
       address: updateData.address ? `${updateData.address.substring(0, 20)}...` : updateData.address,
-      profile_pic: updateData.profile_pic 
-        ? `data:image/${updateData.profile_pic.substring(0, 50)}... (length: ${updateData.profile_pic.length})` 
-        : updateData.profile_pic
+      profile_pic: profilePicData.profile_pic !== undefined 
+        ? (profilePicData.profile_pic 
+            ? `data:image/${profilePicData.profile_pic.substring(0, 50)}... (length: ${profilePicData.profile_pic.length})` 
+            : null)
+        : 'not provided'
     });
 
-    // Only update if there's something to update
+    // Update name and address first (if provided)
     if (Object.keys(updateData).length > 0) {
       try {
-        console.log('Attempting to update user with:', Object.keys(updateData));
+        console.log('📝 Updating name and address:', Object.keys(updateData));
         await user.update(updateData);
-        console.log('✅ User updated successfully');
+        console.log('✅ Name and address updated successfully');
       } catch (updateError) {
-        console.error('❌ Error updating user:', updateError);
+        console.error('❌ Error updating name/address:', updateError);
         console.error('Error name:', updateError.name);
         console.error('Error message:', updateError.message);
-        console.error('Error stack:', updateError.stack);
-        console.error('Update data keys:', Object.keys(updateData));
         if (updateError.original) {
-          console.error('Original error:', updateError.original);
           console.error('SQL state:', updateError.original?.sqlState);
           console.error('SQL message:', updateError.original?.sqlMessage);
         }
         throw updateError;
       }
-    } else {
-      console.log('⚠️  No data to update - updateData is empty');
     }
 
-    // Fetch updated user (use reload to get latest data)
+    // Update profile_pic separately (if provided)
+    // This prevents database issues when updating all fields at once
+    // MySQL/MariaDB can have issues with large TEXT fields when updating multiple columns
+    if (Object.keys(profilePicData).length > 0) {
+      try {
+        console.log('🖼️  Updating profile picture separately');
+        await user.update(profilePicData);
+        console.log('✅ Profile picture updated successfully');
+      } catch (updateError) {
+        console.error('❌ Error updating profile picture:', updateError);
+        console.error('Error name:', updateError.name);
+        console.error('Error message:', updateError.message);
+        if (updateError.original) {
+          console.error('SQL state:', updateError.original?.sqlState);
+          console.error('SQL message:', updateError.original?.sqlMessage);
+        }
+        throw updateError;
+      }
+    }
+
+    // If nothing was provided to update
+    if (Object.keys(updateData).length === 0 && Object.keys(profilePicData).length === 0) {
+      console.log('⚠️  No data to update - all fields were undefined');
+    }
+    
+    // Final reload to ensure we have all the latest data
     await user.reload();
-    console.log('✅ User reloaded successfully');
+    console.log('✅ User data reloaded successfully');
 
     res.json({
       success: true,
