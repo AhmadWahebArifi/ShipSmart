@@ -66,19 +66,29 @@ const Shipment = () => {
 
   const handleAddShipment = async (e) => {
     e.preventDefault();
-    if (!newShipment.from_province || !newShipment.to_province) return;
+    if (!newShipment.from_province || !newShipment.to_province) {
+      setError("Please select both from and to provinces");
+      return;
+    }
 
     try {
+      setError(""); // Clear any previous errors
       const response = await axiosInstance.post("/shipments", newShipment);
       if (response.data && response.data.success) {
         // Refresh the shipments list
         fetchShipments();
         // Reset form
         setNewShipment({ from_province: "", to_province: "", description: "" });
+      } else {
+        setError(response.data.message || "Failed to create shipment");
       }
     } catch (err) {
-      setError("Failed to create shipment");
       console.error("Error creating shipment:", err);
+      if (err.response && err.response.data) {
+        setError(err.response.data.message || "Failed to create shipment");
+      } else {
+        setError("Failed to create shipment. Please try again.");
+      }
     }
   };
 
