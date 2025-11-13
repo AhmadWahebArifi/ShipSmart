@@ -259,6 +259,15 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
     }
 
     // Create shipment
+    console.log("Creating shipment with data:", {
+      from_province,
+      to_province,
+      description: description || null,
+      sender_id: sender.id,
+      receiver_id: receiver ? receiver.id : null,
+      status: "pending",
+    });
+
     const shipment = await Shipment.create({
       from_province,
       to_province,
@@ -267,6 +276,8 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
       receiver_id: receiver ? receiver.id : null,
       status: "pending",
     });
+
+    console.log("Shipment created successfully with ID:", shipment.id);
 
     // Reload with associations
     await shipment.reload({
@@ -287,14 +298,20 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
 
     // Create notification for receiver if exists
     if (receiver) {
-      await Notification.create({
-        user_id: receiver.id,
-        shipment_id: shipment.id,
-        title: "New Shipment Arriving",
-        message: `A shipment from ${from_province} to ${to_province} is on its way. Status: Pending`,
-        type: "shipment_created",
-        is_read: false,
-      });
+      try {
+        await Notification.create({
+          user_id: receiver.id,
+          shipment_id: shipment.id,
+          title: "New Shipment Arriving",
+          message: `A shipment from ${from_province} to ${to_province} is on its way. Status: Pending`,
+          type: "shipment_created",
+          is_read: false,
+        });
+        console.log("Notification created for receiver:", receiver.id);
+      } catch (notificationError) {
+        console.error("Failed to create notification:", notificationError);
+        // Don't fail the whole request if notification creation fails
+      }
     }
 
     res.status(201).json({
@@ -304,6 +321,28 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
     });
   } catch (error) {
     console.error("Create shipment error:", error);
+    console.error("Error name:", error.name);
+    console.error("Error message:", error.message);
+    
+    // Handle specific database errors
+    if (error.name === 'SequelizeDatabaseError') {
+      console.error("Database error details:", error.parent);
+      return res.status(500).json({
+        success: false,
+        message: "Database error occurred while creating shipment",
+        error: process.env.NODE_ENV === "development" ? error.message : undefined,
+      });
+    }
+    
+    // Handle validation errors
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).json({
+        success: false,
+        message: "Validation error",
+        error: error.errors.map(e => e.message),
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: "Error creating shipment",
