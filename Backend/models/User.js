@@ -13,7 +13,8 @@ const User = sequelize.define(
     username: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      unique: true,
+      // Remove unique constraint to avoid key limit issue
+      // unique: true,
       validate: {
         notEmpty: true,
         len: [3, 50],
@@ -22,7 +23,8 @@ const User = sequelize.define(
     email: {
       type: DataTypes.STRING(100),
       allowNull: false,
-      unique: true,
+      // Remove unique constraint to avoid key limit issue
+      // unique: true,
       validate: {
         isEmail: true,
         notEmpty: true,
@@ -76,6 +78,10 @@ const User = sequelize.define(
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",
+    // Disable automatic index creation to avoid key limit
+    indexes: [
+      // We'll manage indexes manually to stay within MySQL's 64-key limit
+    ],
     hooks: {
       beforeCreate: async (user) => {
         if (user.password) {
