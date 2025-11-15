@@ -51,7 +51,8 @@
     "analytics": "تحلیلونه",
     "settings": "تنظیمات",
     "toggleTheme": "تم بدلول",
-    "logout": "وتل"
+    "logout": "وتل",
+    "products": "محصولات"
   },
   "notFound": {
     "title": "404",
@@ -60,6 +61,75 @@
     "goToDashboard": "داشبورد ته لاړ شئ",
     "goBack": "بیرته",
     "errorMessage": "که تاسو فکر کوئ چې دا یو خطا دی، مهرباني وکړئ د ملاتړ سره اړیکه ونیسئ."
+  },
+  "products": {
+    "title": "محصولات",
+    "items": "توکي",
+    "addProduct": "محصول زیات کړئ",
+    "editProduct": "محصول سمول",
+    "noProducts": "هیڅ محصول ونه موندل شو",
+    "getStarted": "د نوي محصول د اضافه کولو سره پیل وکړئ.",
+    "searchPlaceholder": "محصولات ولټوئ...",
+    "confirmDelete": "ایا تاسو ډاډه یاست چې غواړئ دا محصول حذف کړئ؟ دا عمل بیرته راګرځیدونکی نه دی.",
+    "viewShipment": "بریښناک وګورئ",
+    "table": {
+      "name": "د محصول نوم",
+      "shipment": "بریښناک",
+      "trackingNumber": "د تعقیب شمیره",
+      "quantity": "تعداد",
+      "weight": "وزن",
+      "price": "قیمت",
+      "total": ټولټال,
+      "actions": "کړنې"
+    },
+    "form": {
+      "name": "د محصول نوم",
+      "namePlaceholder": "د محصول نوم ولیکئ",
+      "description": "تفصیل",
+      "descriptionPlaceholder": "د محصول تفصیل ولیکئ (اختیاري)",
+      "quantity": "تعداد",
+      "weight": "وزن (کیلوګرامه)",
+      "price": "قیمت (افغانۍ)",
+      "shipmentTrackNumber": "د بریښناک د تعقیب شمیره",
+      "selectShipment": "یو بریښناک وټاکئ"
+    },
+    "stats": {
+      "totalItems": "ټول توکي",
+      "totalQuantity": "ټول تعداد",
+      "totalWeight": "ټول وزن",
+      "totalValue": "ټوله ارزښت"
+    },
+    "filters": {
+      "allShipments": "ټول بریښناک",
+      "trackingNumber": "د تعقیب شمیره"
+    },
+    "success": {
+      "added": "محصول په بریالیتوب سره زیات شو!",
+      "updated": "محصول په بریالیتوب سره تازه شو!",
+      "deleted": "محصول په بریالیتوب سره حذف شو!"
+    },
+    "errors": {
+      "fetchFailed": "د محصولاتو پورته کولو کې ستونزه راغله. مهرباني وکړئ بیا هڅه وکړئ.",
+      "shipmentRequired": "مهرباني وکړئ د دې محصول لپاره یو بریښناک وټاکئ."
+    }
+  },
+  "common": {
+    "loading": "پورته کیږي",
+    "saving": "خوندي کیږي...",
+    "edit": "سمول",
+    "delete": "ړنګول",
+    "cancel": "لغوه کول",
+    "save": "خوندي کول",
+    "reset": "بیا تنظیمول",
+    "actions": "کړنې",
+    "total": "ټولټال",
+    "errors": {
+      "generic": "یوه تېروتنه راغله. مهرباني وکړئ بیا هڅه وکړئ.",
+      "required": "دا ځای اړین دی"
+    }
+  },
+  "validation": {
+    "required": "دا ځای اړین دی",
+    "min": "لږ تر لږه باید {{min}} وي"
   }
 }
-
