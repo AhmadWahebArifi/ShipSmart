@@ -197,7 +197,10 @@ router.get("/:id", authenticateToken, async (req, res) => {
 // @access  Private (with role-based permissions)
 router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
   try {
-    const { from_province, to_province, description } = req.body;
+    const { from_province, to_province, tracking_number, description } = req.body;
+    
+    // Debug log the received data
+    console.log('Received shipment creation request with data:', { from_province, to_province, tracking_number, description });
     const sender = await User.findByPk(req.user.userId);
 
     if (!sender) {
@@ -207,11 +210,16 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
       });
     }
 
-    // Validate provinces
-    if (!from_province || !to_province) {
+    // Validate required fields
+    if (!from_province || !to_province || !tracking_number) {
       return res.status(400).json({
         success: false,
-        message: "From province and to province are required",
+        message: "From province, to province, and tracking number are required",
+        missing_fields: {
+          from_province: !from_province,
+          to_province: !to_province,
+          tracking_number: !tracking_number
+        }
       });
     }
 
@@ -262,6 +270,7 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
     console.log("Creating shipment with data:", {
       from_province,
       to_province,
+      tracking_number,
       description: description || null,
       sender_id: sender.id,
       receiver_id: receiver ? receiver.id : null,
@@ -271,6 +280,7 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
     const shipment = await Shipment.create({
       from_province,
       to_province,
+      tracking_number,  // Added tracking_number here
       description: description || null,
       sender_id: sender.id,
       receiver_id: receiver ? receiver.id : null,
