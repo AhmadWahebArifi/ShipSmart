@@ -90,12 +90,15 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
 
   return (
     <>
-      {/* Overlay for mobile - removed onClick to prevent closing on click */}
+      {/* Overlay for mobile - click to close sidebar */}
       {isOpen && (
         <div
-          className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300 ${
-            isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
+          onClick={onClose}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300 opacity-100"
+          role="button"
+          aria-label="Close sidebar"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === "Enter" && onClose()}
         />
       )}
 
@@ -109,6 +112,8 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
             ? "bg-gray-900 border-r border-gray-800"
             : "bg-white border-r border-gray-200"
         }`}
+        role="navigation"
+        aria-label="Main navigation"
       >
         {/* Header */}
         <div
@@ -160,12 +165,16 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
 
           {/* Close Button (Mobile) */}
           <button
-            onClick={onClose}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
             className={`lg:hidden p-2 rounded-lg transition-colors flex-shrink-0 ${
               isDark
                 ? "text-gray-400 hover:text-white hover:bg-gray-800"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             }`}
+            aria-label="Close sidebar"
           >
             <HiXMark className="w-5 h-5" />
           </button>
