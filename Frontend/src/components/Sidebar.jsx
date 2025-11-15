@@ -17,6 +17,7 @@ import {
   HiSun,
   HiUser,
   HiUserGroup,
+  HiShoppingBag,
 } from "react-icons/hi2";
 
 const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
@@ -39,6 +40,12 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
       label: t("sidebar.shipments"),
       icon: HiCube,
       path: "/shipments",
+    },
+    {
+      id: "products",
+      label: t("sidebar.products"),
+      icon: HiShoppingBag,
+      path: "/products",
     },
     { id: "routes", label: t("sidebar.routes"), icon: HiMap, path: "/routes" },
     {
