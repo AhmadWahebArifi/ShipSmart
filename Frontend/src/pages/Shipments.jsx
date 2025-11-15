@@ -6,7 +6,10 @@ import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
 import axiosInstance from "../config/axios";
 import { HiCube } from "react-icons/hi2";
-import SweetAlert from 'react-sweetalert';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const Shipment = () => {
   const { isDark } = useTheme();
@@ -25,20 +28,21 @@ const Shipment = () => {
   const [newShipment, setNewShipment] = useState({
     from_province: "",
     to_province: "",
+    tracking_number: "",
     description: "",
   });
-  const [alert, setAlert] = useState(null);
 
-  const showAlert = (title, message, type) => {
-    setAlert(
-      <SweetAlert
-        type={type}
-        title={title}
-        onConfirm={() => setAlert(null)}
-      >
-        {message}
-      </SweetAlert>
-    );
+  const showAlert = (title, message, type = 'success') => {
+    MySwal.fire({
+      title: title,
+      text: message,
+      icon: type,
+      confirmButtonText: 'OK',
+      customClass: {
+        confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md',
+      },
+      buttonsStyling: false
+    });
   };
 
   // Fetch shipments and provinces when component mounts
@@ -75,32 +79,83 @@ const Shipment = () => {
   };
 
   const handleChange = (e) => {
-    setNewShipment({ ...newShipment, [e.target.name]: e.target.value });
+    console.log('Updating field:', e.target.name, 'with value:', e.target.value);
+    setNewShipment(prev => {
+      const updated = { ...prev, [e.target.name]: e.target.value };
+      console.log('New state:', updated);
+      return updated;
+    });
   };
 
   const handleAddShipment = async (e) => {
     e.preventDefault();
-    if (!newShipment.from_province || !newShipment.to_province) {
-      showAlert('Validation Error', 'Please select both from and to provinces', 'error');
+    
+    // Debug log the current form state
+    console.log('Form state before submission:', newShipment);
+    
+    // Client-side validation
+    if (!newShipment.from_province || !newShipment.to_province || !newShipment.tracking_number) {
+      const missingFields = [];
+      if (!newShipment.from_province) missingFields.push('From Province');
+      if (!newShipment.to_province) missingFields.push('To Province');
+      if (!newShipment.tracking_number) missingFields.push('Tracking Number');
+      
+      showAlert('Validation Error', `Please fill in all required fields: ${missingFields.join(', ')}`, 'error');
+      return;
+    }
+
+    // Ensure from and to provinces are different
+    if (newShipment.from_province === newShipment.to_province) {
+      showAlert('Validation Error', 'From and to provinces cannot be the same', 'error');
       return;
     }
 
     try {
       setError(""); // Clear any previous errors
-      const response = await axiosInstance.post("/shipments", newShipment);
+      
+      // Create URLSearchParams to send as form data
+      const formData = new URLSearchParams();
+      formData.append('from_province', String(newShipment.from_province || '').trim());
+      formData.append('to_province', String(newShipment.to_province || '').trim());
+      formData.append('tracking_number', String(newShipment.tracking_number || '').trim());
+      formData.append('description', String(newShipment.description || '').trim());
+      
+      console.log('Sending form data to server:', formData.toString());
+
+      // Send as form data instead of JSON
+      const config = {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+        }
+      };
+
+      const response = await axiosInstance.post("/shipments", formData, config);
+      
       if (response.data && response.data.success) {
+        // Reset form
+        setNewShipment({ 
+          from_province: "", 
+          to_province: "", 
+          tracking_number: "",
+          description: "" 
+        });
+        // Show success message
+        showAlert('Success', 'Shipment added successfully', 'success');
         // Refresh the shipments list
         fetchShipments();
-        // Reset form
-        setNewShipment({ from_province: "", to_province: "", description: "" });
-        showAlert('Success', 'Shipment added successfully', 'success');
       } else {
-        showAlert('Error', response.data.message || 'Failed to create shipment', 'error');
+        showAlert('Error', response.data?.message || 'Failed to create shipment', 'error');
       }
     } catch (err) {
       console.error("Error creating shipment:", err);
-      if (err.response && err.response.data) {
-        showAlert('Error', err.response.data.message || 'Failed to create shipment', 'error');
+      console.error("Error response:", err.response?.data);
+      if (err.response?.data) {
+        // Handle validation errors from the server
+        const errorMessage = typeof err.response.data === 'object' 
+          ? Object.values(err.response.data).flat().join('\n')
+          : err.response.data.message || 'Failed to create shipment';
+        showAlert('Validation Error', errorMessage, 'error');
       } else {
         showAlert('Error', 'Failed to create shipment. Please try again.', 'error');
       }
@@ -109,7 +164,6 @@ const Shipment = () => {
 
   return (
     <>
-      {alert}
       <div
         className={`min-h-screen flex transition-colors duration-300 ${
           isDark ? "bg-gray-950" : "bg-gray-50"
@@ -184,7 +238,7 @@ const Shipment = () => {
               >
                 Add New Shipment
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                   <label
                     className={`block text-sm font-medium mb-2 ${
@@ -238,6 +292,31 @@ const Shipment = () => {
                       </option>
                     ))}
                   </select>
+                </div>
+                <div className="md:col-span-3">
+                  <label
+                    className={`block text-sm font-medium mb-2 ${
+                      isDark ? "text-gray-300" : "text-gray-700"
+                    }`}
+                  >
+                    Tracking Number
+                  </label>
+                  <input
+                    type="text"
+                    name="tracking_number"
+                    value={newShipment.tracking_number || ''}
+                    onChange={(e) => {
+                      console.log('Tracking number changed:', e.target.value);
+                      handleChange(e);
+                    }}
+                    placeholder="Enter tracking number"
+                    required
+                    className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
+                      isDark
+                        ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                        : "bg-white border-gray-300 text-gray-900"
+                    }`}
+                  />
                 </div>
                 <div className="md:col-span-3">
                   <label
