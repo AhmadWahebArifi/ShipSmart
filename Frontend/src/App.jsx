@@ -14,6 +14,7 @@ import Dashboard from "./pages/Dashboard";
 import Settings from "./pages/Settings";
 import Admin from "./pages/Admin";
 import Shipments from "./pages/Shipments";
+import Products from "./pages/Products";
 import UserManagement from "./pages/UserManagement";
 import NotFound from "./pages/NotFound";
 
@@ -72,6 +73,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Shipments />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/products"
+                element={
+                  <ProtectedRoute>
+                    <Products />
                   </ProtectedRoute>
                 }
               />
