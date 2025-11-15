@@ -2,12 +2,33 @@ const { sequelize } = require("../config/database");
 const User = require("./User");
 const Shipment = require("./Shipment");
 const Notification = require("./Notification");
+const Product = require("./Product");
 
 // Define associations
+// Shipment associations
 Shipment.belongsTo(User, { foreignKey: "sender_id", as: "sender" });
 Shipment.belongsTo(User, { foreignKey: "receiver_id", as: "receiver" });
+Shipment.hasMany(Product, {
+  foreignKey: "shipment_tracking_number",
+  sourceKey: "tracking_number",
+  as: "products",
+});
+
+// User associations
 User.hasMany(Shipment, { foreignKey: "sender_id", as: "sentShipments" });
 User.hasMany(Shipment, { foreignKey: "receiver_id", as: "receivedShipments" });
+User.hasMany(Product, { foreignKey: "created_by", as: "products" });
+
+// Product associations
+Product.belongsTo(Shipment, {
+  foreignKey: "shipment_tracking_number",
+  targetKey: "tracking_number",
+  as: "shipment",
+});
+Product.belongsTo(User, {
+  foreignKey: "created_by",
+  as: "creator",
+});
 
 Notification.belongsTo(User, { foreignKey: "user_id", as: "user" });
 Notification.belongsTo(Shipment, { foreignKey: "shipment_id", as: "shipment" });
@@ -22,6 +43,7 @@ const models = {
   User,
   Shipment,
   Notification,
+  Product,
   sequelize,
 };
 
