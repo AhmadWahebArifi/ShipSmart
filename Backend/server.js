@@ -24,8 +24,9 @@ app.use("/api/auth", require("./routes/auth"));
 app.use("/api/shipments", require("./routes/shipments"));
 app.use("/api/routes", require("./routes/routes"));
 app.use("/api/vehicles", require("./routes/vehicles"));
-app.use("/api/users", require("./routes/users")); // Add users route
+app.use("/api/users", require("./routes/users"));
 app.use("/api/notifications", require("./routes/notifications"));
+app.use("/api/products", require("./routes/products")); // Products management
 
 // Test route
 app.get("/", (req, res) => {
