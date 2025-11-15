@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
-import { useTheme } from '../context/ThemeContext';
-import axiosInstance from '../config/axios';
-import { FiPackage, FiTruck, FiX, FiPlus, FiCheck } from 'react-icons/fi';
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useTheme } from "../context/ThemeContext";
+import axiosInstance from "../config/axios";
+import { FiPackage, FiTruck, FiX, FiPlus, FiCheck } from "react-icons/fi";
 
 const ProductForm = ({ onSubmit, onCancel, shipmentTrackNumber }) => {
   const { t } = useTranslation();
   const { isDark } = useTheme();
   const [shipments, setShipments] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const {
     register,
@@ -21,24 +21,33 @@ const ProductForm = ({ onSubmit, onCancel, shipmentTrackNumber }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: '',
-      description: '',
+      name: "",
+      description: "",
       quantity: 1,
-      weight: '',
-      price: '',
-      shipmentTrackNumber: shipmentTrackNumber || '',
+      weight: "",
+      price: "",
+      shipment_tracking_number: shipmentTrackNumber || "",
     },
   });
 
   useEffect(() => {
     const fetchShipments = async () => {
       try {
-        const response = await axiosInstance.get('/shipments');
+        console.log("Fetching shipments...");
+        const response = await axiosInstance.get("/shipments");
+        console.log("Shipments response:", response.data);
         if (response.data && response.data.success) {
+          console.log("Setting shipments:", response.data.shipments);
           setShipments(response.data.shipments || []);
+        } else {
+          console.error("Failed to fetch shipments:", response.data?.message);
         }
       } catch (err) {
-        console.error('Error fetching shipments:', err);
+        console.error("Error fetching shipments:", err);
+        if (err.response) {
+          console.error("Response data:", err.response.data);
+          console.error("Response status:", err.response.status);
+        }
       }
     };
 
@@ -48,42 +57,50 @@ const ProductForm = ({ onSubmit, onCancel, shipmentTrackNumber }) => {
   const handleFormSubmit = async (data) => {
     try {
       setLoading(true);
-      setError('');
-      
-      // Ensure shipmentTrackNumber is included
-      if (!data.shipmentTrackNumber) {
-        throw new Error(t('products.errors.shipmentRequired'));
-      }
+      setError("");
+      setSuccess("");
 
-      const response = await axiosInstance.post('/products', data);
-      
-      if (response.data && response.data.success) {
-        setSuccess(t('products.success.added'));
+      // Convert string values to numbers
+      const productData = {
+        ...data,
+        quantity: Number(data.quantity),
+        weight: Number(data.weight),
+        price: Number(data.price),
+        // The field name now matches the backend
+      };
+
+      console.log("Submitting product data:", productData);
+
+      const response = await axiosInstance.post("/products", productData);
+
+      if (response.data.success) {
+        setSuccess("Product added successfully");
         reset();
-        if (onSubmit) {
-          onSubmit(response.data.product);
-        }
-        // Clear success message after 3 seconds
-        setTimeout(() => setSuccess(''), 3000);
+        if (onSubmit) onSubmit(response.data.product);
       }
     } catch (err) {
-      setError(err.response?.data?.message || err.message || t('common.errors.generic'));
+      console.error("Error submitting product:", err);
+      setError(err.response?.data?.message || "Error adding product");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className={`rounded-lg p-6 ${isDark ? 'bg-gray-800' : 'bg-white shadow'}`}>
+    <div
+      className={`rounded-lg p-6 ${isDark ? "bg-gray-800" : "bg-white shadow"}`}
+    >
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-medium flex items-center gap-2">
           <FiPackage className="w-5 h-5" />
-          {t('products.addProduct')}
+          {t("products.addProduct")}
         </h3>
         {onCancel && (
           <button
             onClick={onCancel}
-            className={`p-1 rounded-full ${isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}
+            className={`p-1 rounded-full ${
+              isDark ? "hover:bg-gray-700" : "hover:bg-gray-100"
+            }`}
           >
             <FiX className="w-5 h-5" />
           </button>
@@ -107,136 +124,172 @@ const ProductForm = ({ onSubmit, onCancel, shipmentTrackNumber }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium mb-1">
-              {t('products.form.name')} *
+              {t("products.form.name")} *
             </label>
             <input
               id="name"
               type="text"
-              {...register('name', { required: t('validation.required') })}
+              {...register("name", { required: t("validation.required") })}
               className={`w-full px-3 py-2 rounded-md border ${
-                errors.name ? 'border-red-500' : isDark ? 'border-gray-700 bg-gray-700' : 'border-gray-300'
+                errors.name
+                  ? "border-red-500"
+                  : isDark
+                  ? "border-gray-700 bg-gray-700"
+                  : "border-gray-300"
               }`}
-              placeholder={t('products.form.namePlaceholder')}
+              placeholder={t("products.form.namePlaceholder")}
             />
             {errors.name && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name.message}</p>
+              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                {errors.name.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor="shipmentTrackNumber" className="block text-sm font-medium mb-1">
-              {t('products.form.shipmentTrackNumber')} *
+            <label
+              htmlFor="shipmentTrackNumber"
+              className="block text-sm font-medium mb-1"
+            >
+              {t("products.form.shipmentTrackNumber")} *
             </label>
             <div className="relative">
               <select
-                id="shipmentTrackNumber"
-                {...register('shipmentTrackNumber', { required: t('validation.required') })}
-                className={`w-full px-3 py-2 rounded-md border ${
-                  errors.shipmentTrackNumber
-                    ? 'border-red-500'
-                    : isDark
-                    ? 'border-gray-700 bg-gray-700'
-                    : 'border-gray-300'
+                id="shipment_tracking_number"
+                className={`w-full p-2 border rounded ${
+                  isDark
+                    ? "bg-gray-700 border-gray-600 text-white"
+                    : "bg-white border-gray-300"
                 }`}
+                {...register("shipment_tracking_number", {
+                  required: "Shipment is required",
+                })}
                 disabled={!!shipmentTrackNumber}
               >
-                <option value="">{t('products.form.selectShipment')}</option>
                 {shipments.map((shipment) => (
-                  <option key={shipment._id} value={shipment.trackingNumber}>
-                    {shipment.trackingNumber} - {shipment.origin} → {shipment.destination}
+                  <option key={shipment.id} value={shipment.tracking_number}>
+                    {shipment.tracking_number} - {shipment.from_province} →{" "}
+                    {shipment.to_province}
                   </option>
                 ))}
               </select>
               <FiTruck className="absolute right-3 top-2.5 text-gray-400" />
             </div>
-            {errors.shipmentTrackNumber && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                {errors.shipmentTrackNumber.message}
+            {errors.shipment_tracking_number && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.shipment_tracking_number.message}
               </p>
             )}
           </div>
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium mb-1">
-            {t('products.form.description')}
+          <label
+            htmlFor="description"
+            className="block text-sm font-medium mb-1"
+          >
+            {t("products.form.description")}
           </label>
           <textarea
             id="description"
-            {...register('description')}
+            {...register("description")}
             rows={3}
             className={`w-full px-3 py-2 rounded-md border ${
-              isDark ? 'border-gray-700 bg-gray-700' : 'border-gray-300'
+              isDark ? "border-gray-700 bg-gray-700" : "border-gray-300"
             }`}
-            placeholder={t('products.form.descriptionPlaceholder')}
+            placeholder={t("products.form.descriptionPlaceholder")}
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label htmlFor="quantity" className="block text-sm font-medium mb-1">
-              {t('products.form.quantity')} *
+            <label
+              htmlFor="quantity"
+              className="block text-sm font-medium mb-1"
+            >
+              {t("products.form.quantity")} *
             </label>
             <input
               id="quantity"
               type="number"
               min="1"
-              {...register('quantity', {
-                required: t('validation.required'),
-                min: { value: 1, message: t('validation.min', { min: 1 }) },
+              {...register("quantity", {
+                required: t("validation.required"),
+                min: { value: 1, message: t("validation.min", { min: 1 }) },
               })}
               className={`w-full px-3 py-2 rounded-md border ${
-                errors.quantity ? 'border-red-500' : isDark ? 'border-gray-700 bg-gray-700' : 'border-gray-300'
+                errors.quantity
+                  ? "border-red-500"
+                  : isDark
+                  ? "border-gray-700 bg-gray-700"
+                  : "border-gray-300"
               }`}
             />
             {errors.quantity && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.quantity.message}</p>
+              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                {errors.quantity.message}
+              </p>
             )}
           </div>
 
           <div>
             <label htmlFor="weight" className="block text-sm font-medium mb-1">
-              {t('products.form.weight')} (kg) *
+              {t("products.form.weight")} (kg) *
             </label>
             <input
               id="weight"
               type="number"
               step="0.01"
               min="0.01"
-              {...register('weight', {
-                required: t('validation.required'),
-                min: { value: 0.01, message: t('validation.min', { min: 0.01 }) },
+              {...register("weight", {
+                required: t("validation.required"),
+                min: {
+                  value: 0.01,
+                  message: t("validation.min", { min: 0.01 }),
+                },
               })}
               className={`w-full px-3 py-2 rounded-md border ${
-                errors.weight ? 'border-red-500' : isDark ? 'border-gray-700 bg-gray-700' : 'border-gray-300'
+                errors.weight
+                  ? "border-red-500"
+                  : isDark
+                  ? "border-gray-700 bg-gray-700"
+                  : "border-gray-300"
               }`}
               placeholder="0.00"
             />
             {errors.weight && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.weight.message}</p>
+              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                {errors.weight.message}
+              </p>
             )}
           </div>
 
           <div>
             <label htmlFor="price" className="block text-sm font-medium mb-1">
-              {t('products.form.price')} (AFN) *
+              {t("products.form.price")} (AFN) *
             </label>
             <input
               id="price"
               type="number"
               step="0.01"
               min="0"
-              {...register('price', {
-                required: t('validation.required'),
-                min: { value: 0, message: t('validation.min', { min: 0 }) },
+              {...register("price", {
+                required: t("validation.required"),
+                min: { value: 0, message: t("validation.min", { min: 0 }) },
               })}
               className={`w-full px-3 py-2 rounded-md border ${
-                errors.price ? 'border-red-500' : isDark ? 'border-gray-700 bg-gray-700' : 'border-gray-300'
+                errors.price
+                  ? "border-red-500"
+                  : isDark
+                  ? "border-gray-700 bg-gray-700"
+                  : "border-gray-300"
               }`}
               placeholder="0.00"
             />
             {errors.price && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.price.message}</p>
+              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                {errors.price.message}
+              </p>
             )}
           </div>
         </div>
@@ -249,7 +302,7 @@ const ProductForm = ({ onSubmit, onCancel, shipmentTrackNumber }) => {
               className="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               disabled={loading}
             >
-              {t('common.cancel')}
+              {t("common.cancel")}
             </button>
           )}
           <button
@@ -279,12 +332,12 @@ const ProductForm = ({ onSubmit, onCancel, shipmentTrackNumber }) => {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                {t('common.saving')}
+                {t("common.saving")}
               </>
             ) : (
               <>
                 <FiPlus className="-ml-1 mr-2 h-4 w-4" />
-                {t('products.addProduct')}
+                {t("products.addProduct")}
               </>
             )}
           </button>
