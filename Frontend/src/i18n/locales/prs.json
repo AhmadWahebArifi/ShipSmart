@@ -51,7 +51,8 @@
     "analytics": "تحلیل‌ها",
     "settings": "تنظیمات",
     "toggleTheme": "تغییر تم",
-    "logout": "خروج"
+    "logout": "خروج",
+    "products": "محصولات"
   },
   "notFound": {
     "title": "404",
@@ -60,6 +61,75 @@
     "goToDashboard": "برو به داشبورد",
     "goBack": "بازگشت",
     "errorMessage": "اگر فکر می‌کنید این یک خطا است، لطفاً با پشتیبانی تماس بگیرید."
+  },
+  "products": {
+    "title": "محصولات",
+    "items": "مورد",
+    "addProduct": "افزودن محصول",
+    "editProduct": "ویرایش محصول",
+    "noProducts": "محصولی یافت نشد",
+    "getStarted": "با افزودن یک محصول جدید شروع کنید.",
+    "searchPlaceholder": "جستجوی محصولات...",
+    "confirmDelete": "آیا از حذف این محصول اطمینان دارید؟ این عمل قابل بازگشت نیست.",
+    "viewShipment": "مشاهده محموله",
+    "table": {
+      "name": "نام محصول",
+      "shipment": "محموله",
+      "trackingNumber": "شماره رهگیری",
+      "quantity": "تعداد",
+      "weight": "وزن",
+      "price": "قیمت",
+      "total": "جمع کل",
+      "actions": "عملیات"
+    },
+    "form": {
+      "name": "نام محصول",
+      "namePlaceholder": "نام محصول را وارد کنید",
+      "description": "توضیحات",
+      "descriptionPlaceholder": "توضیحات محصول را وارد کنید (اختیاری)",
+      "quantity": "تعداد",
+      "weight": "وزن (کیلوگرم)",
+      "price": "قیمت (افغانی)",
+      "shipmentTrackNumber": "شماره رهگیری محموله",
+      "selectShipment": "یک محموله انتخاب کنید"
+    },
+    "stats": {
+      "totalItems": "تعداد کل اقلام",
+      "totalQuantity": "تعداد کل",
+      "totalWeight": "وزن کل",
+      "totalValue": "ارزش کل"
+    },
+    "filters": {
+      "allShipments": "همه محموله‌ها",
+      "trackingNumber": "شماره رهگیری"
+    },
+    "success": {
+      "added": "محصول با موفقیت افزوده شد!",
+      "updated": "محصول با موفقیت به‌روزرسانی شد!",
+      "deleted": "محصول با موفقیت حذف شد!"
+    },
+    "errors": {
+      "fetchFailed": "خطا در بارگیری محصولات. لطفاً دوباره تلاش کنید.",
+      "shipmentRequired": "لطفاً یک محموله برای این محصول انتخاب کنید."
+    }
+  },
+  "common": {
+    "loading": "در حال بارگذاری",
+    "saving": "در حال ذخیره‌سازی...",
+    "edit": "ویرایش",
+    "delete": "حذف",
+    "cancel": "انصراف",
+    "save": "ذخیره",
+    "reset": "بازنشانی",
+    "actions": "عملیات",
+    "total": "جمع کل",
+    "errors": {
+      "generic": "خطایی رخ داده است. لطفاً دوباره تلاش کنید.",
+      "required": "این فیلد الزامی است"
+    }
+  },
+  "validation": {
+    "required": "این فیلد الزامی است",
+    "min": "حداقل باید {{min}} باشد"
   }
 }
-
