@@ -604,7 +604,8 @@ const Products = () => {
                                 product.shipment.status
                               )}`}
                             >
-                              {product.shipment.status.replace("_", " ")}
+                              {t(`shipmentStatus.${product.shipment.status}`) ||
+                                product.shipment.status.replace("_", " ")}
                             </span>
                           ) : (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
