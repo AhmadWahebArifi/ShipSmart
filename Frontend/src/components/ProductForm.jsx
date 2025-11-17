@@ -78,21 +78,21 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           productData
         );
         if (response.data.success) {
-          setSuccess("Product updated successfully");
+          setSuccess(t("products.success.updated"));
           if (onSubmit) onSubmit(response.data.product);
         }
       } else {
         // Create new product
         const response = await axiosInstance.post("/products", productData);
         if (response.data.success) {
-          setSuccess("Product added successfully");
+          setSuccess(t("products.success.added"));
           reset();
           if (onSubmit) onSubmit(response.data.product);
         }
       }
     } catch (err) {
       console.error("Error submitting product:", err);
-      setError(err.response?.data?.message || "Error submitting product");
+      setError(err.response?.data?.message || t("common.errors.generic"));
     } finally {
       setLoading(false);
     }
@@ -174,7 +174,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                     : "bg-white border-gray-300"
                 }`}
                 {...register("shipment_tracking_number", {
-                  required: "Shipment is required",
+                  required: t("products.errors.shipmentRequired"),
                 })}
                 disabled={!!shipmentTrackNumber}
               >
@@ -189,7 +189,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               <FiTruck className="absolute right-3 top-2.5 text-gray-400" />
             </div>
             {errors.shipment_tracking_number && (
-              <p className="text-red-500 text-sm mt-1">
+              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                 {errors.shipment_tracking_number.message}
               </p>
             )}
@@ -345,7 +345,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                {product ? t("common.saving") : t("common.saving")}
+                {t("common.saving")}
               </>
             ) : (
               <>
