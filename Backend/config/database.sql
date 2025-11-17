@@ -76,6 +76,40 @@ CREATE TABLE IF NOT EXISTS shipments (
 -- Add unique constraint for tracking_number
 ALTER TABLE shipments ADD CONSTRAINT IF NOT EXISTS unique_tracking_number UNIQUE (tracking_number);
 
+-- Products table
+CREATE TABLE IF NOT EXISTS products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    quantity INT NOT NULL DEFAULT 1,
+    weight DECIMAL(10, 2) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    shipment_tracking_number VARCHAR(50) NOT NULL,
+    created_by INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (shipment_tracking_number) REFERENCES shipments(tracking_number) ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Add unique constraint for product name per shipment
+-- ALTER TABLE products ADD CONSTRAINT IF NOT EXISTS unique_product_per_shipment UNIQUE (name, shipment_tracking_number);
+
+-- Notifications table
+CREATE TABLE IF NOT EXISTS notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    shipment_id INT,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    type ENUM('shipment_created', 'shipment_in_progress', 'shipment_delivered', 'info') DEFAULT 'info',
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (shipment_id) REFERENCES shipments(id) ON DELETE CASCADE
+);
+
 -- Insert sample data (optional)
 INSERT INTO users (username, email, password, role) VALUES
 ('admin', 'admin@shipsmart.com', '$2a$10$YourHashedPasswordHere', 'admin'),
