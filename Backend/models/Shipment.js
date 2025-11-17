@@ -29,7 +29,13 @@ const Shipment = sequelize.define(
       defaultValue: null,
     },
     status: {
-      type: DataTypes.ENUM("pending", "in_progress", "delivered"),
+      type: DataTypes.ENUM(
+        "pending",
+        "in_progress",
+        "on_route",
+        "delivered",
+        "canceled"
+      ),
       defaultValue: "pending",
       allowNull: false,
     },
