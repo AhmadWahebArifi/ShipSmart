@@ -18,6 +18,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -31,6 +32,9 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
     },
   });
 
+  // Watch the shipment tracking number value
+  const selectedShipment = watch("shipment_tracking_number");
+
   useEffect(() => {
     const fetchShipments = async () => {
       try {
@@ -40,6 +44,27 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
         if (response.data && response.data.success) {
           console.log("Setting shipments:", response.data.shipments);
           setShipments(response.data.shipments || []);
+          
+          // If we're editing a product and have a shipment tracking number,
+          // make sure it's available in the dropdown
+          if (product && product.shipment_tracking_number) {
+            const shipmentExists = response.data.shipments?.some(
+              s => s.tracking_number === product.shipment_tracking_number
+            );
+            
+            if (!shipmentExists) {
+              // Add the current product's shipment to the list if it's not there
+              setShipments(prev => [
+                ...(prev || []),
+                {
+                  id: product.shipment?.id || 0,
+                  tracking_number: product.shipment_tracking_number,
+                  from_province: product.shipment?.from_province || "",
+                  to_province: product.shipment?.to_province || ""
+                }
+              ]);
+            }
+          }
         } else {
           console.error("Failed to fetch shipments:", response.data?.message);
         }
@@ -53,7 +78,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
     };
 
     fetchShipments();
-  }, []);
+  }, [product]);
 
   const handleFormSubmit = async (data) => {
     try {
@@ -180,7 +205,10 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               >
                 <option value="">{t("products.form.selectShipment")}</option>
                 {shipments.map((shipment) => (
-                  <option key={shipment.id} value={shipment.tracking_number}>
+                  <option 
+                    key={shipment.id} 
+                    value={shipment.tracking_number}
+                  >
                     {shipment.tracking_number} - {shipment.from_province} →{" "}
                     {shipment.to_province}
                   </option>
