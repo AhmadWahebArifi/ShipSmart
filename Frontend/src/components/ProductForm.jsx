@@ -20,20 +20,28 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
     setValue,
     watch,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      name: product?.name || "",
-      description: product?.description || "",
-      quantity: product?.quantity || 1,
-      weight: product?.weight || "",
-      price: product?.price || "",
-      shipment_tracking_number:
-        product?.shipment_tracking_number || shipmentTrackNumber || "",
-    },
-  });
+  } = useForm();
 
   // Watch the shipment tracking number value
   const selectedShipment = watch("shipment_tracking_number");
+
+  // Debug effect to watch selected shipment changes
+  useEffect(() => {
+    console.log("Selected shipment changed to:", selectedShipment);
+  }, [selectedShipment]);
+
+  // Effect to update form value when product changes
+  useEffect(() => {
+    if (product) {
+      console.log("Product data received:", product);
+      setValue("name", product.name || "");
+      setValue("description", product.description || "");
+      setValue("quantity", product.quantity || 1);
+      setValue("weight", product.weight || "");
+      setValue("price", product.price || "");
+      console.log("Setting basic form values for product:", product);
+    }
+  }, [product, setValue]);
 
   useEffect(() => {
     const fetchShipments = async () => {
@@ -44,26 +52,57 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
         if (response.data && response.data.success) {
           console.log("Setting shipments:", response.data.shipments);
           setShipments(response.data.shipments || []);
-          
+
+          // Debug log
+          console.log("Product for shipment check:", product);
+          console.log("ShipmentTrackNumber prop:", shipmentTrackNumber);
+
           // If we're editing a product and have a shipment tracking number,
           // make sure it's available in the dropdown
           if (product && product.shipment_tracking_number) {
             const shipmentExists = response.data.shipments?.some(
-              s => s.tracking_number === product.shipment_tracking_number
+              (s) => s.tracking_number === product.shipment_tracking_number
             );
-            
+
+            console.log("Shipment exists in list:", shipmentExists);
+            console.log(
+              "Product shipment tracking number:",
+              product.shipment_tracking_number
+            );
+
             if (!shipmentExists) {
               // Add the current product's shipment to the list if it's not there
-              setShipments(prev => [
-                ...(prev || []),
-                {
-                  id: product.shipment?.id || 0,
-                  tracking_number: product.shipment_tracking_number,
-                  from_province: product.shipment?.from_province || "",
-                  to_province: product.shipment?.to_province || ""
-                }
-              ]);
+              setShipments((prev) => {
+                const newShipments = [
+                  ...(prev || []),
+                  {
+                    id: product.shipment?.id || Date.now(), // Use timestamp as ID if not available
+                    tracking_number: product.shipment_tracking_number,
+                    from_province: product.shipment?.from_province || "",
+                    to_province: product.shipment?.to_province || "",
+                  },
+                ];
+                console.log("Updated shipments list:", newShipments);
+                return newShipments;
+              });
             }
+
+            // Set the form value after ensuring the shipment is in the list
+            setValue(
+              "shipment_tracking_number",
+              product.shipment_tracking_number
+            );
+            console.log(
+              "Set form value after shipments loaded:",
+              product.shipment_tracking_number
+            );
+          } else if (shipmentTrackNumber) {
+            // If we're creating a product for a specific shipment
+            setValue("shipment_tracking_number", shipmentTrackNumber);
+            console.log(
+              "Set form value from shipmentTrackNumber prop:",
+              shipmentTrackNumber
+            );
           }
         } else {
           console.error("Failed to fetch shipments:", response.data?.message);
@@ -78,7 +117,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
     };
 
     fetchShipments();
-  }, [product]);
+  }, [product, shipmentTrackNumber, setValue]);
 
   const handleFormSubmit = async (data) => {
     try {
@@ -202,13 +241,16 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                   required: t("products.errors.shipmentRequired"),
                 })}
                 disabled={!!shipmentTrackNumber}
+                value={
+                  selectedShipment ||
+                  product?.shipment_tracking_number ||
+                  shipmentTrackNumber ||
+                  ""
+                }
               >
                 <option value="">{t("products.form.selectShipment")}</option>
                 {shipments.map((shipment) => (
-                  <option 
-                    key={shipment.id} 
-                    value={shipment.tracking_number}
-                  >
+                  <option key={shipment.id} value={shipment.tracking_number}>
                     {shipment.tracking_number} - {shipment.from_province} →{" "}
                     {shipment.to_province}
                   </option>
