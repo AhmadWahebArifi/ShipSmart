@@ -197,10 +197,16 @@ router.get("/:id", authenticateToken, async (req, res) => {
 // @access  Private (with role-based permissions)
 router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
   try {
-    const { from_province, to_province, tracking_number, description } = req.body;
-    
+    const { from_province, to_province, tracking_number, description } =
+      req.body;
+
     // Debug log the received data
-    console.log('Received shipment creation request with data:', { from_province, to_province, tracking_number, description });
+    console.log("Received shipment creation request with data:", {
+      from_province,
+      to_province,
+      tracking_number,
+      description,
+    });
     const sender = await User.findByPk(req.user.userId);
 
     if (!sender) {
@@ -218,8 +224,8 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
         missing_fields: {
           from_province: !from_province,
           to_province: !to_province,
-          tracking_number: !tracking_number
-        }
+          tracking_number: !tracking_number,
+        },
       });
     }
 
@@ -280,7 +286,7 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
     const shipment = await Shipment.create({
       from_province,
       to_province,
-      tracking_number,  // Added tracking_number here
+      tracking_number, // Added tracking_number here
       description: description || null,
       sender_id: sender.id,
       receiver_id: receiver ? receiver.id : null,
@@ -333,29 +339,133 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
     console.error("Create shipment error:", error);
     console.error("Error name:", error.name);
     console.error("Error message:", error.message);
-    
+
     // Handle specific database errors
-    if (error.name === 'SequelizeDatabaseError') {
+    if (error.name === "SequelizeDatabaseError") {
       console.error("Database error details:", error.parent);
       return res.status(500).json({
         success: false,
         message: "Database error occurred while creating shipment",
-        error: process.env.NODE_ENV === "development" ? error.message : undefined,
+        error:
+          process.env.NODE_ENV === "development" ? error.message : undefined,
       });
     }
-    
+
     // Handle validation errors
-    if (error.name === 'SequelizeValidationError') {
+    if (error.name === "SequelizeValidationError") {
       return res.status(400).json({
         success: false,
         message: "Validation error",
-        error: error.errors.map(e => e.message),
+        error: error.errors.map((e) => e.message),
       });
     }
 
     res.status(500).json({
       success: false,
       message: "Error creating shipment",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+});
+
+// @route   PUT /api/shipments/:id
+// @desc    Update a shipment
+// @access  Private (with role-based permissions)
+router.put("/:id", authenticateToken, canModifyShipment(), async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const shipment = await Shipment.findByPk(req.params.id);
+
+    if (!shipment) {
+      return res.status(404).json({
+        success: false,
+        message: "Shipment not found",
+      });
+    }
+
+    // Check permissions based on roles
+    if (user.role === "superadmin") {
+      // SuperAdmin can edit any shipment
+    } else if (user.role === "admin") {
+      // Admin can edit any shipment
+    } else if (user.role === "user") {
+      // Regular users can only edit shipments they sent and only if status is pending
+      if (shipment.sender_id !== user.id) {
+        return res.status(403).json({
+          success: false,
+          message: "You can only edit shipments you sent",
+        });
+      }
+
+      if (shipment.status !== "pending") {
+        return res.status(403).json({
+          success: false,
+          message: "You can only edit shipments with pending status",
+        });
+      }
+    }
+
+    // Update the shipment
+    const { from_province, to_province, description } = req.body;
+
+    // Validate required fields
+    if (!from_province || !to_province) {
+      return res.status(400).json({
+        success: false,
+        message: "From province and to province are required",
+      });
+    }
+
+    await shipment.update({
+      from_province,
+      to_province,
+      description,
+    });
+
+    await shipment.reload({
+      include: [
+        {
+          model: User,
+          as: "sender",
+          attributes: ["id", "username", "name", "email", "province", "branch"],
+        },
+        {
+          model: User,
+          as: "receiver",
+          attributes: ["id", "username", "name", "email", "province", "branch"],
+          required: false,
+        },
+      ],
+    });
+
+    res.json({
+      success: true,
+      message: "Shipment updated successfully",
+      shipment: shipment.toJSON(),
+    });
+  } catch (error) {
+    console.error("Update shipment error:", error);
+
+    // Handle validation errors
+    if (error.name === "SequelizeValidationError") {
+      return res.status(400).json({
+        success: false,
+        message: "Validation error",
+        error: error.errors.map((e) => e.message),
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Error updating shipment",
       error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
@@ -380,12 +490,18 @@ router.put(
         });
       }
 
-      const validStatuses = ["pending", "in_progress", "delivered"];
+      const validStatuses = [
+        "pending",
+        "in_progress",
+        "on_route",
+        "delivered",
+        "canceled",
+      ];
       if (!status || !validStatuses.includes(status)) {
         return res.status(400).json({
           success: false,
           message:
-            "Invalid status. Must be one of: pending, in_progress, delivered",
+            "Invalid status. Must be one of: pending, in_progress, on_route, delivered, canceled",
         });
       }
 
@@ -419,8 +535,8 @@ router.put(
                 "You can only mark shipments as delivered for your branch",
             });
           }
-        } else if (status === "in_progress") {
-          // Users can mark as in_progress if they are the sender or if origin is their branch
+        } else if (status === "in_progress" || status === "on_route") {
+          // Users can mark as in_progress/on_route if they are the sender or if origin is their branch
           if (
             shipment.sender_id !== user.id &&
             (!user.branch ||
@@ -431,7 +547,7 @@ router.put(
             return res.status(403).json({
               success: false,
               message:
-                "You can only mark shipments as in progress from your branch",
+                "You can only mark shipments as in progress/on route from your branch",
             });
           }
         } else if (status === "pending") {
@@ -442,13 +558,27 @@ router.put(
               message: "You can only reset shipments you sent",
             });
           }
+        } else if (status === "canceled") {
+          // Users can cancel shipments they sent or received
+          if (
+            shipment.sender_id !== user.id &&
+            shipment.receiver_id !== user.id
+          ) {
+            return res.status(403).json({
+              success: false,
+              message: "You can only cancel shipments you sent or received",
+            });
+          }
         }
       }
 
       // Update status
       const updateData = { status };
 
-      if (status === "in_progress" && !shipment.shipped_at) {
+      if (
+        (status === "in_progress" || status === "on_route") &&
+        !shipment.shipped_at
+      ) {
         updateData.shipped_at = new Date();
       }
 
@@ -463,6 +593,30 @@ router.put(
             title: "Shipment Delivered",
             message: `Your shipment from ${shipment.from_province} to ${shipment.to_province} has been delivered.`,
             type: "shipment_delivered",
+            is_read: false,
+          });
+        }
+      } else if (status === "canceled") {
+        // Create notification for receiver if exists
+        if (shipment.receiver_id) {
+          await Notification.create({
+            user_id: shipment.receiver_id,
+            shipment_id: shipment.id,
+            title: "Shipment Canceled",
+            message: `Your shipment from ${shipment.from_province} to ${shipment.to_province} has been canceled.`,
+            type: "info",
+            is_read: false,
+          });
+        }
+
+        // Create notification for sender
+        if (shipment.sender_id && shipment.sender_id !== shipment.receiver_id) {
+          await Notification.create({
+            user_id: shipment.sender_id,
+            shipment_id: shipment.id,
+            title: "Shipment Canceled",
+            message: `Your shipment from ${shipment.from_province} to ${shipment.to_province} has been canceled.`,
+            type: "info",
             is_read: false,
           });
         }
@@ -515,6 +669,156 @@ router.put(
     }
   }
 );
+
+// @route   DELETE /api/shipments/:id
+// @desc    Delete a shipment
+// @access  Private (with role-based permissions)
+router.delete(
+  "/:id",
+  authenticateToken,
+  canModifyShipment(),
+  async (req, res) => {
+    try {
+      const user = await User.findByPk(req.user.userId);
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "User not found",
+        });
+      }
+
+      const shipment = await Shipment.findByPk(req.params.id);
+
+      if (!shipment) {
+        return res.status(404).json({
+          success: false,
+          message: "Shipment not found",
+        });
+      }
+
+      // Check permissions based on roles
+      if (user.role === "superadmin") {
+        // SuperAdmin can delete any shipment
+      } else if (user.role === "admin") {
+        // Admin can delete any shipment
+      } else if (user.role === "user") {
+        // Regular users can only delete shipments they sent
+        if (shipment.sender_id !== user.id) {
+          return res.status(403).json({
+            success: false,
+            message: "You can only delete shipments you sent",
+          });
+        }
+      }
+
+      // Delete the shipment
+      await shipment.destroy();
+
+      res.json({
+        success: true,
+        message: "Shipment deleted successfully",
+      });
+    } catch (error) {
+      console.error("Delete shipment error:", error);
+      res.status(500).json({
+        success: false,
+        message: "Error deleting shipment",
+        error:
+          process.env.NODE_ENV === "development" ? error.message : undefined,
+      });
+    }
+  }
+);
+
+// @route   GET /api/shipments/stats
+// @desc    Get shipment statistics
+// @access  Private
+router.get("/stats", authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    let whereClause = {};
+
+    // Filter by user role
+    if (user.role === "superadmin" || user.role === "admin") {
+      // Admins can see all shipments
+    } else if (user.role === "user") {
+      // Regular users can only see shipments they sent or received
+      whereClause = {
+        [require("sequelize").Op.or]: [
+          { sender_id: user.id },
+          { receiver_id: user.id },
+        ],
+      };
+    }
+
+    // Get total shipments count
+    const totalShipments = await Shipment.count({ where: whereClause });
+
+    // Get shipments by status
+    const statusCounts = await Shipment.findAll({
+      where: whereClause,
+      attributes: [
+        "status",
+        [
+          require("sequelize").fn("COUNT", require("sequelize").col("status")),
+          "count",
+        ],
+      ],
+      group: ["status"],
+    });
+
+    // Format status counts
+    const statusStats = {
+      pending: 0,
+      in_progress: 0,
+      on_route: 0,
+      delivered: 0,
+      canceled: 0,
+    };
+
+    statusCounts.forEach((item) => {
+      statusStats[item.status] = parseInt(item.get("count"));
+    });
+
+    // Get today's delivered shipments
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const deliveredToday = await Shipment.count({
+      where: {
+        ...whereClause,
+        status: "delivered",
+        delivered_at: {
+          [require("sequelize").Op.gte]: today,
+        },
+      },
+    });
+
+    res.json({
+      success: true,
+      stats: {
+        totalShipments,
+        statusStats,
+        deliveredToday,
+      },
+    });
+  } catch (error) {
+    console.error("Get shipment stats error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching shipment statistics",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+});
 
 // @route   GET /api/shipments/stats/overview
 // @desc    Get shipment statistics (admin only)
