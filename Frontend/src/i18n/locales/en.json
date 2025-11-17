@@ -71,11 +71,12 @@
     "getStarted": "Get started by adding a new product.",
     "searchPlaceholder": "Search products...",
     "confirmDelete": "Are you sure you want to delete this product? This action cannot be undone.",
+    "confirmDeleteTitle": "Delete Product",
     "viewShipment": "View Shipment",
     "table": {
       "name": "Product Name",
       "shipment": "Shipment",
-      "trackingNumber": "Tracking #",
+      "status": "Status",
       "quantity": "Qty",
       "weight": "Weight",
       "price": "Price",
@@ -113,6 +114,13 @@
       "shipmentRequired": "Please select a shipment for this product."
     }
   },
+  "shipmentStatus": {
+    "pending": "Pending",
+    "in_progress": "In Progress",
+    "on_route": "On Route",
+    "delivered": "Delivered",
+    "canceled": "Canceled"
+  },
   "common": {
     "loading": "Loading",
     "saving": "Saving...",
@@ -120,6 +128,7 @@
     "delete": "Delete",
     "cancel": "Cancel",
     "save": "Save",
+    "update": "Update",
     "reset": "Reset",
     "actions": "Actions",
     "total": "Total",
