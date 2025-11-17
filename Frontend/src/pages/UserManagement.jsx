@@ -14,6 +14,10 @@ import {
   HiCheck,
   HiXMark,
 } from "react-icons/hi2";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 
 function UserManagement() {
   const { user: authUser } = useAuth();
@@ -72,6 +76,20 @@ function UserManagement() {
     }));
   };
 
+  const showAlert = (title, message, type = "success") => {
+    MySwal.fire({
+      title: title,
+      text: message,
+      icon: type,
+      confirmButtonText: "OK",
+      customClass: {
+        confirmButton:
+          "bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md",
+      },
+      buttonsStyling: false,
+    });
+  };
+
   const handleCreateUser = async (e) => {
     e.preventDefault();
     try {
@@ -87,22 +105,42 @@ function UserManagement() {
           branch: "",
           name: "",
         });
+        showAlert("Success", "User created successfully", "success");
       }
     } catch (err) {
       setError("Failed to create user");
       console.error("Error creating user:", err);
+      showAlert("Error", "Failed to create user", "error");
     }
   };
 
   const handleDeleteUser = async (userId) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      try {
-        await axiosInstance.delete(`/users/${userId}`);
-        setUsers((prev) => prev.filter((user) => user.id !== userId));
-      } catch (err) {
-        setError("Failed to delete user");
-        console.error("Error deleting user:", err);
-      }
+    try {
+      const result = await MySwal.fire({
+        title: "Delete User",
+        text: "Are you sure you want to delete this user? This action cannot be undone.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Delete",
+        cancelButtonText: "Cancel",
+        customClass: {
+          confirmButton:
+            "bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md mr-2",
+          cancelButton:
+            "bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md",
+        },
+        buttonsStyling: false,
+      });
+
+      if (!result.isConfirmed) return;
+
+      await axiosInstance.delete(`/users/${userId}`);
+      setUsers((prev) => prev.filter((user) => user.id !== userId));
+      showAlert("Success", "User deleted successfully", "success");
+    } catch (err) {
+      setError("Failed to delete user");
+      console.error("Error deleting user:", err);
+      showAlert("Error", "Failed to delete user", "error");
     }
   };
 
