@@ -1,15 +1,260 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
 import axiosInstance from "../config/axios";
-import { HiCube } from "react-icons/hi2";
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
+import {
+  HiCube,
+  HiPencil,
+  HiTrash,
+  HiRefresh,
+  HiCheck,
+  HiX,
+} from "react-icons/hi";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 const MySwal = withReactContent(Swal);
+
+// Afghanistan provinces list
+const PROVINCES = [
+  "Kabul",
+  "Herat",
+  "Kandahar",
+  "Balkh",
+  "Nangarhar",
+  "Badghis",
+  "Badakhshan",
+  "Baghlan",
+  "Bamyan",
+  "Daykundi",
+  "Farah",
+  "Faryab",
+  "Ghazni",
+  "Ghor",
+  "Helmand",
+  "Jowzjan",
+  "Kapisa",
+  "Khost",
+  "Kunar",
+  "Kunduz",
+  "Laghman",
+  "Logar",
+  "Nimruz",
+  "Nuristan",
+  "Paktia",
+  "Paktika",
+  "Panjshir",
+  "Parwan",
+  "Samangan",
+  "Sar-e Pol",
+  "Takhar",
+  "Uruzgan",
+  "Wardak",
+  "Zabul",
+];
+
+// Edit Shipment Modal Component
+const EditShipmentModal = ({ isOpen, onClose, shipment, onSave, isDark }) => {
+  const [formData, setFormData] = useState({
+    from_province: shipment?.from_province || "",
+    to_province: shipment?.to_province || "",
+    description: shipment?.description || "",
+  });
+
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (shipment) {
+      setFormData({
+        from_province: shipment.from_province || "",
+        to_province: shipment.to_province || "",
+        description: shipment.description || "",
+      });
+    }
+  }, [shipment]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setError("");
+
+    try {
+      const result = await onSave(shipment.id, formData);
+      if (result.success) {
+        onClose();
+      } else {
+        setError(result.message);
+      }
+    } catch (err) {
+      setError("Failed to save changes");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div
+        className={`rounded-xl shadow-lg w-full max-w-md ${
+          isDark ? "bg-gray-800" : "bg-white"
+        }`}
+      >
+        <div
+          className={`px-6 py-4 border-b ${
+            isDark ? "border-gray-700" : "border-gray-200"
+          }`}
+        >
+          <div className="flex justify-between items-center">
+            <h3
+              className={`text-lg font-semibold ${
+                isDark ? "text-white" : "text-gray-800"
+              }`}
+            >
+              Edit Shipment
+            </h3>
+            <button
+              onClick={onClose}
+              className={`p-1 rounded-full ${
+                isDark
+                  ? "text-gray-400 hover:bg-gray-700"
+                  : "text-gray-500 hover:bg-gray-200"
+              }`}
+            >
+              <HiX className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6">
+          {error && (
+            <div
+              className={`mb-4 p-3 rounded-lg ${
+                isDark ? "bg-red-900/30 text-red-300" : "bg-red-50 text-red-700"
+              }`}
+            >
+              {error}
+            </div>
+          )}
+
+          <div className="mb-4">
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              From Province
+            </label>
+            <select
+              name="from_province"
+              value={formData.from_province}
+              onChange={handleChange}
+              required
+              className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
+                isDark
+                  ? "bg-gray-700 border-gray-600 text-white"
+                  : "bg-white border-gray-300 text-gray-900"
+              }`}
+            >
+              <option value="">Select Province</option>
+              {PROVINCES.map((province) => (
+                <option key={province} value={province}>
+                  {province}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mb-4">
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              To Province
+            </label>
+            <select
+              name="to_province"
+              value={formData.to_province}
+              onChange={handleChange}
+              required
+              className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
+                isDark
+                  ? "bg-gray-700 border-gray-600 text-white"
+                  : "bg-white border-gray-300 text-gray-900"
+              }`}
+            >
+              <option value="">Select Province</option>
+              {PROVINCES.map((province) => (
+                <option key={province} value={province}>
+                  {province}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="mb-6">
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              Description
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Shipment description"
+              rows={3}
+              className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none resize-none ${
+                isDark
+                  ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                  : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
+              }`}
+            />
+          </div>
+
+          <div className="flex justify-end space-x-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className={`px-4 py-2 rounded-lg font-medium ${
+                isDark
+                  ? "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className={`px-4 py-2 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50`}
+            >
+              {saving ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 const Shipment = () => {
   const { isDark } = useTheme();
@@ -20,9 +265,7 @@ const Shipment = () => {
     closeSidebar,
     toggleSidebarCollapse,
   } = useSidebar();
-
   const [shipments, setShipments] = useState([]);
-  const [provinces, setProvinces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [newShipment, setNewShipment] = useState({
@@ -32,23 +275,27 @@ const Shipment = () => {
     description: "",
   });
 
-  const showAlert = (title, message, type = 'success') => {
+  // State for edit modal
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [currentShipment, setCurrentShipment] = useState(null);
+
+  const showAlert = (title, message, type = "success") => {
     MySwal.fire({
       title: title,
       text: message,
       icon: type,
-      confirmButtonText: 'OK',
+      confirmButtonText: "OK",
       customClass: {
-        confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md',
+        confirmButton:
+          "bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md",
       },
-      buttonsStyling: false
+      buttonsStyling: false,
     });
   };
 
-  // Fetch shipments and provinces when component mounts
+  // Fetch shipments when component mounts
   useEffect(() => {
     fetchShipments();
-    fetchProvinces();
   }, []);
 
   const fetchShipments = async () => {
@@ -66,107 +313,329 @@ const Shipment = () => {
     }
   };
 
-  const fetchProvinces = async () => {
-    try {
-      const response = await axiosInstance.get("/shipments/provinces");
-      if (response.data && response.data.success) {
-        setProvinces(response.data.provinces);
-      }
-    } catch (err) {
-      setError("Failed to fetch provinces");
-      console.error("Error fetching provinces:", err);
-    }
-  };
-
   const handleChange = (e) => {
-    console.log('Updating field:', e.target.name, 'with value:', e.target.value);
-    setNewShipment(prev => {
+    console.log(
+      "Updating field:",
+      e.target.name,
+      "with value:",
+      e.target.value
+    );
+    setNewShipment((prev) => {
       const updated = { ...prev, [e.target.name]: e.target.value };
-      console.log('New state:', updated);
+      console.log("New state:", updated);
       return updated;
     });
   };
 
   const handleAddShipment = async (e) => {
     e.preventDefault();
-    
+
     // Debug log the current form state
-    console.log('Form state before submission:', newShipment);
-    
+    console.log("Form state before submission:", newShipment);
+
     // Client-side validation
-    if (!newShipment.from_province || !newShipment.to_province || !newShipment.tracking_number) {
+    if (
+      !newShipment.from_province ||
+      !newShipment.to_province ||
+      !newShipment.tracking_number
+    ) {
       const missingFields = [];
-      if (!newShipment.from_province) missingFields.push('From Province');
-      if (!newShipment.to_province) missingFields.push('To Province');
-      if (!newShipment.tracking_number) missingFields.push('Tracking Number');
-      
-      showAlert('Validation Error', `Please fill in all required fields: ${missingFields.join(', ')}`, 'error');
+      if (!newShipment.from_province) missingFields.push("From Province");
+      if (!newShipment.to_province) missingFields.push("To Province");
+      if (!newShipment.tracking_number) missingFields.push("Tracking Number");
+
+      showAlert(
+        "Validation Error",
+        `Please fill in all required fields: ${missingFields.join(", ")}`,
+        "error"
+      );
       return;
     }
 
     // Ensure from and to provinces are different
     if (newShipment.from_province === newShipment.to_province) {
-      showAlert('Validation Error', 'From and to provinces cannot be the same', 'error');
+      showAlert(
+        "Validation Error",
+        "From and to provinces cannot be the same",
+        "error"
+      );
       return;
     }
 
     try {
       setError(""); // Clear any previous errors
-      
+
       // Create URLSearchParams to send as form data
       const formData = new URLSearchParams();
-      formData.append('from_province', String(newShipment.from_province || '').trim());
-      formData.append('to_province', String(newShipment.to_province || '').trim());
-      formData.append('tracking_number', String(newShipment.tracking_number || '').trim());
-      formData.append('description', String(newShipment.description || '').trim());
-      
-      console.log('Sending form data to server:', formData.toString());
+      formData.append(
+        "from_province",
+        String(newShipment.from_province || "").trim()
+      );
+      formData.append(
+        "to_province",
+        String(newShipment.to_province || "").trim()
+      );
+      formData.append(
+        "tracking_number",
+        String(newShipment.tracking_number || "").trim()
+      );
+      formData.append(
+        "description",
+        String(newShipment.description || "").trim()
+      );
+
+      console.log("Sending form data to server:", formData.toString());
 
       // Send as form data instead of JSON
       const config = {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/json',
-        }
+          "Content-Type": "application/x-www-form-urlencoded",
+          Accept: "application/json",
+        },
       };
 
       const response = await axiosInstance.post("/shipments", formData, config);
-      
+
       if (response.data && response.data.success) {
         // Reset form
-        setNewShipment({ 
-          from_province: "", 
-          to_province: "", 
+        setNewShipment({
+          from_province: "",
+          to_province: "",
           tracking_number: "",
-          description: "" 
+          description: "",
         });
         // Show success message
-        showAlert('Success', 'Shipment added successfully', 'success');
+        showAlert("Success", "Shipment added successfully", "success");
         // Refresh the shipments list
         fetchShipments();
       } else {
-        showAlert('Error', response.data?.message || 'Failed to create shipment', 'error');
+        showAlert(
+          "Error",
+          response.data?.message || "Failed to create shipment",
+          "error"
+        );
       }
     } catch (err) {
       console.error("Error creating shipment:", err);
       console.error("Error response:", err.response?.data);
       if (err.response?.data) {
         // Handle validation errors from the server
-        const errorMessage = typeof err.response.data === 'object' 
-          ? Object.values(err.response.data).flat().join('\n')
-          : err.response.data.message || 'Failed to create shipment';
-        showAlert('Validation Error', errorMessage, 'error');
+        const errorMessage =
+          typeof err.response.data === "object"
+            ? Object.values(err.response.data).flat().join("\n")
+            : err.response.data.message || "Failed to create shipment";
+        showAlert("Validation Error", errorMessage, "error");
       } else {
-        showAlert('Error', 'Failed to create shipment. Please try again.', 'error');
+        showAlert(
+          "Error",
+          "Failed to create shipment. Please try again.",
+          "error"
+        );
       }
     }
+  };
+
+  // Handle status change
+  const handleStatusChange = async (shipmentId, newStatus) => {
+    try {
+      const result = await MySwal.fire({
+        title: "Change Status",
+        text: `Are you sure you want to change the status to ${newStatus.replace(
+          "_",
+          " "
+        )}?`,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Change Status",
+        cancelButtonText: "Cancel",
+        customClass: {
+          confirmButton:
+            "bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md mr-2",
+          cancelButton:
+            "bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md",
+        },
+        buttonsStyling: false,
+      });
+
+      if (!result.isConfirmed) return;
+
+      const response = await axiosInstance.put(
+        `/shipments/${shipmentId}/status`,
+        {
+          status: newStatus,
+        }
+      );
+
+      if (response.data && response.data.success) {
+        // Update the shipment in the state
+        setShipments((prevShipments) =>
+          prevShipments.map((shipment) =>
+            shipment.id === shipmentId
+              ? { ...shipment, status: newStatus }
+              : shipment
+          )
+        );
+        setError(""); // Clear any previous errors
+        showAlert("Success", "Shipment status updated successfully", "success");
+      } else {
+        setError(response.data.message || "Failed to update shipment status");
+        showAlert(
+          "Error",
+          response.data.message || "Failed to update shipment status",
+          "error"
+        );
+      }
+    } catch (err) {
+      console.error("Error updating shipment status:", err);
+      if (err.response && err.response.data) {
+        setError(
+          err.response.data.message || "Failed to update shipment status"
+        );
+        showAlert(
+          "Error",
+          err.response.data.message || "Failed to update shipment status",
+          "error"
+        );
+      } else {
+        setError("Failed to update shipment status. Please try again.");
+        showAlert(
+          "Error",
+          "Failed to update shipment status. Please try again.",
+          "error"
+        );
+      }
+    }
+  };
+
+  // Handle edit shipment
+  const handleEditShipment = async (shipmentId, updatedData) => {
+    try {
+      const response = await axiosInstance.put(
+        `/shipments/${shipmentId}`,
+        updatedData
+      );
+
+      if (response.data && response.data.success) {
+        // Update the shipment in the state
+        setShipments((prevShipments) =>
+          prevShipments.map((shipment) =>
+            shipment.id === shipmentId
+              ? { ...shipment, ...updatedData }
+              : shipment
+          )
+        );
+        setError(""); // Clear any previous errors
+        showAlert("Success", "Shipment updated successfully", "success");
+        return { success: true };
+      } else {
+        setError(response.data.message || "Failed to update shipment");
+        showAlert(
+          "Error",
+          response.data.message || "Failed to update shipment",
+          "error"
+        );
+        return { success: false, message: response.data.message };
+      }
+    } catch (err) {
+      console.error("Error updating shipment:", err);
+      if (err.response && err.response.data) {
+        setError(err.response.data.message || "Failed to update shipment");
+        showAlert(
+          "Error",
+          err.response.data.message || "Failed to update shipment",
+          "error"
+        );
+        return { success: false, message: err.response.data.message };
+      } else {
+        setError("Failed to update shipment. Please try again.");
+        showAlert(
+          "Error",
+          "Failed to update shipment. Please try again.",
+          "error"
+        );
+        return {
+          success: false,
+          message: "Failed to update shipment. Please try again.",
+        };
+      }
+    }
+  };
+
+  // Handle delete shipment
+  const handleDeleteShipment = async (shipmentId) => {
+    try {
+      const result = await MySwal.fire({
+        title: "Delete Shipment",
+        text: "Are you sure you want to delete this shipment? This action cannot be undone.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Delete",
+        cancelButtonText: "Cancel",
+        customClass: {
+          confirmButton:
+            "bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md mr-2",
+          cancelButton:
+            "bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-4 rounded-md",
+        },
+        buttonsStyling: false,
+      });
+
+      if (!result.isConfirmed) return;
+
+      const response = await axiosInstance.delete(`/shipments/${shipmentId}`);
+
+      if (response.data && response.data.success) {
+        // Remove the shipment from the state
+        setShipments((prevShipments) =>
+          prevShipments.filter((shipment) => shipment.id !== shipmentId)
+        );
+        setError(""); // Clear any previous errors
+        showAlert("Success", "Shipment deleted successfully", "success");
+      } else {
+        setError(response.data.message || "Failed to delete shipment");
+        showAlert(
+          "Error",
+          response.data.message || "Failed to delete shipment",
+          "error"
+        );
+      }
+    } catch (err) {
+      console.error("Error deleting shipment:", err);
+      if (err.response && err.response.data) {
+        setError(err.response.data.message || "Failed to delete shipment");
+        showAlert(
+          "Error",
+          err.response.data.message || "Failed to delete shipment",
+          "error"
+        );
+      } else {
+        setError("Failed to delete shipment. Please try again.");
+        showAlert(
+          "Error",
+          "Failed to delete shipment. Please try again.",
+          "error"
+        );
+      }
+    }
+  };
+
+  // Open edit modal
+  const openEditModal = (shipment) => {
+    setCurrentShipment(shipment);
+    setEditModalOpen(true);
+  };
+
+  // Close edit modal
+  const closeEditModal = () => {
+    setEditModalOpen(false);
+    setCurrentShipment(null);
   };
 
   return (
     <>
       <div
         className={`min-h-screen flex transition-colors duration-300 ${
-          isDark ? "bg-gray-950" : "bg-gray-50"
+          isDark ? "bg-gray-900" : "bg-gray-100"
         }`}
       >
         {/* Sidebar */}
@@ -259,7 +728,7 @@ const Shipment = () => {
                     }`}
                   >
                     <option value="">Select Province</option>
-                    {provinces.map((province) => (
+                    {PROVINCES.map((province) => (
                       <option key={province} value={province}>
                         {province}
                       </option>
@@ -286,7 +755,7 @@ const Shipment = () => {
                     }`}
                   >
                     <option value="">Select Province</option>
-                    {provinces.map((province) => (
+                    {PROVINCES.map((province) => (
                       <option key={province} value={province}>
                         {province}
                       </option>
@@ -304,9 +773,9 @@ const Shipment = () => {
                   <input
                     type="text"
                     name="tracking_number"
-                    value={newShipment.tracking_number || ''}
+                    value={newShipment.tracking_number || ""}
                     onChange={(e) => {
-                      console.log('Tracking number changed:', e.target.value);
+                      console.log("Tracking number changed:", e.target.value);
                       handleChange(e);
                     }}
                     placeholder="Enter tracking number"
@@ -408,6 +877,7 @@ const Shipment = () => {
                             <th className="p-3 text-left">To</th>
                             <th className="p-3 text-left">Status</th>
                             <th className="p-3 text-left">Created</th>
+                            <th className="p-3 text-left">Actions</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -447,10 +917,15 @@ const Shipment = () => {
                                     ? isDark
                                       ? "text-green-400"
                                       : "text-green-600"
-                                    : shipment.status === "in_progress"
+                                    : shipment.status === "in_progress" ||
+                                      shipment.status === "on_route"
                                     ? isDark
                                       ? "text-yellow-400"
                                       : "text-yellow-600"
+                                    : shipment.status === "canceled"
+                                    ? isDark
+                                      ? "text-red-400"
+                                      : "text-red-600"
                                     : isDark
                                     ? "text-blue-400"
                                     : "text-blue-600"
@@ -467,6 +942,61 @@ const Shipment = () => {
                                   shipment.created_at
                                 ).toLocaleDateString()}
                               </td>
+                              <td className="p-3">
+                                <div className="flex space-x-2">
+                                  {/* Status Change Dropdown */}
+                                  <select
+                                    value={shipment.status}
+                                    onChange={(e) =>
+                                      handleStatusChange(
+                                        shipment.id,
+                                        e.target.value
+                                      )
+                                    }
+                                    className={`border rounded px-2 py-1 text-sm ${
+                                      isDark
+                                        ? "bg-gray-700 border-gray-600 text-white"
+                                        : "bg-white border-gray-300 text-gray-900"
+                                    }`}
+                                  >
+                                    <option value="pending">Pending</option>
+                                    <option value="in_progress">
+                                      In Progress
+                                    </option>
+                                    <option value="on_route">On Route</option>
+                                    <option value="delivered">Delivered</option>
+                                    <option value="canceled">Canceled</option>
+                                  </select>
+
+                                  {/* Edit Button */}
+                                  <button
+                                    onClick={() => openEditModal(shipment)}
+                                    className={`p-1 rounded ${
+                                      isDark
+                                        ? "text-blue-400 hover:bg-gray-600"
+                                        : "text-blue-600 hover:bg-gray-200"
+                                    }`}
+                                    title="Edit"
+                                  >
+                                    <HiPencil className="w-4 h-4" />
+                                  </button>
+
+                                  {/* Delete Button */}
+                                  <button
+                                    onClick={() =>
+                                      handleDeleteShipment(shipment.id)
+                                    }
+                                    className={`p-1 rounded ${
+                                      isDark
+                                        ? "text-red-400 hover:bg-gray-600"
+                                        : "text-red-600 hover:bg-gray-200"
+                                    }`}
+                                    title="Delete"
+                                  >
+                                    <HiTrash className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -479,6 +1009,15 @@ const Shipment = () => {
           </div>
         </div>
       </div>
+
+      {/* Edit Shipment Modal */}
+      <EditShipmentModal
+        isOpen={editModalOpen}
+        onClose={closeEditModal}
+        shipment={currentShipment}
+        onSave={handleEditShipment}
+        isDark={isDark}
+      />
     </>
   );
 };
