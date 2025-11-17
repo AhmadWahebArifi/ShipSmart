@@ -62,6 +62,27 @@ router.post("/", [authenticateToken, ...validateProduct], async (req, res) => {
       created_by: req.user.userId,
     });
 
+    // Reload with associations
+    await product.reload({
+      include: [
+        {
+          model: Shipment,
+          as: "shipment",
+          attributes: [
+            "tracking_number",
+            "from_province",
+            "to_province",
+            "status",
+          ],
+        },
+        {
+          model: User,
+          as: "creator",
+          attributes: ["id", "username", "name", "email"],
+        },
+      ],
+    });
+
     res.status(201).json({
       success: true,
       product: {
@@ -72,7 +93,10 @@ router.post("/", [authenticateToken, ...validateProduct], async (req, res) => {
         weight: product.weight,
         price: product.price,
         shipment_tracking_number: product.shipment_tracking_number,
+        shipment: product.shipment,
+        created_by: product.creator,
         created_at: product.created_at,
+        updated_at: product.updated_at,
       },
     });
   } catch (error) {
@@ -264,6 +288,27 @@ router.put(
 
       await product.save();
 
+      // Reload with associations
+      await product.reload({
+        include: [
+          {
+            model: Shipment,
+            as: "shipment",
+            attributes: [
+              "tracking_number",
+              "from_province",
+              "to_province",
+              "status",
+            ],
+          },
+          {
+            model: User,
+            as: "creator",
+            attributes: ["id", "username", "name", "email"],
+          },
+        ],
+      });
+
       res.json({
         success: true,
         product: {
@@ -274,6 +319,9 @@ router.put(
           weight: product.weight,
           price: product.price,
           shipment_tracking_number: product.shipment_tracking_number,
+          shipment: product.shipment,
+          created_by: product.creator,
+          created_at: product.created_at,
           updated_at: product.updated_at,
         },
       });
