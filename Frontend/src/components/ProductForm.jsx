@@ -5,7 +5,7 @@ import { useTheme } from "../context/ThemeContext";
 import axiosInstance from "../config/axios";
 import { FiPackage, FiTruck, FiX, FiPlus, FiCheck } from "react-icons/fi";
 
-const ProductForm = ({ onSubmit, onCancel, shipmentTrackNumber }) => {
+const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
   const { t } = useTranslation();
   const { isDark } = useTheme();
   const [shipments, setShipments] = useState([]);
@@ -21,12 +21,13 @@ const ProductForm = ({ onSubmit, onCancel, shipmentTrackNumber }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: "",
-      description: "",
-      quantity: 1,
-      weight: "",
-      price: "",
-      shipment_tracking_number: shipmentTrackNumber || "",
+      name: product?.name || "",
+      description: product?.description || "",
+      quantity: product?.quantity || 1,
+      weight: product?.weight || "",
+      price: product?.price || "",
+      shipment_tracking_number:
+        product?.shipment_tracking_number || shipmentTrackNumber || "",
     },
   });
 
@@ -66,21 +67,32 @@ const ProductForm = ({ onSubmit, onCancel, shipmentTrackNumber }) => {
         quantity: Number(data.quantity),
         weight: Number(data.weight),
         price: Number(data.price),
-        // The field name now matches the backend
       };
 
       console.log("Submitting product data:", productData);
 
-      const response = await axiosInstance.post("/products", productData);
-
-      if (response.data.success) {
-        setSuccess("Product added successfully");
-        reset();
-        if (onSubmit) onSubmit(response.data.product);
+      if (product) {
+        // Update existing product
+        const response = await axiosInstance.put(
+          `/products/${product.id}`,
+          productData
+        );
+        if (response.data.success) {
+          setSuccess("Product updated successfully");
+          if (onSubmit) onSubmit(response.data.product);
+        }
+      } else {
+        // Create new product
+        const response = await axiosInstance.post("/products", productData);
+        if (response.data.success) {
+          setSuccess("Product added successfully");
+          reset();
+          if (onSubmit) onSubmit(response.data.product);
+        }
       }
     } catch (err) {
       console.error("Error submitting product:", err);
-      setError(err.response?.data?.message || "Error adding product");
+      setError(err.response?.data?.message || "Error submitting product");
     } finally {
       setLoading(false);
     }
@@ -93,7 +105,7 @@ const ProductForm = ({ onSubmit, onCancel, shipmentTrackNumber }) => {
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-medium flex items-center gap-2">
           <FiPackage className="w-5 h-5" />
-          {t("products.addProduct")}
+          {product ? t("products.editProduct") : t("products.addProduct")}
         </h3>
         {onCancel && (
           <button
@@ -148,7 +160,7 @@ const ProductForm = ({ onSubmit, onCancel, shipmentTrackNumber }) => {
 
           <div>
             <label
-              htmlFor="shipmentTrackNumber"
+              htmlFor="shipment_tracking_number"
               className="block text-sm font-medium mb-1"
             >
               {t("products.form.shipmentTrackNumber")} *
@@ -166,6 +178,7 @@ const ProductForm = ({ onSubmit, onCancel, shipmentTrackNumber }) => {
                 })}
                 disabled={!!shipmentTrackNumber}
               >
+                <option value="">{t("products.form.selectShipment")}</option>
                 {shipments.map((shipment) => (
                   <option key={shipment.id} value={shipment.tracking_number}>
                     {shipment.tracking_number} - {shipment.from_province} →{" "}
@@ -332,12 +345,12 @@ const ProductForm = ({ onSubmit, onCancel, shipmentTrackNumber }) => {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   ></path>
                 </svg>
-                {t("common.saving")}
+                {product ? t("common.saving") : t("common.saving")}
               </>
             ) : (
               <>
                 <FiPlus className="-ml-1 mr-2 h-4 w-4" />
-                {t("products.addProduct")}
+                {product ? t("common.update") : t("products.addProduct")}
               </>
             )}
           </button>
