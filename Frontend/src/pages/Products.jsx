@@ -53,9 +53,6 @@ const Products = () => {
         params.append("search", searchTerm);
       }
 
-      // Include shipment details in the response
-      params.append("include", "shipment");
-
       const response = await axiosInstance.get(
         `/products?${params.toString()}`
       );
@@ -84,27 +81,56 @@ const Products = () => {
     });
   };
 
-  const handleUpdateProduct = (updatedProduct) => {
-    setProducts(
-      products.map((p) => (p._id === updatedProduct._id ? updatedProduct : p))
-    );
-    setEditingProduct(null);
-    Swal.fire({
-      toast: true,
-      position: "top-end",
-      icon: "success",
-      title: t("products.success.updated"),
-      showConfirmButton: false,
-      timer: 3000,
-    });
+  const handleUpdateProduct = async (updatedProduct) => {
+    try {
+      const response = await axiosInstance.put(
+        `/products/${updatedProduct.id}`,
+        updatedProduct
+      );
+      if (response.data && response.data.success) {
+        setProducts(
+          products.map((p) =>
+            p.id === updatedProduct.id ? response.data.product : p
+          )
+        );
+        setEditingProduct(null);
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "success",
+          title: t("products.success.updated"),
+          showConfirmButton: false,
+          timer: 3000,
+        });
+      }
+    } catch (err) {
+      console.error("Error updating product:", err);
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: err.response?.data?.message || t("common.errors.generic"),
+        showConfirmButton: false,
+        timer: 3000,
+      });
+    }
   };
 
   const handleDeleteProduct = async (productId) => {
-    if (!window.confirm(t("products.confirmDelete"))) return;
+    const result = await Swal.fire({
+      title: t("products.confirmDeleteTitle"),
+      text: t("products.confirmDelete"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: t("common.delete"),
+      cancelButtonText: t("common.cancel"),
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       await axiosInstance.delete(`/products/${productId}`);
-      setProducts(products.filter((p) => p._id !== productId));
+      setProducts(products.filter((p) => p.id !== productId));
       Swal.fire({
         toast: true,
         position: "top-end",
@@ -139,6 +165,7 @@ const Products = () => {
       shipmentTrackNumber: trackNumber || "",
     });
     setSearchTerm("");
+    fetchProducts();
   };
 
   // Filter products based on search term
@@ -173,6 +200,24 @@ const Products = () => {
     (sum, p) => sum + (parseFloat(p.price) * parseInt(p.quantity) || 0),
     0
   );
+
+  // Function to get status color based on shipment status
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "delivered":
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
+      case "canceled":
+        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300";
+      case "on_route":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
+      case "in_progress":
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
+      case "pending":
+        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
+    }
+  };
 
   return (
     <div
@@ -448,6 +493,12 @@ const Products = () => {
                       </th>
                       <th
                         scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                      >
+                        {t("products.table.status")}
+                      </th>
+                      <th
+                        scope="col"
                         className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider"
                       >
                         {t("products.table.quantity")}
@@ -484,7 +535,7 @@ const Products = () => {
                   >
                     {filteredProducts.map((product) => (
                       <tr
-                        key={product._id}
+                        key={product.id}
                         className={
                           isDark ? "hover:bg-gray-800" : "hover:bg-gray-50"
                         }
@@ -546,6 +597,21 @@ const Products = () => {
                             )}
                           </div>
                         </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {product.shipment ? (
+                            <span
+                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+                                product.shipment.status
+                              )}`}
+                            >
+                              {product.shipment.status.replace("_", " ")}
+                            </span>
+                          ) : (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                              N/A
+                            </span>
+                          )}
+                        </td>
                         <td
                           className={`px-6 py-4 whitespace-nowrap text-right text-sm ${
                             isDark ? "text-gray-200" : "text-gray-900"
@@ -591,14 +657,14 @@ const Products = () => {
                               <FiEdit2 className="h-4 w-4" />
                             </button>
                             <button
-                              onClick={() => handleDeleteProduct(product._id)}
+                              onClick={() => handleDeleteProduct(product.id)}
                               className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 ml-2"
                               title={t("common.delete")}
                             >
                               <FiTrash2 className="h-4 w-4" />
                             </button>
                             <Link
-                              to={`/shipments?trackingNumber=${product.shipmentTrackNumber}`}
+                              to={`/shipments?trackingNumber=${product.shipment_tracking_number}`}
                               className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 ml-2"
                               title={t("products.viewShipment")}
                             >
@@ -611,7 +677,7 @@ const Products = () => {
                   </tbody>
                   <tfoot className={`${isDark ? "bg-gray-800" : "bg-gray-50"}`}>
                     <tr>
-                      <td colSpan="2" className="px-6 py-3 text-sm font-medium">
+                      <td colSpan="3" className="px-6 py-3 text-sm font-medium">
                         {t("common.total")}
                       </td>
                       <td className="px-6 py-3 text-right text-sm font-medium">
