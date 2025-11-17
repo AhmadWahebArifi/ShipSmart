@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS shipments (
     from_province VARCHAR(100) NOT NULL,
     to_province VARCHAR(100) NOT NULL,
     description TEXT,
-    status ENUM('pending', 'in_progress', 'delivered') DEFAULT 'pending',
+    status ENUM('pending', 'in_progress', 'on_route', 'delivered', 'canceled') DEFAULT 'pending',
     sender_id INT NOT NULL,
     receiver_id INT NULL DEFAULT NULL,
     shipped_at TIMESTAMP NULL DEFAULT NULL,
