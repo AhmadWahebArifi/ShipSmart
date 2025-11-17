@@ -71,11 +71,12 @@
     "getStarted": "با افزودن یک محصول جدید شروع کنید.",
     "searchPlaceholder": "جستجوی محصولات...",
     "confirmDelete": "آیا از حذف این محصول اطمینان دارید؟ این عمل قابل بازگشت نیست.",
+    "confirmDeleteTitle": "حذف محصول",
     "viewShipment": "مشاهده محموله",
     "table": {
       "name": "نام محصول",
       "shipment": "محموله",
-      "trackingNumber": "شماره رهگیری",
+      "status": "وضعیت",
       "quantity": "تعداد",
       "weight": "وزن",
       "price": "قیمت",
@@ -113,6 +114,13 @@
       "shipmentRequired": "لطفاً یک محموله برای این محصول انتخاب کنید."
     }
   },
+  "shipmentStatus": {
+    "pending": "در انتظار",
+    "in_progress": "در حال پیشرفت",
+    "on_route": "در مسیر",
+    "delivered": "تحویل شده",
+    "canceled": "لغو شده"
+  },
   "common": {
     "loading": "در حال بارگذاری",
     "saving": "در حال ذخیره‌سازی...",
@@ -120,6 +128,7 @@
     "delete": "حذف",
     "cancel": "انصراف",
     "save": "ذخیره",
+    "update": "به‌روزرسانی",
     "reset": "بازنشانی",
     "actions": "عملیات",
     "total": "جمع کل",
