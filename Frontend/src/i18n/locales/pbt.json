@@ -71,11 +71,12 @@
     "getStarted": "د نوي محصول د اضافه کولو سره پیل وکړئ.",
     "searchPlaceholder": "محصولات ولټوئ...",
     "confirmDelete": "ایا تاسو ډاډه یاست چې غواړئ دا محصول حذف کړئ؟ دا عمل بیرته راګرځیدونکی نه دی.",
+    "confirmDeleteTitle": "محصول ړنګول",
     "viewShipment": "بریښناک وګورئ",
     "table": {
       "name": "د محصول نوم",
       "shipment": "بریښناک",
-      "trackingNumber": "د تعقیب شمیره",
+      "status": "حالت",
       "quantity": "تعداد",
       "weight": "وزن",
       "price": "قیمت",
@@ -113,6 +114,13 @@
       "shipmentRequired": "مهرباني وکړئ د دې محصول لپاره یو بریښناک وټاکئ."
     }
   },
+  "shipmentStatus": {
+    "pending": "منتظر",
+    "in_progress": "پرمختګ کې",
+    "on_route": "په لاره کې",
+    "delivered": "ورکړل شوی",
+    "canceled": "لغوه شوی"
+  },
   "common": {
     "loading": "پورته کیږي",
     "saving": "خوندي کیږي...",
@@ -120,6 +128,7 @@
     "delete": "ړنګول",
     "cancel": "لغوه کول",
     "save": "خوندي کول",
+    "update": "تازه کول",
     "reset": "بیا تنظیمول",
     "actions": "کړنې",
     "total": "ټولټال",
