@@ -3,11 +3,13 @@ const User = require("./User");
 const Shipment = require("./Shipment");
 const Notification = require("./Notification");
 const Product = require("./Product");
+const Vehicle = require("./Vehicle");
 
 // Define associations
 // Shipment associations
 Shipment.belongsTo(User, { foreignKey: "sender_id", as: "sender" });
 Shipment.belongsTo(User, { foreignKey: "receiver_id", as: "receiver" });
+Shipment.belongsTo(Vehicle, { foreignKey: "vehicle_id", as: "vehicle" });
 Shipment.hasMany(Product, {
   foreignKey: "shipment_tracking_number",
   sourceKey: "tracking_number",
@@ -18,6 +20,7 @@ Shipment.hasMany(Product, {
 User.hasMany(Shipment, { foreignKey: "sender_id", as: "sentShipments" });
 User.hasMany(Shipment, { foreignKey: "receiver_id", as: "receivedShipments" });
 User.hasMany(Product, { foreignKey: "created_by", as: "products" });
+User.hasMany(Vehicle, { foreignKey: "created_by", as: "vehicles" });
 
 // Product associations
 Product.belongsTo(Shipment, {
@@ -26,6 +29,12 @@ Product.belongsTo(Shipment, {
   as: "shipment",
 });
 Product.belongsTo(User, {
+  foreignKey: "created_by",
+  as: "creator",
+});
+
+// Vehicle associations
+Vehicle.belongsTo(User, {
   foreignKey: "created_by",
   as: "creator",
 });
@@ -44,8 +53,14 @@ const models = {
   Shipment,
   Notification,
   Product,
+  Vehicle,
   sequelize,
 };
+
+// Call associate methods
+if (Vehicle.associate) {
+  Vehicle.associate(models);
+}
 
 // Sync models with database (adds missing columns without dropping data)
 // Wrap in async IIFE to handle errors gracefully
