@@ -37,6 +37,8 @@ router.post("/", [authenticateToken, ...validateProduct], async (req, res) => {
       weight,
       price,
       shipment_tracking_number,
+      sender,
+      receiver,
     } = req.body;
 
     // Check if shipment exists
@@ -51,6 +53,19 @@ router.post("/", [authenticateToken, ...validateProduct], async (req, res) => {
       });
     }
 
+    // Check if shipment status allows adding products
+    if (
+      shipment.status === "delivered" ||
+      shipment.status === "canceled" ||
+      shipment.status === "on_route"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Cannot add products to a shipment that is delivered, canceled, or on route",
+      });
+    }
+
     // Create product
     const product = await Product.create({
       name,
@@ -60,6 +75,8 @@ router.post("/", [authenticateToken, ...validateProduct], async (req, res) => {
       price,
       shipment_tracking_number,
       created_by: req.user.userId,
+      sender: sender || null,
+      receiver: receiver || null,
     });
 
     // Reload with associations
@@ -93,6 +110,8 @@ router.post("/", [authenticateToken, ...validateProduct], async (req, res) => {
         weight: product.weight,
         price: product.price,
         shipment_tracking_number: product.shipment_tracking_number,
+        sender: product.sender,
+        receiver: product.receiver,
         shipment: product.shipment,
         created_by: product.creator,
         created_at: product.created_at,
@@ -248,6 +267,8 @@ router.put(
         weight,
         price,
         shipment_tracking_number,
+        sender,
+        receiver,
       } = req.body;
 
       const product = await Product.findByPk(req.params.id);
@@ -274,6 +295,19 @@ router.put(
             message: "Shipment not found",
           });
         }
+
+        // Check if shipment status allows adding products
+        if (
+          shipment.status === "delivered" ||
+          shipment.status === "canceled" ||
+          shipment.status === "on_route"
+        ) {
+          return res.status(400).json({
+            success: false,
+            message:
+              "Cannot add products to a shipment that is delivered, canceled, or on route",
+          });
+        }
       }
 
       // Update product
@@ -285,6 +319,8 @@ router.put(
       if (shipment_tracking_number) {
         product.shipment_tracking_number = shipment_tracking_number;
       }
+      if (sender !== undefined) product.sender = sender;
+      if (receiver !== undefined) product.receiver = receiver;
 
       await product.save();
 
@@ -319,6 +355,8 @@ router.put(
           weight: product.weight,
           price: product.price,
           shipment_tracking_number: product.shipment_tracking_number,
+          sender: product.sender,
+          receiver: product.receiver,
           shipment: product.shipment,
           created_by: product.creator,
           created_at: product.created_at,
