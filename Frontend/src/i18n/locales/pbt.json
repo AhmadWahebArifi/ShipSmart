@@ -62,6 +62,67 @@
     "goBack": "بیرته",
     "errorMessage": "که تاسو فکر کوئ چې دا یو خطا دی، مهرباني وکړئ د ملاتړ سره اړیکه ونیسئ."
   },
+  "shipments": {
+    "title": "بریښناک",
+    "addNewShipment": "نوی بریښناک زیات کړئ",
+    "editShipment": "بریښناک سمول",
+    "noShipments": "هیڅ بریښناک ونه موندل شو",
+    "getStarted": "د پیل لپاره یو نوی بریښناک زیات کړئ.",
+    "trackingNumber": "د تعقیب شمیره",
+    "fromProvince": "له ولایت",
+    "toProvince": "ته ولایت",
+    "description": "تفصیل",
+    "status": "حالت",
+    "created": "جوړ شوی",
+    "actions": "کړنې",
+    "form": {
+      "fromProvincePlaceholder": "د سرچینې ولایت وټاکئ",
+      "toProvincePlaceholder": "د موخې ولایت وټاکئ",
+      "trackingNumberPlaceholder": "د تعقیب شمیره ولیکئ",
+      "descriptionPlaceholder": "د بریښناک تفصیل",
+      "addShipment": "بریښناک زیات کړئ",
+      "saveChanges": "بدلونونه خوندي کړئ",
+      "cancel": "لغوه کول"
+    },
+    "table": {
+      "trackingNumber": "د تعقیب شمیره",
+      "from": "له",
+      "to": "ته",
+      "status": "حالت",
+      "created": "جوړ شوی",
+      "actions": "کړنې"
+    },
+    "status": {
+      "pending": "منتظر",
+      "in_progress": "پرمختګ کې",
+      "on_route": "په لاره کې",
+      "delivered": "ورکړل شوی",
+      "canceled": "لغوه شوی"
+    },
+    "confirmDelete": "ایا تاسو ډاډه یاست چې غواړئ دا بریښناک حذف کړئ؟ دا عمل بیرته راګرځیدونکی نه دی.",
+    "confirmDeleteTitle": "بریښناک ړنګول",
+    "confirmStatusChange": "ایا تاسو ډاډه یاست چې غواړئ حالت {{status}} ته بدل کړئ؟",
+    "confirmStatusChangeTitle": "حالت بدلول",
+    "success": {
+      "added": "بریښناک په بریالیتوب سره زیات شو!",
+      "updated": "بریښناک په بریالیتوب سره تازه شو!",
+      "deleted": "بریښناک په بریالیتوب سره حذف شو!",
+      "statusUpdated": "د بریښناک حالت په بریالیتوب سره تازه شو!"
+    },
+    "errors": {
+      "fetchFailed": "د بریښناکونو پورته کولو کې ستونزه راغله. مهرباني وکړئ بیا هڅه وکړئ.",
+      "addFailed": "د بریښناک زیاتولو کې ستونزه راغله. مهرباني وکړئ بیا هڅه وکړئ.",
+      "updateFailed": "د بریښناک تازه کولو کې ستونزه راغله. مهرباني وکړئ بیا هڅه وکړئ.",
+      "deleteFailed": "د بریښناک ړنګولو کې ستونزه راغله. مهرباني وکړئ بیا هڅه وکړئ.",
+      "statusUpdateFailed": "د بریښناک حالت تازه کولو کې ستونزه راغله. مهرباني وکړئ بیا هڅه وکړئ.",
+      "validation": {
+        "fromProvinceRequired": "د سرچینې ولایت اړین دی",
+        "toProvinceRequired": "د موخې ولایت اړین دی",
+        "trackingNumberRequired": "د تعقیب شمیره اړینه ده",
+        "provincesSame": "د سرچینې او موخې ولایتونه یو شان نشي کیدای"
+      }
+    }
+  },
   "products": {
     "title": "محصولات",
     "items": "توکي",
