@@ -193,6 +193,8 @@
     "reset": "Reset",
     "actions": "Actions",
     "total": "Total",
+    "success": "Success",
+    "ok": "OK",
     "errors": {
       "generic": "An error occurred. Please try again.",
       "required": "This field is required"
