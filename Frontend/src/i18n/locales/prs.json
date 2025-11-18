@@ -62,6 +62,67 @@
     "goBack": "بازگشت",
     "errorMessage": "اگر فکر می‌کنید این یک خطا است، لطفاً با پشتیبانی تماس بگیرید."
   },
+  "shipments": {
+    "title": "محموله‌ها",
+    "addNewShipment": "افزودن محموله جدید",
+    "editShipment": "ویرایش محموله",
+    "noShipments": "هیچ محموله‌ای یافت نشد",
+    "getStarted": "برای شروع یک محموله جدید اضافه کنید.",
+    "trackingNumber": "شماره رهگیری",
+    "fromProvince": "از ولایت",
+    "toProvince": "به ولایت",
+    "description": "توضیحات",
+    "status": "وضعیت",
+    "created": "ایجاد شده",
+    "actions": "عملیات",
+    "form": {
+      "fromProvincePlaceholder": "ولایت مبدأ را انتخاب کنید",
+      "toProvincePlaceholder": "ولایت مقصد را انتخاب کنید",
+      "trackingNumberPlaceholder": "شماره رهگیری را وارد کنید",
+      "descriptionPlaceholder": "توضیحات محموله",
+      "addShipment": "افزودن محموله",
+      "saveChanges": "ذخیره تغییرات",
+      "cancel": "انصراف"
+    },
+    "table": {
+      "trackingNumber": "شماره رهگیری",
+      "from": "از",
+      "to": "به",
+      "status": "وضعیت",
+      "created": "ایجاد شده",
+      "actions": "عملیات"
+    },
+    "status": {
+      "pending": "در انتظار",
+      "in_progress": "در حال پیشرفت",
+      "on_route": "در مسیر",
+      "delivered": "تحویل شده",
+      "canceled": "لغو شده"
+    },
+    "confirmDelete": "آیا از حذف این محموله اطمینان دارید؟ این عمل قابل بازگشت نیست.",
+    "confirmDeleteTitle": "حذف محموله",
+    "confirmStatusChange": "آیا از تغییر وضعیت به {{status}} اطمینان دارید؟",
+    "confirmStatusChangeTitle": "تغییر وضعیت",
+    "success": {
+      "added": "محموله با موفقیت افزوده شد!",
+      "updated": "محموله با موفقیت به‌روزرسانی شد!",
+      "deleted": "محموله با موفقیت حذف شد!",
+      "statusUpdated": "وضعیت محموله با موفقیت به‌روزرسانی شد!"
+    },
+    "errors": {
+      "fetchFailed": "خطا در بارگیری محموله‌ها. لطفاً دوباره تلاش کنید.",
+      "addFailed": "خطا در افزودن محموله. لطفاً دوباره تلاش کنید.",
+      "updateFailed": "خطا در به‌روزرسانی محموله. لطفاً دوباره تلاش کنید.",
+      "deleteFailed": "خطا در حذف محموله. لطفاً دوباره تلاش کنید.",
+      "statusUpdateFailed": "خطا در به‌روزرسانی وضعیت محموله. لطفاً دوباره تلاش کنید.",
+      "validation": {
+        "fromProvinceRequired": "ولایت مبدأ الزامی است",
+        "toProvinceRequired": "ولایت مقصد الزامی است",
+        "trackingNumberRequired": "شماره رهگیری الزامی است",
+        "provincesSame": "ولایت مبدأ و مقصد نمی‌تواند یکسان باشد"
+      }
+    }
+  },
   "products": {
     "title": "محصولات",
     "items": "مورد",
