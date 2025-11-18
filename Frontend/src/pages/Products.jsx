@@ -252,7 +252,13 @@ const Products = () => {
               >
                 <FiPackage className="w-6 h-6" />
               </div>
-              <h1 className="text-2xl font-bold">{t("products.title")}</h1>
+              <h1
+                className={`text-2xl font-bold ${
+                  isDark ? "text-white" : "text-gray-900"
+                }`}
+              >
+                {t("products.title")}
+              </h1>
               <span className="px-3 py-1 text-sm rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
                 {totalItems} {t("products.items")}
               </span>
@@ -481,43 +487,57 @@ const Products = () => {
                     <tr>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          isDark ? "text-gray-300" : "text-gray-500"
+                        }`}
                       >
                         {t("products.table.name")}
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          isDark ? "text-gray-300" : "text-gray-500"
+                        }`}
                       >
                         {t("products.table.shipment")}
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider"
+                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          isDark ? "text-gray-300" : "text-gray-500"
+                        }`}
                       >
                         {t("products.table.status")}
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider"
+                        className={`px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
+                          isDark ? "text-gray-300" : "text-gray-500"
+                        }`}
                       >
                         {t("products.table.quantity")}
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider"
+                        className={`px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
+                          isDark ? "text-gray-300" : "text-gray-500"
+                        }`}
                       >
                         {t("products.table.weight")} (kg)
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider"
+                        className={`px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
+                          isDark ? "text-gray-300" : "text-gray-500"
+                        }`}
                       >
                         {t("products.table.price")} (AFN)
                       </th>
                       <th
                         scope="col"
-                        className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider"
+                        className={`px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
+                          isDark ? "text-gray-300" : "text-gray-500"
+                        }`}
                       >
                         {t("products.table.total")} (AFN)
                       </th>
@@ -678,17 +698,32 @@ const Products = () => {
                   </tbody>
                   <tfoot className={`${isDark ? "bg-gray-800" : "bg-gray-50"}`}>
                     <tr>
-                      <td colSpan="3" className="px-6 py-3 text-sm font-medium">
+                      <td
+                        colSpan="3"
+                        className={`px-6 py-3 text-sm font-medium ${
+                          isDark ? "text-gray-200" : "text-gray-900"
+                        }`}
+                      >
                         {t("common.total")}
                       </td>
-                      <td className="px-6 py-3 text-right text-sm font-medium">
+                      <td
+                        className={`px-6 py-3 text-right text-sm font-medium ${
+                          isDark ? "text-gray-200" : "text-gray-900"
+                        }`}
+                      >
                         {totalQuantity}
                       </td>
-                      <td className="px-6 py-3 text-right text-sm font-medium">
+                      <td
+                        className={`px-6 py-3 text-right text-sm font-medium ${
+                          isDark ? "text-gray-200" : "text-gray-900"
+                        }`}
+                      >
                         {totalWeight.toFixed(2)}
                       </td>
                       <td
-                        className="px-6 py-3 text-right text-sm font-medium"
+                        className={`px-6 py-3 text-right text-sm font-medium ${
+                          isDark ? "text-gray-200" : "text-gray-900"
+                        }`}
                         colSpan="2"
                       >
                         {totalValue.toFixed(2)} AFN
