@@ -82,7 +82,12 @@
       "descriptionPlaceholder": "توضیحات محموله",
       "addShipment": "افزودن محموله",
       "saveChanges": "ذخیره تغییرات",
-      "cancel": "انصراف"
+      "cancel": "انصراف",
+      "expectedDepartureDate": "تاریخ مورد انتظار حرکت",
+      "expectedArrivalDate": "تاریخ مورد انتظار رسیدن",
+      "vehicle": "وسیله نقلیه",
+      "selectVehicle": "یک وسیله نقلیه انتخاب کنید",
+      "vehicleHelpText": "فقط وسایل نقلیه موجود نشان داده می شوند"
     },
     "table": {
       "trackingNumber": "شماره رهگیری",
@@ -90,7 +95,10 @@
       "to": "به",
       "status": "وضعیت",
       "created": "ایجاد شده",
-      "actions": "عملیات"
+      "actions": "عملیات",
+      "expectedDeparture": "تاریخ مورد انتظار حرکت",
+      "expectedArrival": "تاریخ مورد انتظار رسیدن",
+      "vehicle": "وسیله نقلیه"
     },
     "status": {
       "pending": "در انتظار",
@@ -142,7 +150,9 @@
       "weight": "وزن",
       "price": "قیمت",
       "total": "جمع کل",
-      "actions": "عملیات"
+      "actions": "عملیات",
+      "sender": "فرستنده",
+      "receiver": "گیرنده"
     },
     "form": {
       "name": "نام محصول",
@@ -153,7 +163,11 @@
       "weight": "وزن (کیلوگرامه)",
       "price": "قیمت (افغانی)",
       "shipmentTrackNumber": "شماره رهگیری محموله",
-      "selectShipment": "یک محموله انتخاب کنید"
+      "selectShipment": "یک محموله انتخاب کنید",
+      "sender": "فرستنده",
+      "senderPlaceholder": "نام فرستنده را وارد کنید",
+      "receiver": "گیرنده",
+      "receiverPlaceholder": "نام گیرنده را وارد کنید"
     },
     "stats": {
       "totalItems": "تعداد کل اقلام",
@@ -172,7 +186,8 @@
     },
     "errors": {
       "fetchFailed": "خطا در بارگیری محصولات. لطفاً دوباره تلاش کنید.",
-      "shipmentRequired": "لطفاً یک محموله برای این محصول انتخاب کنید."
+      "shipmentRequired": "لطفاً یک محموله برای این محصول انتخاب کنید.",
+      "shipmentNotAvailable": "محموله انتخاب شده برای افزودن محصولات در دسترس نیست."
     }
   },
   "shipmentStatus": {
@@ -203,5 +218,51 @@
   "validation": {
     "required": "این فیلد الزامی است",
     "min": "حداقل باید {{min}} باشد"
+  },
+  "vehicles": {
+    "title": "وسایل نقلیه",
+    "items": "مورد",
+    "addVehicle": "افزودن وسیله نقلیه",
+    "editVehicle": "ویرایش وسیله نقلیه",
+    "noVehicles": "هیچ وسیله نقلیه‌ای یافت نشد",
+    "getStarted": "با افزودن یک وسیله نقلیه جدید شروع کنید.",
+    "searchPlaceholder": "جستجوی وسایل نقلیه...",
+    "confirmDelete": "آیا از حذف این وسیله نقلیه اطمینان دارید؟ این عمل قابل بازگشت نیست.",
+    "confirmDeleteTitle": "حذف وسیله نقلیه",
+    "table": {
+      "vehicleId": "شماره وسیله نقلیه",
+      "type": "نوع",
+      "driverName": "نام راننده",
+      "capacity": "ظرفیت",
+      "status": "وضعیت",
+      "actions": "عملیات"
+    },
+    "form": {
+      "vehicleId": "شماره وسیله نقلیه",
+      "vehicleIdPlaceholder": "شماره وسیله نقلیه را وارد کنید",
+      "type": "نوع",
+      "typePlaceholder": "نوع وسیله نقلیه را وارد کنید",
+      "driverName": "نام راننده",
+      "driverNamePlaceholder": "نام راننده را وارد کنید (اختیاری)",
+      "capacity": "ظرفیت",
+      "status": "وضعیت"
+    },
+    "status": {
+      "available": "در دسترس",
+      "not_available": "در دسترس نیست"
+    },
+    "stats": {
+      "totalVehicles": "مجموع وسایل نقلیه",
+      "availableVehicles": "وسایل نقلیه در دسترس",
+      "totalCapacity": "ظرفیت کل"
+    },
+    "success": {
+      "added": "وسیله نقلیه با موفقیت افزوده شد!",
+      "updated": "وسیله نقلیه با موفقیت به‌روزرسانی شد!",
+      "deleted": "وسیله نقلیه با موفقیت حذف شد!"
+    },
+    "errors": {
+      "fetchFailed": "خطا در بارگیری وسایل نقلیه. لطفاً دوباره تلاش کنید."
+    }
   }
 }
