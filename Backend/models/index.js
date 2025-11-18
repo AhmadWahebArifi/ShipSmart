@@ -34,10 +34,7 @@ Product.belongsTo(User, {
 });
 
 // Vehicle associations
-Vehicle.belongsTo(User, {
-  foreignKey: "created_by",
-  as: "creator",
-});
+// Association moved to Vehicle model's associate method
 
 Notification.belongsTo(User, { foreignKey: "user_id", as: "user" });
 Notification.belongsTo(Shipment, { foreignKey: "shipment_id", as: "shipment" });
