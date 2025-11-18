@@ -82,7 +82,12 @@
       "descriptionPlaceholder": "د بریښناک تفصیل",
       "addShipment": "بریښناک زیات کړئ",
       "saveChanges": "بدلونونه خوندي کړئ",
-      "cancel": "لغوه کول"
+      "cancel": "لغوه کول",
+      "expectedDepartureDate": "د لیږد مورد انتظار نیټه",
+      "expectedArrivalDate": "د رسید مورد انتظار نیټه",
+      "vehicle": "موټر",
+      "selectVehicle": "یو موټر وټاکئ",
+      "vehicleHelpText": "یوازې شته موټرونه ښودل کیږي"
     },
     "table": {
       "trackingNumber": "د تعقیب شمیره",
@@ -90,7 +95,10 @@
       "to": "ته",
       "status": "حالت",
       "created": "جوړ شوی",
-      "actions": "کړنې"
+      "actions": "کړنې",
+      "expectedDeparture": "د لیږد مورد انتظار نیټه",
+      "expectedArrival": "د رسید مورد انتظار نیټه",
+      "vehicle": "موټر"
     },
     "status": {
       "pending": "منتظر",
@@ -142,7 +150,9 @@
       "weight": "وزن",
       "price": "قیمت",
       "total": "ټولټال",
-      "actions": "کړنې"
+      "actions": "کړنې",
+      "sender": "لیږونکی",
+      "receiver": "ترلاسه کونکی"
     },
     "form": {
       "name": "د محصول نوم",
@@ -153,7 +163,11 @@
       "weight": "وزن (کیلوګرامه)",
       "price": "قیمت (افغانۍ)",
       "shipmentTrackNumber": "د بریښناک د تعقیب شمیره",
-      "selectShipment": "یو بریښناک وټاکئ"
+      "selectShipment": "یو بریښناک وټاکئ",
+      "sender": "لیږونکی",
+      "senderPlaceholder": "د لیږونکي نوم ولیکئ",
+      "receiver": "ترلاسه کونکی",
+      "receiverPlaceholder": "د ترلاسه کونکي نوم ولیکئ"
     },
     "stats": {
       "totalItems": "ټول توکي",
@@ -172,7 +186,8 @@
     },
     "errors": {
       "fetchFailed": "د محصولاتو پورته کولو کې ستونزه راغله. مهرباني وکړئ بیا هڅه وکړئ.",
-      "shipmentRequired": "مهرباني وکړئ د دې محصول لپاره یو بریښناک وټاکئ."
+      "shipmentRequired": "مهرباني وکړئ د دې محصول لپاره یو بریښناک وټاکئ.",
+      "shipmentNotAvailable": "غوره شوی بریښناک د محصولاتو زیاتولو لپاره شتون نلري."
     }
   },
   "shipmentStatus": {
@@ -203,5 +218,51 @@
   "validation": {
     "required": "دا ځای اړین دی",
     "min": "لږ تر لږه باید {{min}} وي"
+  },
+  "vehicles": {
+    "title": "موټرونه",
+    "items": "توکي",
+    "addVehicle": "موټر زیات کړئ",
+    "editVehicle": "موټر سمول",
+    "noVehicles": "هیڅ موټر ونه موندل شو",
+    "getStarted": "د نوي موټر د اضافه کولو سره پیل وکړئ.",
+    "searchPlaceholder": "موټرونه ولټوئ...",
+    "confirmDelete": "ایا تاسو ډاډه یاست چې غواړئ دا موټر حذف کړئ؟ دا عمل بیرته راګرځیدونکی نه دی.",
+    "confirmDeleteTitle": "موټر ړنګول",
+    "table": {
+      "vehicleId": "د موټر شمیره",
+      "type": "ډول",
+      "driverName": "د چلوونکي نوم",
+      "capacity": "ظرفیت",
+      "status": "حالت",
+      "actions": "کړنې"
+    },
+    "form": {
+      "vehicleId": "د موټر شمیره",
+      "vehicleIdPlaceholder": "د موټر شمیره ولیکئ",
+      "type": "ډول",
+      "typePlaceholder": "د موټر ډول ولیکئ",
+      "driverName": "د چلوونکي نوم",
+      "driverNamePlaceholder": "د چلوونکي نوم ولیکئ (اختیاري)",
+      "capacity": "ظرفیت",
+      "status": "حالت"
+    },
+    "status": {
+      "available": "شته",
+      "not_available": "نشته"
+    },
+    "stats": {
+      "totalVehicles": "ټول موټرونه",
+      "availableVehicles": "شته موټرونه",
+      "totalCapacity": "ټوله ظرفیت"
+    },
+    "success": {
+      "added": "موټر په بریالیتوب سره زیات شو!",
+      "updated": "موټر په بریالیتوب سره تازه شو!",
+      "deleted": "موټر په بریالیتوب سره حذف شو!"
+    },
+    "errors": {
+      "fetchFailed": "د موټرونو پورته کولو کې ستونزه راغله. مهرباني وکړئ بیا هڅه وکړئ."
+    }
   }
 }
