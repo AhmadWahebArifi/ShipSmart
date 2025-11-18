@@ -1,23 +1,28 @@
-const { Sequelize } = require('sequelize');
-const dotenv = require('dotenv');
+// config/database.js
+const { Sequelize } = require("sequelize");
+const dotenv = require("dotenv");
 
 dotenv.config();
 
-// Create Sequelize connection
+// Create Sequelize instance
 const sequelize = new Sequelize(
-  process.env.DB_NAME || 'shipsmart_db',
-  process.env.DB_USER || 'root',
-  process.env.DB_PASSWORD || '',
+  process.env.DB_NAME || "shipsmart_db",
+  process.env.DB_USER || "root",
+  process.env.DB_PASSWORD || "",
   {
-    host: process.env.DB_HOST || 'localhost',
-    dialect: 'mysql',
-    logging: process.env.NODE_ENV === 'development' ? console.log : false,
+    host: process.env.DB_HOST || "localhost",
+    dialect: "mysql",
+    logging: process.env.NODE_ENV === "development" ? console.log : false,
+    dialectOptions: {
+      // Important: Set this to handle empty password correctly
+      ssl: false,
+    },
     pool: {
       max: 5,
       min: 0,
       acquire: 30000,
-      idle: 10000
-    }
+      idle: 10000,
+    },
   }
 );
 
@@ -25,18 +30,27 @@ const sequelize = new Sequelize(
 const testConnection = async () => {
   try {
     await sequelize.authenticate();
-    console.log('✅ MySQL Database connected successfully (Sequelize)');
-    return true;
+    console.log("✅ Database connection established successfully");
+
+    // Sync models
+    await sequelize.sync({ alter: true });
+    console.log("✅ Database synchronized");
   } catch (error) {
-    console.error('❌ Database connection error:');
-    console.error('❌ Error syncing database:', error);
-    if (error.parent) {
-      console.error('Error details:', error.parent.message || error.message);
-    }
-    console.warn('⚠️  Server will continue running without database connection');
-    console.warn('💡 Make sure MySQL is running and connection settings are correct');
-    return false;
+    console.error("❌ Database connection error:");
+    console.error("Error name:", error.name);
+    console.error("Error message:", error.message);
+    console.error(
+      "Error details:",
+      error.original?.sqlMessage || error.message
+    );
+    console.log("⚠️  Server will continue running without database connection");
+    console.log(
+      "💡 Make sure MySQL is running and connection settings are correct"
+    );
   }
 };
 
-module.exports = { sequelize, testConnection };
+module.exports = {
+  sequelize,
+  testConnection,
+};
