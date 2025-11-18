@@ -6,7 +6,7 @@ const {
   canModifyShipment,
   canSendToBranch,
 } = require("../middleware/rolePermission");
-const { Shipment, User, Notification } = require("../models");
+const { Shipment, User, Notification, Vehicle } = require("../models");
 
 // Afghanistan provinces list
 const PROVINCES = [
@@ -82,6 +82,19 @@ router.get("/", authenticateToken, async (req, res) => {
         attributes: ["id", "username", "name", "email", "province", "branch"],
         required: false,
       },
+      {
+        model: Vehicle,
+        as: "vehicle",
+        attributes: [
+          "id",
+          "vehicle_id",
+          "type",
+          "driver_name",
+          "capacity",
+          "status",
+        ],
+        required: false,
+      },
     ];
 
     // Filter by user role
@@ -155,6 +168,19 @@ router.get("/:id", authenticateToken, async (req, res) => {
           attributes: ["id", "username", "name", "email", "province", "branch"],
           required: false,
         },
+        {
+          model: Vehicle,
+          as: "vehicle",
+          attributes: [
+            "id",
+            "vehicle_id",
+            "type",
+            "driver_name",
+            "capacity",
+            "status",
+          ],
+          required: false,
+        },
       ],
     });
 
@@ -197,8 +223,15 @@ router.get("/:id", authenticateToken, async (req, res) => {
 // @access  Private (with role-based permissions)
 router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
   try {
-    const { from_province, to_province, tracking_number, description } =
-      req.body;
+    const {
+      from_province,
+      to_province,
+      tracking_number,
+      description,
+      expected_departure_date,
+      expected_arrival_date,
+      vehicle_id,
+    } = req.body;
 
     // Debug log the received data
     console.log("Received shipment creation request with data:", {
@@ -206,6 +239,8 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
       to_province,
       tracking_number,
       description,
+      expected_departure_date,
+      expected_arrival_date,
     });
     const sender = await User.findByPk(req.user.userId);
 
@@ -281,6 +316,9 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
       sender_id: sender.id,
       receiver_id: receiver ? receiver.id : null,
       status: "pending",
+      expected_departure_date: expected_departure_date || null,
+      expected_arrival_date: expected_arrival_date || null,
+      vehicle_id: vehicle_id || null,
     });
 
     const shipment = await Shipment.create({
@@ -291,6 +329,9 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
       sender_id: sender.id,
       receiver_id: receiver ? receiver.id : null,
       status: "pending",
+      expected_departure_date: expected_departure_date || null,
+      expected_arrival_date: expected_arrival_date || null,
+      vehicle_id: vehicle_id || null,
     });
 
     console.log("Shipment created successfully with ID:", shipment.id);
@@ -414,7 +455,14 @@ router.put("/:id", authenticateToken, canModifyShipment(), async (req, res) => {
     }
 
     // Update the shipment
-    const { from_province, to_province, description } = req.body;
+    const {
+      from_province,
+      to_province,
+      description,
+      expected_departure_date,
+      expected_arrival_date,
+      vehicle_id,
+    } = req.body;
 
     // Validate required fields
     if (!from_province || !to_province) {
@@ -428,6 +476,9 @@ router.put("/:id", authenticateToken, canModifyShipment(), async (req, res) => {
       from_province,
       to_province,
       description,
+      expected_departure_date: expected_departure_date || null,
+      expected_arrival_date: expected_arrival_date || null,
+      vehicle_id: vehicle_id || null,
     });
 
     await shipment.reload({
@@ -623,6 +674,22 @@ router.put(
       }
 
       await shipment.update(updateData);
+
+      // Update vehicle status based on shipment status
+      if (shipment.vehicle_id) {
+        const vehicle = await Vehicle.findByPk(shipment.vehicle_id);
+        if (vehicle) {
+          // If shipment is in progress or on route, vehicle is not available
+          if (status === "in_progress" || status === "on_route") {
+            await vehicle.update({ status: "not_available" });
+          }
+          // If shipment is delivered or canceled, vehicle becomes available
+          else if (status === "delivered" || status === "canceled") {
+            await vehicle.update({ status: "available" });
+          }
+        }
+      }
+
       await shipment.reload({
         include: [
           {
@@ -647,6 +714,19 @@ router.put(
               "email",
               "province",
               "branch",
+            ],
+            required: false,
+          },
+          {
+            model: Vehicle,
+            as: "vehicle",
+            attributes: [
+              "id",
+              "vehicle_id",
+              "type",
+              "driver_name",
+              "capacity",
+              "status",
             ],
             required: false,
           },
@@ -903,5 +983,90 @@ router.get(
     }
   }
 );
+
+// Add a new route to automatically update shipment status based on dates
+router.put("/auto-update-status", authenticateToken, async (req, res) => {
+  try {
+    const now = new Date();
+
+    // Update shipments that should be on route based on departure date
+    const shipmentsToRoute = await Shipment.findAll({
+      where: {
+        status: "pending",
+        expected_departure_date: {
+          [require("sequelize").Op.lte]: now,
+        },
+        expected_departure_date: {
+          [require("sequelize").Op.ne]: null,
+        },
+      },
+    });
+
+    for (const shipment of shipmentsToRoute) {
+      await shipment.update({
+        status: "on_route",
+        shipped_at: shipment.shipped_at || now,
+      });
+
+      // Create notification for receiver if exists
+      if (shipment.receiver_id) {
+        await Notification.create({
+          user_id: shipment.receiver_id,
+          shipment_id: shipment.id,
+          title: "Shipment On Route",
+          message: `Your shipment from ${shipment.from_province} to ${shipment.to_province} is now on route.`,
+          type: "shipment_in_progress",
+          is_read: false,
+        });
+      }
+    }
+
+    // Update shipments that should be delivered based on arrival date
+    const shipmentsToDeliver = await Shipment.findAll({
+      where: {
+        status: "on_route",
+        expected_arrival_date: {
+          [require("sequelize").Op.lte]: now,
+        },
+        expected_arrival_date: {
+          [require("sequelize").Op.ne]: null,
+        },
+      },
+    });
+
+    for (const shipment of shipmentsToDeliver) {
+      await shipment.update({
+        status: "delivered",
+        delivered_at: shipment.delivered_at || now,
+      });
+
+      // Create notification for sender
+      if (shipment.sender_id) {
+        await Notification.create({
+          user_id: shipment.sender_id,
+          shipment_id: shipment.id,
+          title: "Shipment Delivered",
+          message: `Your shipment from ${shipment.from_province} to ${shipment.to_province} has been delivered.`,
+          type: "shipment_delivered",
+          is_read: false,
+        });
+      }
+    }
+
+    res.json({
+      success: true,
+      message: "Shipment statuses updated successfully",
+      updated_on_route: shipmentsToRoute.length,
+      updated_delivered: shipmentsToDeliver.length,
+    });
+  } catch (error) {
+    console.error("Auto-update shipment status error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error updating shipment statuses",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+});
 
 module.exports = router;
