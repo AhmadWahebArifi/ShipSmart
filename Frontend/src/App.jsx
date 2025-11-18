@@ -17,6 +17,7 @@ import Shipments from "./pages/Shipments";
 import Products from "./pages/Products";
 import UserManagement from "./pages/UserManagement";
 import NotFound from "./pages/NotFound";
+import Vehicles from "./pages/Vehicles";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -81,6 +82,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Products />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/vehicles"
+                element={
+                  <ProtectedRoute>
+                    <Vehicles />
                   </ProtectedRoute>
                 }
               />
