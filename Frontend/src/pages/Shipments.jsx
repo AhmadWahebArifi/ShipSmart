@@ -158,7 +158,7 @@ const EditShipmentModal = ({ isOpen, onClose, shipment, onSave, isDark }) => {
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
-              From Province
+              {t("shipments.fromProvince")}
             </label>
             <select
               name="from_province"
@@ -186,7 +186,7 @@ const EditShipmentModal = ({ isOpen, onClose, shipment, onSave, isDark }) => {
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
-              To Province
+              {t("shipments.toProvince")}
             </label>
             <select
               name="to_province"
@@ -214,7 +214,7 @@ const EditShipmentModal = ({ isOpen, onClose, shipment, onSave, isDark }) => {
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
-              Description
+              {t("shipments.description")}
             </label>
             <textarea
               name="description"
@@ -258,6 +258,7 @@ const EditShipmentModal = ({ isOpen, onClose, shipment, onSave, isDark }) => {
 
 const Shipment = () => {
   const { isDark } = useTheme();
+  const { t } = useTranslation();
   const {
     sidebarOpen,
     sidebarCollapsed,
@@ -284,7 +285,7 @@ const Shipment = () => {
       title: title,
       text: message,
       icon: type,
-      confirmButtonText: "OK",
+      confirmButtonText: t("common.ok"),
       customClass: {
         confirmButton:
           "bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md",
@@ -306,7 +307,7 @@ const Shipment = () => {
         setShipments(response.data.shipments);
       }
     } catch (err) {
-      setError("Failed to fetch shipments");
+      setError(t("shipments.errors.fetchFailed"));
       console.error("Error fetching shipments:", err);
     } finally {
       setLoading(false);
@@ -340,13 +341,16 @@ const Shipment = () => {
       !newShipment.tracking_number
     ) {
       const missingFields = [];
-      if (!newShipment.from_province) missingFields.push("From Province");
-      if (!newShipment.to_province) missingFields.push("To Province");
-      if (!newShipment.tracking_number) missingFields.push("Tracking Number");
+      if (!newShipment.from_province)
+        missingFields.push(t("shipments.fromProvince"));
+      if (!newShipment.to_province)
+        missingFields.push(t("shipments.toProvince"));
+      if (!newShipment.tracking_number)
+        missingFields.push(t("shipments.trackingNumber"));
 
       showAlert(
-        "Validation Error",
-        `Please fill in all required fields: ${missingFields.join(", ")}`,
+        t("common.errors.generic"),
+        `${t("common.errors.required")}: ${missingFields.join(", ")}`,
         "error"
       );
       return;
@@ -355,8 +359,8 @@ const Shipment = () => {
     // Ensure from and to provinces are different
     if (newShipment.from_province === newShipment.to_province) {
       showAlert(
-        "Validation Error",
-        "From and to provinces cannot be the same",
+        t("common.errors.generic"),
+        t("shipments.errors.validation.provincesSame"),
         "error"
       );
       return;
@@ -405,13 +409,13 @@ const Shipment = () => {
           description: "",
         });
         // Show success message
-        showAlert("Success", "Shipment added successfully", "success");
+        showAlert(t("common.success"), t("shipments.success.added"), "success");
         // Refresh the shipments list
         fetchShipments();
       } else {
         showAlert(
-          "Error",
-          response.data?.message || "Failed to create shipment",
+          t("common.errors.generic"),
+          response.data?.message || t("shipments.errors.addFailed"),
           "error"
         );
       }
@@ -423,12 +427,12 @@ const Shipment = () => {
         const errorMessage =
           typeof err.response.data === "object"
             ? Object.values(err.response.data).flat().join("\n")
-            : err.response.data.message || "Failed to create shipment";
-        showAlert("Validation Error", errorMessage, "error");
+            : err.response.data.message || t("shipments.errors.addFailed");
+        showAlert(t("common.errors.generic"), errorMessage, "error");
       } else {
         showAlert(
-          "Error",
-          "Failed to create shipment. Please try again.",
+          t("common.errors.generic"),
+          t("shipments.errors.addFailed"),
           "error"
         );
       }
@@ -439,15 +443,14 @@ const Shipment = () => {
   const handleStatusChange = async (shipmentId, newStatus) => {
     try {
       const result = await MySwal.fire({
-        title: "Change Status",
-        text: `Are you sure you want to change the status to ${newStatus.replace(
-          "_",
-          " "
-        )}?`,
+        title: t("shipments.confirmStatusChangeTitle"),
+        text: t("shipments.confirmStatusChange", {
+          status: t(`shipments.status.${newStatus}`),
+        }),
         icon: "question",
         showCancelButton: true,
-        confirmButtonText: "Yes, Change Status",
-        cancelButtonText: "Cancel",
+        confirmButtonText: t("shipments.confirmStatusChangeTitle"),
+        cancelButtonText: t("shipments.form.cancel"),
         customClass: {
           confirmButton:
             "bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md mr-2",
@@ -476,12 +479,18 @@ const Shipment = () => {
           )
         );
         setError(""); // Clear any previous errors
-        showAlert("Success", "Shipment status updated successfully", "success");
-      } else {
-        setError(response.data.message || "Failed to update shipment status");
         showAlert(
-          "Error",
-          response.data.message || "Failed to update shipment status",
+          t("common.success"),
+          t("shipments.success.statusUpdated"),
+          "success"
+        );
+      } else {
+        setError(
+          response.data.message || t("shipments.errors.statusUpdateFailed")
+        );
+        showAlert(
+          t("common.errors.generic"),
+          response.data.message || t("shipments.errors.statusUpdateFailed"),
           "error"
         );
       }
@@ -489,18 +498,18 @@ const Shipment = () => {
       console.error("Error updating shipment status:", err);
       if (err.response && err.response.data) {
         setError(
-          err.response.data.message || "Failed to update shipment status"
+          err.response.data.message || t("shipments.errors.statusUpdateFailed")
         );
         showAlert(
-          "Error",
-          err.response.data.message || "Failed to update shipment status",
+          t("common.errors.generic"),
+          err.response.data.message || t("shipments.errors.statusUpdateFailed"),
           "error"
         );
       } else {
-        setError("Failed to update shipment status. Please try again.");
+        setError(t("shipments.errors.statusUpdateFailed"));
         showAlert(
-          "Error",
-          "Failed to update shipment status. Please try again.",
+          t("common.errors.generic"),
+          t("shipments.errors.statusUpdateFailed"),
           "error"
         );
       }
@@ -525,13 +534,17 @@ const Shipment = () => {
           )
         );
         setError(""); // Clear any previous errors
-        showAlert("Success", "Shipment updated successfully", "success");
+        showAlert(
+          t("common.success"),
+          t("shipments.success.updated"),
+          "success"
+        );
         return { success: true };
       } else {
-        setError(response.data.message || "Failed to update shipment");
+        setError(response.data.message || t("shipments.errors.updateFailed"));
         showAlert(
-          "Error",
-          response.data.message || "Failed to update shipment",
+          t("common.errors.generic"),
+          response.data.message || t("shipments.errors.updateFailed"),
           "error"
         );
         return { success: false, message: response.data.message };
@@ -539,23 +552,25 @@ const Shipment = () => {
     } catch (err) {
       console.error("Error updating shipment:", err);
       if (err.response && err.response.data) {
-        setError(err.response.data.message || "Failed to update shipment");
+        setError(
+          err.response.data.message || t("shipments.errors.updateFailed")
+        );
         showAlert(
-          "Error",
-          err.response.data.message || "Failed to update shipment",
+          t("common.errors.generic"),
+          err.response.data.message || t("shipments.errors.updateFailed"),
           "error"
         );
         return { success: false, message: err.response.data.message };
       } else {
-        setError("Failed to update shipment. Please try again.");
+        setError(t("shipments.errors.updateFailed"));
         showAlert(
-          "Error",
-          "Failed to update shipment. Please try again.",
+          t("common.errors.generic"),
+          t("shipments.errors.updateFailed"),
           "error"
         );
         return {
           success: false,
-          message: "Failed to update shipment. Please try again.",
+          message: t("shipments.errors.updateFailed"),
         };
       }
     }
@@ -565,12 +580,12 @@ const Shipment = () => {
   const handleDeleteShipment = async (shipmentId) => {
     try {
       const result = await MySwal.fire({
-        title: "Delete Shipment",
-        text: "Are you sure you want to delete this shipment? This action cannot be undone.",
+        title: t("shipments.confirmDeleteTitle"),
+        text: t("shipments.confirmDelete"),
         icon: "warning",
         showCancelButton: true,
-        confirmButtonText: "Yes, Delete",
-        cancelButtonText: "Cancel",
+        confirmButtonText: t("shipments.confirmDeleteTitle"),
+        cancelButtonText: t("shipments.form.cancel"),
         customClass: {
           confirmButton:
             "bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md mr-2",
@@ -590,29 +605,35 @@ const Shipment = () => {
           prevShipments.filter((shipment) => shipment.id !== shipmentId)
         );
         setError(""); // Clear any previous errors
-        showAlert("Success", "Shipment deleted successfully", "success");
-      } else {
-        setError(response.data.message || "Failed to delete shipment");
         showAlert(
-          "Error",
-          response.data.message || "Failed to delete shipment",
+          t("common.success"),
+          t("shipments.success.deleted"),
+          "success"
+        );
+      } else {
+        setError(response.data.message || t("shipments.errors.deleteFailed"));
+        showAlert(
+          t("common.errors.generic"),
+          response.data.message || t("shipments.errors.deleteFailed"),
           "error"
         );
       }
     } catch (err) {
       console.error("Error deleting shipment:", err);
       if (err.response && err.response.data) {
-        setError(err.response.data.message || "Failed to delete shipment");
+        setError(
+          err.response.data.message || t("shipments.errors.deleteFailed")
+        );
         showAlert(
-          "Error",
-          err.response.data.message || "Failed to delete shipment",
+          t("common.errors.generic"),
+          err.response.data.message || t("shipments.errors.deleteFailed"),
           "error"
         );
       } else {
-        setError("Failed to delete shipment. Please try again.");
+        setError(t("shipments.errors.deleteFailed"));
         showAlert(
-          "Error",
-          "Failed to delete shipment. Please try again.",
+          t("common.errors.generic"),
+          t("shipments.errors.deleteFailed"),
           "error"
         );
       }
@@ -673,7 +694,7 @@ const Shipment = () => {
                     isDark ? "text-white" : "text-gray-800"
                   }`}
                 >
-                  📦 Shipments
+                  📦 {t("shipments.title")}
                 </h1>
               </div>
             </div>
@@ -705,7 +726,7 @@ const Shipment = () => {
                   isDark ? "text-white" : "text-gray-700"
                 }`}
               >
-                Add New Shipment
+                {t("shipments.addNewShipment")}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
@@ -714,7 +735,7 @@ const Shipment = () => {
                       isDark ? "text-gray-300" : "text-gray-700"
                     }`}
                   >
-                    From Province
+                    {t("shipments.fromProvince")}
                   </label>
                   <select
                     name="from_province"
@@ -727,7 +748,9 @@ const Shipment = () => {
                         : "bg-white border-gray-300 text-gray-900"
                     }`}
                   >
-                    <option value="">Select Province</option>
+                    <option value="">
+                      {t("shipments.form.fromProvincePlaceholder")}
+                    </option>
                     {PROVINCES.map((province) => (
                       <option key={province} value={province}>
                         {province}
@@ -741,7 +764,7 @@ const Shipment = () => {
                       isDark ? "text-gray-300" : "text-gray-700"
                     }`}
                   >
-                    To Province
+                    {t("shipments.toProvince")}
                   </label>
                   <select
                     name="to_province"
@@ -754,7 +777,9 @@ const Shipment = () => {
                         : "bg-white border-gray-300 text-gray-900"
                     }`}
                   >
-                    <option value="">Select Province</option>
+                    <option value="">
+                      {t("shipments.form.toProvincePlaceholder")}
+                    </option>
                     {PROVINCES.map((province) => (
                       <option key={province} value={province}>
                         {province}
@@ -768,7 +793,7 @@ const Shipment = () => {
                       isDark ? "text-gray-300" : "text-gray-700"
                     }`}
                   >
-                    Tracking Number
+                    {t("shipments.trackingNumber")}
                   </label>
                   <input
                     type="text"
@@ -778,7 +803,7 @@ const Shipment = () => {
                       console.log("Tracking number changed:", e.target.value);
                       handleChange(e);
                     }}
-                    placeholder="Enter tracking number"
+                    placeholder={t("shipments.form.trackingNumberPlaceholder")}
                     required
                     className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
                       isDark
@@ -793,13 +818,13 @@ const Shipment = () => {
                       isDark ? "text-gray-300" : "text-gray-700"
                     }`}
                   >
-                    Description
+                    {t("shipments.description")}
                   </label>
                   <textarea
                     name="description"
                     value={newShipment.description}
                     onChange={handleChange}
-                    placeholder="Shipment description"
+                    placeholder={t("shipments.form.descriptionPlaceholder")}
                     rows={3}
                     className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none resize-none ${
                       isDark
@@ -813,7 +838,7 @@ const Shipment = () => {
                 type="submit"
                 className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-all"
               >
-                Add Shipment
+                {t("shipments.form.addShipment")}
               </button>
             </form>
 
@@ -833,7 +858,7 @@ const Shipment = () => {
                       isDark ? "text-gray-400" : "text-gray-600"
                     }`}
                   >
-                    Loading shipments...
+                    {t("common.loading")}...
                   </p>
                 </div>
               ) : (
@@ -848,7 +873,7 @@ const Shipment = () => {
                         isDark ? "text-white" : "text-gray-800"
                       }`}
                     >
-                      Shipments ({shipments.length})
+                      {t("shipments.title")} ({shipments.length})
                     </h2>
                   </div>
                   {shipments.length === 0 ? (
@@ -858,7 +883,7 @@ const Shipment = () => {
                           isDark ? "text-gray-400" : "text-gray-600"
                         }`}
                       >
-                        No shipments found. Add a new shipment to get started.
+                        {t("shipments.noShipments")} {t("shipments.getStarted")}
                       </p>
                     </div>
                   ) : (
@@ -872,12 +897,24 @@ const Shipment = () => {
                           }`}
                         >
                           <tr>
-                            <th className="p-3 text-left">Tracking #</th>
-                            <th className="p-3 text-left">From</th>
-                            <th className="p-3 text-left">To</th>
-                            <th className="p-3 text-left">Status</th>
-                            <th className="p-3 text-left">Created</th>
-                            <th className="p-3 text-left">Actions</th>
+                            <th className="p-3 text-left">
+                              {t("shipments.table.trackingNumber")}
+                            </th>
+                            <th className="p-3 text-left">
+                              {t("shipments.table.from")}
+                            </th>
+                            <th className="p-3 text-left">
+                              {t("shipments.table.to")}
+                            </th>
+                            <th className="p-3 text-left">
+                              {t("shipments.table.status")}
+                            </th>
+                            <th className="p-3 text-left">
+                              {t("shipments.table.created")}
+                            </th>
+                            <th className="p-3 text-left">
+                              {t("shipments.table.actions")}
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
@@ -931,7 +968,7 @@ const Shipment = () => {
                                     : "text-blue-600"
                                 }`}
                               >
-                                {shipment.status.replace("_", " ")}
+                                {t(`shipments.status.${shipment.status}`)}
                               </td>
                               <td
                                 className={`p-3 ${
@@ -959,13 +996,21 @@ const Shipment = () => {
                                         : "bg-white border-gray-300 text-gray-900"
                                     }`}
                                   >
-                                    <option value="pending">Pending</option>
-                                    <option value="in_progress">
-                                      In Progress
+                                    <option value="pending">
+                                      {t("shipments.status.pending")}
                                     </option>
-                                    <option value="on_route">On Route</option>
-                                    <option value="delivered">Delivered</option>
-                                    <option value="canceled">Canceled</option>
+                                    <option value="in_progress">
+                                      {t("shipments.status.in_progress")}
+                                    </option>
+                                    <option value="on_route">
+                                      {t("shipments.status.on_route")}
+                                    </option>
+                                    <option value="delivered">
+                                      {t("shipments.status.delivered")}
+                                    </option>
+                                    <option value="canceled">
+                                      {t("shipments.status.canceled")}
+                                    </option>
                                   </select>
 
                                   {/* Edit Button */}
@@ -976,7 +1021,7 @@ const Shipment = () => {
                                         ? "text-blue-400 hover:bg-gray-600"
                                         : "text-blue-600 hover:bg-gray-200"
                                     }`}
-                                    title="Edit"
+                                    title={t("common.edit")}
                                   >
                                     <HiPencil className="w-4 h-4" />
                                   </button>
@@ -991,7 +1036,7 @@ const Shipment = () => {
                                         ? "text-red-400 hover:bg-gray-600"
                                         : "text-red-600 hover:bg-gray-200"
                                     }`}
-                                    title="Delete"
+                                    title={t("common.delete")}
                                   >
                                     <HiTrash className="w-4 h-4" />
                                   </button>
