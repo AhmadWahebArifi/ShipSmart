@@ -66,6 +66,25 @@ const Shipment = sequelize.define(
       allowNull: true,
       defaultValue: null,
     },
+    // Add expected arrival and departure dates
+    expected_departure_date: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+    },
+    expected_arrival_date: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: null,
+    },
+    vehicle_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "vehicles",
+        key: "id",
+      },
+    },
   },
   {
     tableName: "shipments",
