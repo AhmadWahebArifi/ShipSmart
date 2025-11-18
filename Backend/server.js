@@ -3,6 +3,9 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const { testConnection } = require("./config/database");
 const models = require("./models");
+const {
+  scheduleShipmentStatusUpdates,
+} = require("./jobs/shipmentStatusUpdater");
 
 // Load environment variables
 dotenv.config();
@@ -60,6 +63,9 @@ app.listen(PORT, () => {
   console.log(`\n🚀 ShipSmart Backend Server running on port ${PORT}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV || "development"}`);
   console.log(`📅 Server started at: ${new Date().toISOString()}`);
+
+  // Schedule shipment status updates
+  scheduleShipmentStatusUpdates();
 
   // Show available routes
   console.log("\n📋 Available API Routes:");
