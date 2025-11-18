@@ -58,6 +58,17 @@ const Product = sequelize.define(
         key: "id",
       },
     },
+    // Add sender and receiver fields
+    sender: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
+    receiver: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
   },
   {
     tableName: "products",
