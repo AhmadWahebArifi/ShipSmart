@@ -39,6 +39,8 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
       setValue("quantity", product.quantity || 1);
       setValue("weight", product.weight || "");
       setValue("price", product.price || "");
+      setValue("sender", product.sender || "");
+      setValue("receiver", product.receiver || "");
       console.log("Setting basic form values for product:", product);
     }
   }, [product, setValue]);
@@ -50,8 +52,16 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
         const response = await axiosInstance.get("/shipments");
         console.log("Shipments response:", response.data);
         if (response.data && response.data.success) {
-          console.log("Setting shipments:", response.data.shipments);
-          setShipments(response.data.shipments || []);
+          // Filter shipments to only show those that are not delivered, canceled, or on_route
+          const availableShipments = response.data.shipments.filter(
+            (shipment) =>
+              shipment.status !== "delivered" &&
+              shipment.status !== "canceled" &&
+              shipment.status !== "on_route"
+          );
+
+          console.log("Setting available shipments:", availableShipments);
+          setShipments(availableShipments || []);
 
           // Debug log
           console.log("Product for shipment check:", product);
@@ -60,7 +70,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           // If we're editing a product and have a shipment tracking number,
           // make sure it's available in the dropdown
           if (product && product.shipment_tracking_number) {
-            const shipmentExists = response.data.shipments?.some(
+            const shipmentExists = availableShipments?.some(
               (s) => s.tracking_number === product.shipment_tracking_number
             );
 
@@ -293,6 +303,52 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
             }`}
             placeholder={t("products.form.descriptionPlaceholder")}
           />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label
+              htmlFor="sender"
+              className={`block text-sm font-medium mb-1 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              {t("products.form.sender")}
+            </label>
+            <input
+              id="sender"
+              type="text"
+              {...register("sender")}
+              className={`w-full px-3 py-2 rounded-md border ${
+                isDark
+                  ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                  : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
+              }`}
+              placeholder={t("products.form.senderPlaceholder")}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="receiver"
+              className={`block text-sm font-medium mb-1 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              {t("products.form.receiver")}
+            </label>
+            <input
+              id="receiver"
+              type="text"
+              {...register("receiver")}
+              className={`w-full px-3 py-2 rounded-md border ${
+                isDark
+                  ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                  : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
+              }`}
+              placeholder={t("products.form.receiverPlaceholder")}
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
