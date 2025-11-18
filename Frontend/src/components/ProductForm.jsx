@@ -199,7 +199,12 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="name"
+              className={`block text-sm font-medium mb-1 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
               {t("products.form.name")} *
             </label>
             <input
@@ -210,8 +215,8 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                 errors.name
                   ? "border-red-500"
                   : isDark
-                  ? "border-gray-700 bg-gray-700"
-                  : "border-gray-300"
+                  ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                  : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
               }`}
               placeholder={t("products.form.namePlaceholder")}
             />
@@ -225,7 +230,9 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           <div>
             <label
               htmlFor="shipment_tracking_number"
-              className="block text-sm font-medium mb-1"
+              className={`block text-sm font-medium mb-1 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
             >
               {t("products.form.shipmentTrackNumber")} *
             </label>
@@ -234,8 +241,8 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                 id="shipment_tracking_number"
                 className={`w-full p-2 border rounded ${
                   isDark
-                    ? "bg-gray-700 border-gray-600 text-white"
-                    : "bg-white border-gray-300"
+                    ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                    : "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
                 }`}
                 {...register("shipment_tracking_number", {
                   required: t("products.errors.shipmentRequired"),
@@ -269,7 +276,9 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
         <div>
           <label
             htmlFor="description"
-            className="block text-sm font-medium mb-1"
+            className={`block text-sm font-medium mb-1 ${
+              isDark ? "text-gray-300" : "text-gray-700"
+            }`}
           >
             {t("products.form.description")}
           </label>
@@ -278,7 +287,9 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
             {...register("description")}
             rows={3}
             className={`w-full px-3 py-2 rounded-md border ${
-              isDark ? "border-gray-700 bg-gray-700" : "border-gray-300"
+              isDark
+                ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
             }`}
             placeholder={t("products.form.descriptionPlaceholder")}
           />
@@ -288,7 +299,9 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           <div>
             <label
               htmlFor="quantity"
-              className="block text-sm font-medium mb-1"
+              className={`block text-sm font-medium mb-1 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
             >
               {t("products.form.quantity")} *
             </label>
@@ -304,8 +317,8 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                 errors.quantity
                   ? "border-red-500"
                   : isDark
-                  ? "border-gray-700 bg-gray-700"
-                  : "border-gray-300"
+                  ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                  : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
               }`}
             />
             {errors.quantity && (
@@ -316,7 +329,12 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           </div>
 
           <div>
-            <label htmlFor="weight" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="weight"
+              className={`block text-sm font-medium mb-1 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
               {t("products.form.weight")} (kg) *
             </label>
             <input
@@ -335,8 +353,8 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                 errors.weight
                   ? "border-red-500"
                   : isDark
-                  ? "border-gray-700 bg-gray-700"
-                  : "border-gray-300"
+                  ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                  : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
               }`}
               placeholder="0.00"
             />
@@ -348,7 +366,12 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           </div>
 
           <div>
-            <label htmlFor="price" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="price"
+              className={`block text-sm font-medium mb-1 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
               {t("products.form.price")} (AFN) *
             </label>
             <input
@@ -364,8 +387,8 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                 errors.price
                   ? "border-red-500"
                   : isDark
-                  ? "border-gray-700 bg-gray-700"
-                  : "border-gray-300"
+                  ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                  : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
               }`}
               placeholder="0.00"
             />
