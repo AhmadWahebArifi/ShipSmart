@@ -82,7 +82,12 @@
       "descriptionPlaceholder": "Shipment description",
       "addShipment": "Add Shipment",
       "saveChanges": "Save Changes",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "expectedDepartureDate": "Expected Departure Date",
+      "expectedArrivalDate": "Expected Arrival Date",
+      "vehicle": "Vehicle",
+      "selectVehicle": "Select a vehicle",
+      "vehicleHelpText": "Only available vehicles are shown"
     },
     "table": {
       "trackingNumber": "Tracking #",
@@ -90,7 +95,10 @@
       "to": "To",
       "status": "Status",
       "created": "Created",
-      "actions": "Actions"
+      "actions": "Actions",
+      "expectedDeparture": "Expected Departure",
+      "expectedArrival": "Expected Arrival",
+      "vehicle": "Vehicle"
     },
     "status": {
       "pending": "Pending",
@@ -142,7 +150,9 @@
       "weight": "Weight",
       "price": "Price",
       "total": "Total",
-      "actions": "Actions"
+      "actions": "Actions",
+      "sender": "Sender",
+      "receiver": "Receiver"
     },
     "form": {
       "name": "Product Name",
@@ -153,7 +163,11 @@
       "weight": "Weight (kg)",
       "price": "Price (AFN)",
       "shipmentTrackNumber": "Shipment Tracking #",
-      "selectShipment": "Select a shipment"
+      "selectShipment": "Select a shipment",
+      "sender": "Sender",
+      "senderPlaceholder": "Enter sender name",
+      "receiver": "Receiver",
+      "receiverPlaceholder": "Enter receiver name"
     },
     "stats": {
       "totalItems": "Total Items",
@@ -172,7 +186,8 @@
     },
     "errors": {
       "fetchFailed": "Failed to load products. Please try again.",
-      "shipmentRequired": "Please select a shipment for this product."
+      "shipmentRequired": "Please select a shipment for this product.",
+      "shipmentNotAvailable": "Selected shipment is not available for adding products."
     }
   },
   "shipmentStatus": {
@@ -203,5 +218,51 @@
   "validation": {
     "required": "This field is required",
     "min": "Must be at least {{min}}"
+  },
+  "vehicles": {
+    "title": "Vehicles",
+    "items": "items",
+    "addVehicle": "Add Vehicle",
+    "editVehicle": "Edit Vehicle",
+    "noVehicles": "No vehicles found",
+    "getStarted": "Get started by adding a new vehicle.",
+    "searchPlaceholder": "Search vehicles...",
+    "confirmDelete": "Are you sure you want to delete this vehicle? This action cannot be undone.",
+    "confirmDeleteTitle": "Delete Vehicle",
+    "table": {
+      "vehicleId": "Vehicle ID",
+      "type": "Type",
+      "driverName": "Driver Name",
+      "capacity": "Capacity",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "form": {
+      "vehicleId": "Vehicle ID",
+      "vehicleIdPlaceholder": "Enter vehicle ID",
+      "type": "Type",
+      "typePlaceholder": "Enter vehicle type",
+      "driverName": "Driver Name",
+      "driverNamePlaceholder": "Enter driver name (optional)",
+      "capacity": "Capacity",
+      "status": "Status"
+    },
+    "status": {
+      "available": "Available",
+      "not_available": "Not Available"
+    },
+    "stats": {
+      "totalVehicles": "Total Vehicles",
+      "availableVehicles": "Available Vehicles",
+      "totalCapacity": "Total Capacity"
+    },
+    "success": {
+      "added": "Vehicle added successfully!",
+      "updated": "Vehicle updated successfully!",
+      "deleted": "Vehicle deleted successfully!"
+    },
+    "errors": {
+      "fetchFailed": "Failed to load vehicles. Please try again."
+    }
   }
 }
