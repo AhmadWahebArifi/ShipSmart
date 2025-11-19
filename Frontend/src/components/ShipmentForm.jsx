@@ -1,48 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import { useTheme } from "../context/ThemeContext";
 import axiosInstance from "../config/axios";
 import { FiTruck, FiX, FiPlus, FiCheck } from "react-icons/fi";
-
-const PROVINCES = [
-  "Kabul",
-  "Herat",
-  "Kandahar",
-  "Balkh",
-  "Nangarhar",
-  "Badghis",
-  "Badakhshan",
-  "Baghlan",
-  "Bamyan",
-  "Daykundi",
-  "Farah",
-  "Faryab",
-  "Ghazni",
-  "Ghor",
-  "Helmand",
-  "Jowzjan",
-  "Kapisa",
-  "Khost",
-  "Kunar",
-  "Kunduz",
-  "Laghman",
-  "Logar",
-  "Nimruz",
-  "Nuristan",
-  "Paktia",
-  "Paktika",
-  "Panjshir",
-  "Parwan",
-  "Samangan",
-  "Sar-e Pol",
-  "Takhar",
-  "Uruzgan",
-  "Wardak",
-  "Zabul",
-];
+import { useTranslation } from "react-i18next";
 
 const ShipmentForm = ({ onSubmit, onCancel, shipment }) => {
   const { t } = useTranslation();
+  const PROVINCES = t("provinces", { returnObjects: true });
   const { isDark } = useTheme();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
