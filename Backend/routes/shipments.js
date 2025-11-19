@@ -264,17 +264,55 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
       });
     }
 
-    if (
-      !PROVINCES.includes(from_province) ||
-      !PROVINCES.includes(to_province)
-    ) {
+    // Validate province names (case-insensitive and trim whitespace)
+    const normalizedFromProvince = from_province?.trim();
+    const normalizedToProvince = to_province?.trim();
+
+    // Debug logging to see what we're receiving
+    console.log("Received province values in creation route:", {
+      from_province,
+      to_province,
+      normalizedFromProvince,
+      normalizedToProvince,
+    });
+
+    const isValidFromProvince = PROVINCES.some(
+      (province) =>
+        province.toLowerCase() === normalizedFromProvince?.toLowerCase()
+    );
+    const isValidToProvince = PROVINCES.some(
+      (province) =>
+        province.toLowerCase() === normalizedToProvince?.toLowerCase()
+    );
+
+    if (!isValidFromProvince || !isValidToProvince) {
+      console.log("Province validation failed in creation route:", {
+        from_province,
+        to_province,
+        normalizedFromProvince,
+        normalizedToProvince,
+        isValidFromProvince,
+        isValidToProvince,
+        availableProvinces: PROVINCES,
+      });
       return res.status(400).json({
         success: false,
         message: "Invalid province name",
       });
     }
 
-    if (from_province === to_province) {
+    // Use the exact province name from the PROVINCES array to ensure consistency
+    const exactFromProvince = PROVINCES.find(
+      (province) =>
+        province.toLowerCase() === normalizedFromProvince?.toLowerCase()
+    );
+    const exactToProvince = PROVINCES.find(
+      (province) =>
+        province.toLowerCase() === normalizedToProvince?.toLowerCase()
+    );
+
+    // Check if provinces are the same (using exact names)
+    if (exactFromProvince === exactToProvince) {
       return res.status(400).json({
         success: false,
         message: "From and to provinces cannot be the same",
@@ -307,10 +345,10 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
       });
     }
 
-    // Create shipment
+    // Create shipment with exact province names
     console.log("Creating shipment with data:", {
-      from_province,
-      to_province,
+      from_province: exactFromProvince,
+      to_province: exactToProvince,
       tracking_number,
       description: description || null,
       sender_id: sender.id,
@@ -322,8 +360,8 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
     });
 
     const shipment = await Shipment.create({
-      from_province,
-      to_province,
+      from_province: exactFromProvince,
+      to_province: exactToProvince,
       tracking_number, // Added tracking_number here
       description: description || null,
       sender_id: sender.id,
@@ -371,7 +409,7 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
           user_id: receiver.id,
           shipment_id: shipment.id,
           title: "New Shipment Arriving",
-          message: `A shipment from ${from_province} to ${to_province} is on its way. Status: Pending`,
+          message: `A shipment from ${exactFromProvince} to ${exactToProvince} is on its way. Status: Pending`,
           type: "shipment_created",
           is_read: false,
         });
@@ -483,9 +521,56 @@ router.put("/:id", authenticateToken, canModifyShipment(), async (req, res) => {
       });
     }
 
-    await shipment.update({
+    // Validate province names (case-insensitive and trim whitespace)
+    const normalizedFromProvince = from_province?.trim();
+    const normalizedToProvince = to_province?.trim();
+
+    // Debug logging to see what we're receiving
+    console.log("Received province values in update route:", {
       from_province,
       to_province,
+      normalizedFromProvince,
+      normalizedToProvince,
+    });
+
+    const isValidFromProvince = PROVINCES.some(
+      (province) =>
+        province.toLowerCase() === normalizedFromProvince?.toLowerCase()
+    );
+    const isValidToProvince = PROVINCES.some(
+      (province) =>
+        province.toLowerCase() === normalizedToProvince?.toLowerCase()
+    );
+
+    if (!isValidFromProvince || !isValidToProvince) {
+      console.log("Province validation failed in update route:", {
+        from_province,
+        to_province,
+        normalizedFromProvince,
+        normalizedToProvince,
+        isValidFromProvince,
+        isValidToProvince,
+        availableProvinces: PROVINCES,
+      });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid province name",
+      });
+    }
+
+    // Use the exact province name from the PROVINCES array to ensure consistency
+    const exactFromProvince = PROVINCES.find(
+      (province) =>
+        province.toLowerCase() === normalizedFromProvince?.toLowerCase()
+    );
+    const exactToProvince = PROVINCES.find(
+      (province) =>
+        province.toLowerCase() === normalizedToProvince?.toLowerCase()
+    );
+
+    await shipment.update({
+      from_province: exactFromProvince,
+      to_province: exactToProvince,
       description,
       expected_departure_date: expected_departure_date || null,
       expected_arrival_date: expected_arrival_date || null,
@@ -601,7 +686,15 @@ router.put(
       if (user.role === "superadmin") {
         // SuperAdmin can change any status
       } else if (user.role === "admin") {
-        // Admin can change any status
+        // Admin can change any status EXCEPT for shipments from Kabul
+        // Only SuperAdmin can change status of shipments from Kabul
+        if (shipment.from_province === "Kabul" && user.role !== "superadmin") {
+          return res.status(403).json({
+            success: false,
+            message:
+              "Only SuperAdmin can change status of shipments from Kabul",
+          });
+        }
       } else if (user.role === "user") {
         // Regular users have limited permissions
         if (status === "delivered") {
@@ -609,9 +702,7 @@ router.put(
           if (
             shipment.receiver_id !== user.id &&
             (!user.branch ||
-              !shipment.to_province.includes(
-                user.branch.replace(" Branch", "")
-              ))
+              shipment.to_province !== user.branch.replace(" Branch", ""))
           ) {
             return res.status(403).json({
               success: false,
@@ -624,9 +715,7 @@ router.put(
           if (
             shipment.sender_id !== user.id &&
             (!user.branch ||
-              !shipment.from_province.includes(
-                user.branch.replace(" Branch", "")
-              ))
+              shipment.from_province !== user.branch.replace(" Branch", ""))
           ) {
             return res.status(403).json({
               success: false,
