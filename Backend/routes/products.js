@@ -133,6 +133,14 @@ router.post("/", [authenticateToken, ...validateProduct], async (req, res) => {
 // @access  Private
 router.get("/", authenticateToken, async (req, res) => {
   try {
+    const user = await User.findByPk(req.user.userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
     const { shipment_tracking_number } = req.query;
     const whereClause = {};
 
@@ -140,25 +148,44 @@ router.get("/", authenticateToken, async (req, res) => {
       whereClause.shipment_tracking_number = shipment_tracking_number;
     }
 
+    // Build include options
+    const includeOptions = [
+      {
+        model: Shipment,
+        as: "shipment",
+        attributes: [
+          "tracking_number",
+          "from_province",
+          "to_province",
+          "status",
+        ],
+      },
+      {
+        model: User,
+        as: "creator",
+        attributes: ["id", "username", "name", "email"],
+      },
+    ];
+
+    // For non-admin users, filter products based on their branch
+    let shipmentWhereClause = {};
+    if (user.role !== "superadmin" && user.role !== "admin") {
+      if (user.branch) {
+        const userProvince = user.branch.replace(" Branch", "");
+        shipmentWhereClause = {
+          [require("sequelize").Op.or]: [
+            { from_province: userProvince },
+            { to_province: userProvince },
+          ],
+        };
+        // Add shipment filter to include options
+        includeOptions[0].where = shipmentWhereClause;
+      }
+    }
+
     const products = await Product.findAll({
       where: whereClause,
-      include: [
-        {
-          model: Shipment,
-          as: "shipment",
-          attributes: [
-            "tracking_number",
-            "from_province",
-            "to_province",
-            "status",
-          ],
-        },
-        {
-          model: User,
-          as: "creator",
-          attributes: ["id", "username", "name", "email"],
-        },
-      ],
+      include: includeOptions,
       order: [["created_at", "DESC"]],
     });
 
@@ -194,24 +221,51 @@ router.get("/", authenticateToken, async (req, res) => {
 // @access  Private
 router.get("/:id", authenticateToken, async (req, res) => {
   try {
-    const product = await Product.findByPk(req.params.id, {
-      include: [
-        {
-          model: Shipment,
-          as: "shipment",
-          attributes: [
-            "tracking_number",
-            "from_province",
-            "to_province",
-            "status",
+    const user = await User.findByPk(req.user.userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Build include options
+    const includeOptions = [
+      {
+        model: Shipment,
+        as: "shipment",
+        attributes: [
+          "tracking_number",
+          "from_province",
+          "to_province",
+          "status",
+        ],
+      },
+      {
+        model: User,
+        as: "creator",
+        attributes: ["id", "username", "name", "email"],
+      },
+    ];
+
+    // For non-admin users, filter products based on their branch
+    let shipmentWhereClause = {};
+    if (user.role !== "superadmin" && user.role !== "admin") {
+      if (user.branch) {
+        const userProvince = user.branch.replace(" Branch", "");
+        shipmentWhereClause = {
+          [require("sequelize").Op.or]: [
+            { from_province: userProvince },
+            { to_province: userProvince },
           ],
-        },
-        {
-          model: User,
-          as: "creator",
-          attributes: ["id", "username", "name", "email"],
-        },
-      ],
+        };
+        // Add shipment filter to include options
+        includeOptions[0].where = shipmentWhereClause;
+      }
+    }
+
+    const product = await Product.findByPk(req.params.id, {
+      include: includeOptions,
     });
 
     if (!product) {
@@ -219,6 +273,26 @@ router.get("/:id", authenticateToken, async (req, res) => {
         success: false,
         message: "Product not found",
       });
+    }
+
+    // Additional check for non-admin users to ensure they can access this product
+    if (user.role !== "superadmin" && user.role !== "admin") {
+      if (user.branch) {
+        const userProvince = user.branch.replace(" Branch", "");
+        const shipment = product.shipment;
+        if (shipment) {
+          // Check if user's branch matches either the from_province or to_province
+          if (
+            shipment.from_province !== userProvince &&
+            shipment.to_province !== userProvince
+          ) {
+            return res.status(403).json({
+              success: false,
+              message: "You don't have permission to access this product",
+            });
+          }
+        }
+      }
     }
 
     res.json({
