@@ -353,6 +353,17 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
       ],
     });
 
+    // Update vehicle status if vehicle is assigned
+    if (
+      vehicle_id &&
+      (shipment.status === "in_progress" || shipment.status === "on_route")
+    ) {
+      const vehicle = await Vehicle.findByPk(vehicle_id);
+      if (vehicle) {
+        await vehicle.update({ status: "not_available" });
+      }
+    }
+
     // Create notification for receiver if exists
     if (receiver) {
       try {
@@ -480,6 +491,28 @@ router.put("/:id", authenticateToken, canModifyShipment(), async (req, res) => {
       expected_arrival_date: expected_arrival_date || null,
       vehicle_id: vehicle_id || null,
     });
+
+    // Update vehicle status if vehicle is assigned
+    if (vehicle_id) {
+      const vehicle = await Vehicle.findByPk(vehicle_id);
+      if (vehicle) {
+        // If shipment status is in progress or on route, vehicle is not available
+        if (
+          shipment.status === "in_progress" ||
+          shipment.status === "on_route"
+        ) {
+          await vehicle.update({ status: "not_available" });
+        }
+        // If shipment status is pending, delivered or canceled, vehicle becomes available
+        else if (
+          shipment.status === "pending" ||
+          shipment.status === "delivered" ||
+          shipment.status === "canceled"
+        ) {
+          await vehicle.update({ status: "available" });
+        }
+      }
+    }
 
     await shipment.reload({
       include: [
