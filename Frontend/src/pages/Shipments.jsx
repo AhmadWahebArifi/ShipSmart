@@ -6,6 +6,8 @@ import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
+import ShipmentForm from "../components/ShipmentForm";
+import EditShipmentModal from "../components/EditShipmentModal";
 import axiosInstance from "../config/axios";
 import {
   HiCube,
@@ -14,6 +16,7 @@ import {
   HiRefresh,
   HiCheck,
   HiX,
+  HiTruck,
 } from "react-icons/hi";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -58,204 +61,6 @@ const PROVINCES = [
   "Zabul",
 ];
 
-// Edit Shipment Modal Component
-const EditShipmentModal = ({ isOpen, onClose, shipment, onSave, isDark }) => {
-  const [formData, setFormData] = useState({
-    from_province: shipment?.from_province || "",
-    to_province: shipment?.to_province || "",
-    description: shipment?.description || "",
-  });
-
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    if (shipment) {
-      setFormData({
-        from_province: shipment.from_province || "",
-        to_province: shipment.to_province || "",
-        description: shipment.description || "",
-      });
-    }
-  }, [shipment]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-    setError("");
-
-    try {
-      const result = await onSave(shipment.id, formData);
-      if (result.success) {
-        onClose();
-      } else {
-        setError(result.message);
-      }
-    } catch (err) {
-      setError("Failed to save changes");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div
-        className={`rounded-xl shadow-lg w-full max-w-md ${
-          isDark ? "bg-gray-800" : "bg-white"
-        }`}
-      >
-        <div
-          className={`px-6 py-4 border-b ${
-            isDark ? "border-gray-700" : "border-gray-200"
-          }`}
-        >
-          <div className="flex justify-between items-center">
-            <h3
-              className={`text-lg font-semibold ${
-                isDark ? "text-white" : "text-gray-800"
-              }`}
-            >
-              Edit Shipment
-            </h3>
-            <button
-              onClick={onClose}
-              className={`p-1 rounded-full ${
-                isDark
-                  ? "text-gray-400 hover:bg-gray-700"
-                  : "text-gray-500 hover:bg-gray-200"
-              }`}
-            >
-              <HiX className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-6">
-          {error && (
-            <div
-              className={`mb-4 p-3 rounded-lg ${
-                isDark ? "bg-red-900/30 text-red-300" : "bg-red-50 text-red-700"
-              }`}
-            >
-              {error}
-            </div>
-          )}
-
-          <div className="mb-4">
-            <label
-              className={`block text-sm font-medium mb-2 ${
-                isDark ? "text-gray-300" : "text-gray-700"
-              }`}
-            >
-              {t("shipments.fromProvince")}
-            </label>
-            <select
-              name="from_province"
-              value={formData.from_province}
-              onChange={handleChange}
-              required
-              className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
-                isDark
-                  ? "bg-gray-700 border-gray-600 text-white"
-                  : "bg-white border-gray-300 text-gray-900"
-              }`}
-            >
-              <option value="">Select Province</option>
-              {PROVINCES.map((province) => (
-                <option key={province} value={province}>
-                  {province}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="mb-4">
-            <label
-              className={`block text-sm font-medium mb-2 ${
-                isDark ? "text-gray-300" : "text-gray-700"
-              }`}
-            >
-              {t("shipments.toProvince")}
-            </label>
-            <select
-              name="to_province"
-              value={formData.to_province}
-              onChange={handleChange}
-              required
-              className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
-                isDark
-                  ? "bg-gray-700 border-gray-600 text-white"
-                  : "bg-white border-gray-300 text-gray-900"
-              }`}
-            >
-              <option value="">Select Province</option>
-              {PROVINCES.map((province) => (
-                <option key={province} value={province}>
-                  {province}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="mb-6">
-            <label
-              className={`block text-sm font-medium mb-2 ${
-                isDark ? "text-gray-300" : "text-gray-700"
-              }`}
-            >
-              {t("shipments.description")}
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Shipment description"
-              rows={3}
-              className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none resize-none ${
-                isDark
-                  ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                  : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
-              }`}
-            />
-          </div>
-
-          <div className="flex justify-end space-x-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className={`px-4 py-2 rounded-lg font-medium ${
-                isDark
-                  ? "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={saving}
-              className={`px-4 py-2 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50`}
-            >
-              {saving ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
-
 const Shipment = () => {
   const { isDark } = useTheme();
   const { t } = useTranslation();
@@ -269,14 +74,8 @@ const Shipment = () => {
   const [shipments, setShipments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [newShipment, setNewShipment] = useState({
-    from_province: "",
-    to_province: "",
-    tracking_number: "",
-    description: "",
-  });
-
-  // State for edit modal
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [editingShipment, setEditingShipment] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentShipment, setCurrentShipment] = useState(null);
 
@@ -292,6 +91,33 @@ const Shipment = () => {
       },
       buttonsStyling: false,
     });
+  };
+
+  // Handle adding a new shipment from the form
+  const handleAddShipmentFromForm = (newShipment) => {
+    setShipments([newShipment, ...shipments]);
+    setShowAddForm(false);
+    showAlert(t("common.success"), t("shipments.success.added"), "success");
+  };
+
+  // Handle updating a shipment
+  const handleUpdateShipment = async (updatedShipment) => {
+    try {
+      setShipments(
+        shipments.map((s) =>
+          s.id === updatedShipment.id ? updatedShipment : s
+        )
+      );
+      setEditingShipment(null);
+      showAlert(t("common.success"), t("shipments.success.updated"), "success");
+    } catch (err) {
+      console.error("Error updating shipment:", err);
+      showAlert(
+        t("common.errors.generic"),
+        err.response?.data?.message || t("shipments.errors.updateFailed"),
+        "error"
+      );
+    }
   };
 
   // Fetch shipments when component mounts
@@ -311,131 +137,6 @@ const Shipment = () => {
       console.error("Error fetching shipments:", err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleChange = (e) => {
-    console.log(
-      "Updating field:",
-      e.target.name,
-      "with value:",
-      e.target.value
-    );
-    setNewShipment((prev) => {
-      const updated = { ...prev, [e.target.name]: e.target.value };
-      console.log("New state:", updated);
-      return updated;
-    });
-  };
-
-  const handleAddShipment = async (e) => {
-    e.preventDefault();
-
-    // Debug log the current form state
-    console.log("Form state before submission:", newShipment);
-
-    // Client-side validation
-    if (
-      !newShipment.from_province ||
-      !newShipment.to_province ||
-      !newShipment.tracking_number
-    ) {
-      const missingFields = [];
-      if (!newShipment.from_province)
-        missingFields.push(t("shipments.fromProvince"));
-      if (!newShipment.to_province)
-        missingFields.push(t("shipments.toProvince"));
-      if (!newShipment.tracking_number)
-        missingFields.push(t("shipments.trackingNumber"));
-
-      showAlert(
-        t("common.errors.generic"),
-        `${t("common.errors.required")}: ${missingFields.join(", ")}`,
-        "error"
-      );
-      return;
-    }
-
-    // Ensure from and to provinces are different
-    if (newShipment.from_province === newShipment.to_province) {
-      showAlert(
-        t("common.errors.generic"),
-        t("shipments.errors.validation.provincesSame"),
-        "error"
-      );
-      return;
-    }
-
-    try {
-      setError(""); // Clear any previous errors
-
-      // Create URLSearchParams to send as form data
-      const formData = new URLSearchParams();
-      formData.append(
-        "from_province",
-        String(newShipment.from_province || "").trim()
-      );
-      formData.append(
-        "to_province",
-        String(newShipment.to_province || "").trim()
-      );
-      formData.append(
-        "tracking_number",
-        String(newShipment.tracking_number || "").trim()
-      );
-      formData.append(
-        "description",
-        String(newShipment.description || "").trim()
-      );
-
-      console.log("Sending form data to server:", formData.toString());
-
-      // Send as form data instead of JSON
-      const config = {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Accept: "application/json",
-        },
-      };
-
-      const response = await axiosInstance.post("/shipments", formData, config);
-
-      if (response.data && response.data.success) {
-        // Reset form
-        setNewShipment({
-          from_province: "",
-          to_province: "",
-          tracking_number: "",
-          description: "",
-        });
-        // Show success message
-        showAlert(t("common.success"), t("shipments.success.added"), "success");
-        // Refresh the shipments list
-        fetchShipments();
-      } else {
-        showAlert(
-          t("common.errors.generic"),
-          response.data?.message || t("shipments.errors.addFailed"),
-          "error"
-        );
-      }
-    } catch (err) {
-      console.error("Error creating shipment:", err);
-      console.error("Error response:", err.response?.data);
-      if (err.response?.data) {
-        // Handle validation errors from the server
-        const errorMessage =
-          typeof err.response.data === "object"
-            ? Object.values(err.response.data).flat().join("\n")
-            : err.response.data.message || t("shipments.errors.addFailed");
-        showAlert(t("common.errors.generic"), errorMessage, "error");
-      } else {
-        showAlert(
-          t("common.errors.generic"),
-          t("shipments.errors.addFailed"),
-          "error"
-        );
-      }
     }
   };
 
@@ -712,135 +413,34 @@ const Shipment = () => {
               </div>
             )}
 
-            {/* Add Shipment Form */}
-            <form
-              onSubmit={handleAddShipment}
-              className={`rounded-xl shadow-lg border p-6 mb-8 transition-all duration-300 ${
-                isDark
-                  ? "bg-gray-800 border-gray-700"
-                  : "bg-white border-gray-200"
-              }`}
-            >
-              <h2
-                className={`text-xl font-semibold mb-4 transition-colors ${
-                  isDark ? "text-white" : "text-gray-700"
-                }`}
-              >
-                {t("shipments.addNewShipment")}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div>
-                  <label
-                    className={`block text-sm font-medium mb-2 ${
-                      isDark ? "text-gray-300" : "text-gray-700"
-                    }`}
-                  >
-                    {t("shipments.fromProvince")}
-                  </label>
-                  <select
-                    name="from_province"
-                    value={newShipment.from_province}
-                    onChange={handleChange}
-                    required
-                    className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
-                      isDark
-                        ? "bg-gray-700 border-gray-600 text-white"
-                        : "bg-white border-gray-300 text-gray-900"
-                    }`}
-                  >
-                    <option value="">
-                      {t("shipments.form.fromProvincePlaceholder")}
-                    </option>
-                    {PROVINCES.map((province) => (
-                      <option key={province} value={province}>
-                        {province}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label
-                    className={`block text-sm font-medium mb-2 ${
-                      isDark ? "text-gray-300" : "text-gray-700"
-                    }`}
-                  >
-                    {t("shipments.toProvince")}
-                  </label>
-                  <select
-                    name="to_province"
-                    value={newShipment.to_province}
-                    onChange={handleChange}
-                    required
-                    className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
-                      isDark
-                        ? "bg-gray-700 border-gray-600 text-white"
-                        : "bg-white border-gray-300 text-gray-900"
-                    }`}
-                  >
-                    <option value="">
-                      {t("shipments.form.toProvincePlaceholder")}
-                    </option>
-                    {PROVINCES.map((province) => (
-                      <option key={province} value={province}>
-                        {province}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="md:col-span-3">
-                  <label
-                    className={`block text-sm font-medium mb-2 ${
-                      isDark ? "text-gray-300" : "text-gray-700"
-                    }`}
-                  >
-                    {t("shipments.trackingNumber")}
-                  </label>
-                  <input
-                    type="text"
-                    name="tracking_number"
-                    value={newShipment.tracking_number || ""}
-                    onChange={(e) => {
-                      console.log("Tracking number changed:", e.target.value);
-                      handleChange(e);
-                    }}
-                    placeholder={t("shipments.form.trackingNumberPlaceholder")}
-                    required
-                    className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
-                      isDark
-                        ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                        : "bg-white border-gray-300 text-gray-900"
-                    }`}
-                  />
-                </div>
-                <div className="md:col-span-3">
-                  <label
-                    className={`block text-sm font-medium mb-2 ${
-                      isDark ? "text-gray-300" : "text-gray-700"
-                    }`}
-                  >
-                    {t("shipments.description")}
-                  </label>
-                  <textarea
-                    name="description"
-                    value={newShipment.description}
-                    onChange={handleChange}
-                    placeholder={t("shipments.form.descriptionPlaceholder")}
-                    rows={3}
-                    className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none resize-none ${
-                      isDark
-                        ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                        : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
-                    }`}
-                  />
-                </div>
+            {/* Add/Edit Shipment Form */}
+            {(showAddForm || editingShipment) && (
+              <div className="mb-6">
+                <ShipmentForm
+                  onSubmit={
+                    editingShipment
+                      ? handleUpdateShipment
+                      : handleAddShipmentFromForm
+                  }
+                  onCancel={() => {
+                    setShowAddForm(false);
+                    setEditingShipment(null);
+                  }}
+                  shipment={editingShipment}
+                />
               </div>
+            )}
+
+            {/* Add Shipment Button */}
+            <div className="mb-6">
               <button
-                type="submit"
-                className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-all"
+                onClick={() => setShowAddForm(!showAddForm)}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                {t("shipments.form.addShipment")}
+                <HiCube className="-ml-1 mr-2 h-4 w-4" />
+                {t("shipments.addNewShipment")}
               </button>
-            </form>
+            </div>
 
             {/* Shipment Table */}
             <div
@@ -907,10 +507,19 @@ const Shipment = () => {
                               {t("shipments.table.to")}
                             </th>
                             <th className="p-3 text-left">
+                              {t("shipments.table.expectedDeparture")}
+                            </th>
+                            <th className="p-3 text-left">
+                              {t("shipments.table.expectedArrival")}
+                            </th>
+                            <th className="p-3 text-left">
                               {t("shipments.table.status")}
                             </th>
                             <th className="p-3 text-left">
                               {t("shipments.table.created")}
+                            </th>
+                            <th className="p-3 text-left">
+                              {t("shipments.table.vehicle")}
                             </th>
                             <th className="p-3 text-left">
                               {t("shipments.table.actions")}
@@ -949,6 +558,28 @@ const Shipment = () => {
                                 {shipment.to_province}
                               </td>
                               <td
+                                className={`p-3 ${
+                                  isDark ? "text-gray-300" : "text-gray-700"
+                                }`}
+                              >
+                                {shipment.expected_departure_date
+                                  ? new Date(
+                                      shipment.expected_departure_date
+                                    ).toLocaleDateString()
+                                  : "-"}
+                              </td>
+                              <td
+                                className={`p-3 ${
+                                  isDark ? "text-gray-300" : "text-gray-700"
+                                }`}
+                              >
+                                {shipment.expected_arrival_date
+                                  ? new Date(
+                                      shipment.expected_arrival_date
+                                    ).toLocaleDateString()
+                                  : "-"}
+                              </td>
+                              <td
                                 className={`p-3 font-semibold ${
                                   shipment.status === "delivered"
                                     ? isDark
@@ -978,6 +609,20 @@ const Shipment = () => {
                                 {new Date(
                                   shipment.created_at
                                 ).toLocaleDateString()}
+                              </td>
+                              <td
+                                className={`p-3 ${
+                                  isDark ? "text-gray-300" : "text-gray-700"
+                                }`}
+                              >
+                                {shipment.vehicle ? (
+                                  <div className="flex items-center gap-1">
+                                    <HiTruck className="w-4 h-4" />
+                                    <span>{shipment.vehicle.vehicle_id}</span>
+                                  </div>
+                                ) : (
+                                  "-"
+                                )}
                               </td>
                               <td className="p-3">
                                 <div className="flex space-x-2">
@@ -1014,17 +659,20 @@ const Shipment = () => {
                                   </select>
 
                                   {/* Edit Button */}
-                                  <button
-                                    onClick={() => openEditModal(shipment)}
-                                    className={`p-1 rounded ${
-                                      isDark
-                                        ? "text-blue-400 hover:bg-gray-600"
-                                        : "text-blue-600 hover:bg-gray-200"
-                                    }`}
-                                    title={t("common.edit")}
-                                  >
-                                    <HiPencil className="w-4 h-4" />
-                                  </button>
+                                  {shipment.status !== "delivered" &&
+                                    shipment.status !== "on_route" && (
+                                      <button
+                                        onClick={() => openEditModal(shipment)}
+                                        className={`p-1 rounded ${
+                                          isDark
+                                            ? "text-blue-400 hover:bg-gray-600"
+                                            : "text-blue-600 hover:bg-gray-200"
+                                        }`}
+                                        title={t("common.edit")}
+                                      >
+                                        <HiPencil className="w-4 h-4" />
+                                      </button>
+                                    )}
 
                                   {/* Delete Button */}
                                   <button
