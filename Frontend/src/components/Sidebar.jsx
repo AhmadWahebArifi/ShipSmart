@@ -67,7 +67,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
   if (user && (user.role === "admin" || user.role === "superadmin")) {
     menuItems.splice(5, 0, {
       id: "users",
-      label: "User Management",
+      label: t("sidebar.users"),
       icon: HiUserGroup,
       path: "/users",
     });
