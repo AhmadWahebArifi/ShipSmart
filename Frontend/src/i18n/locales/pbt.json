@@ -42,6 +42,10 @@
     "selectLanguage": "ژبه وټاکئ",
     "backToDashboard": "بیرته داشبورد ته",
     "managePreferences": "خپل حساب تنظیمات او غوره توبونه اداره کړئ",
+    "appearance": "ظاهري بڼه",
+    "themeDescription": "د رڼا او تیاره حالت ترمنځ واړوئ.",
+    "darkMode": "تیاره حالت فعال کړئ",
+    "lightMode": "روښانه حالت فعال کړئ",
     "moreSettings": "نور تنظیمات",
     "additionalSettingsComingSoon": "اضافي تنظیمات ژر..."
   },
@@ -305,6 +309,7 @@
     "accessDeniedTitle": "لاسرسی بند دی",
     "accessDeniedMessage": "تاسو د کاروونکو د مدیریت اجازه نلرئ.",
     "addUser": "کاروونکی زیات کړئ",
+    "users": "کاروونکي",
     "usersCount": "کاروونکي ({{count}})",
     "form": {
       "createTitle": "نوی کاروونکی جوړ کړئ",
