@@ -237,34 +237,6 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
             isDark ? "border-gray-800" : "border-gray-200"
           }`}
         >
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
-              isCollapsed ? "justify-center" : ""
-            } ${
-              isDark
-                ? "text-gray-400 hover:text-white hover:bg-gray-800/50"
-                : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-            }`}
-            title={isCollapsed ? (isDark ? "Light Mode" : "Dark Mode") : ""}
-          >
-            {isDark ? (
-              <HiSun className="w-5 h-5 flex-shrink-0" />
-            ) : (
-              <HiMoon className="w-5 h-5 flex-shrink-0" />
-            )}
-            {!isCollapsed && (
-              <span
-                className={`font-medium transition-all duration-300 ${
-                  isCollapsed ? "opacity-0 w-0" : "opacity-100"
-                }`}
-              >
-                {t("sidebar.toggleTheme")}
-              </span>
-            )}
-          </button>
-
           {/* Settings */}
           <button
             onClick={(e) => handleNavigation("/settings", e)}
