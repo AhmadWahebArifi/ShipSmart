@@ -236,7 +236,13 @@ const Vehicles = () => {
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                     {t("vehicles.stats.totalVehicles")}
                   </p>
-                  <p className="text-2xl font-semibold">{totalVehicles}</p>
+                  <p
+                    className={`text-2xl font-semibold ${
+                      isDark ? "text-white" : "text-gray-900"
+                    }`}
+                  >
+                    {totalVehicles}
+                  </p>
                 </div>
               </div>
             </div>
@@ -254,7 +260,13 @@ const Vehicles = () => {
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                     {t("vehicles.stats.availableVehicles")}
                   </p>
-                  <p className="text-2xl font-semibold">{availableVehicles}</p>
+                  <p
+                    className={`text-2xl font-semibold ${
+                      isDark ? "text-white" : "text-gray-900"
+                    }`}
+                  >
+                    {availableVehicles}
+                  </p>
                 </div>
               </div>
             </div>
@@ -265,14 +277,18 @@ const Vehicles = () => {
               }`}
             >
               <div className="flex items-center">
-                <div className="p-3 rounded-full bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400">
+                <div className="p-3 rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
                   <FiTruck className="w-5 h-5" />
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    {t("vehicles.stats.totalCapacity")} (kg)
+                    {t("vehicles.stats.totalCapacity")}
                   </p>
-                  <p className="text-2xl font-semibold">
+                  <p
+                    className={`text-2xl font-semibold ${
+                      isDark ? "text-white" : "text-gray-900"
+                    }`}
+                  >
                     {totalCapacity.toFixed(2)}
                   </p>
                 </div>
