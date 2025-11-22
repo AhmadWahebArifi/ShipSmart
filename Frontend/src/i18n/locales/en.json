@@ -74,9 +74,20 @@
     "fromProvince": "From Province",
     "toProvince": "To Province",
     "description": "Description",
-    "status": "Status",
+    "shipmentStatus": "Status",
+    "trackingNumberPlaceholder": "Enter tracking number",
+    "descriptionPlaceholder": "Enter product description (optional)",
+    "vehicle": "Vehicle",
     "created": "Created",
     "actions": "Actions",
+    "optional": "Optional",
+    "routeInfo": "Route Information",
+    "routeNotFound": "Route information not available",
+    "routeHops": "{{count}} stop(s) in route",
+    "selectProvince": "Select a province",
+    "expectedDeparture": "Expected Departure Date",
+    "expectedArrival": "Expected Arrival Date",
+    "selectVehicle": "Select a vehicle",
     "form": {
       "fromProvincePlaceholder": "Select origin province",
       "toProvincePlaceholder": "Select destination province",
@@ -89,13 +100,17 @@
       "expectedArrivalDate": "Expected Arrival Date",
       "vehicle": "Vehicle",
       "selectVehicle": "Select a vehicle",
-      "vehicleHelpText": "Only available vehicles are shown"
+      "vehicleHelpText": "Only available vehicles are shown",
+      "routeInfo": "Route Information",
+      "routeInfoPlaceholder": "Route will be calculated automatically",
+      "routeHops": "Route Hops"
     },
     "table": {
       "trackingNumber": "Tracking #",
       "from": "From",
       "to": "To",
-      "status": "Status",
+      "route": "Route",
+      "tableStatus": "Status",
       "created": "Created",
       "actions": "Actions",
       "expectedDeparture": "Expected Departure",
@@ -215,6 +230,9 @@
     "notConnected": "No Direct Connection",
     "noConnections": "No provincial connections found",
     "getStarted": "Provincial connection data will appear here.",
+    "routeDetails": "Route Details",
+    "routeStops": "Route Stops",
+    "stops": "stops",
     "errors": {
       "fetchFailed": "Failed to load provincial connections. Please try again.",
       "checkFailed": "Failed to check route connection. Please try again.",
@@ -294,7 +312,7 @@
       "type": "Type",
       "driverName": "Driver Name",
       "capacity": "Capacity",
-      "status": "Status",
+      "tableStatus": "Status",
       "actions": "Actions"
     },
     "form": {
@@ -305,7 +323,7 @@
       "driverName": "Driver Name",
       "driverNamePlaceholder": "Enter driver name (optional)",
       "capacity": "Capacity",
-      "status": "Status"
+      "formStatus": "Status"
     },
     "status": {
       "available": "Available",
