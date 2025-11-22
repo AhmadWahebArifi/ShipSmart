@@ -31,7 +31,9 @@
     "updated": "به‌روزرسانی شده",
     "hoursAgo": "{{count}} ساعت پیش",
     "dayAgo": "{{count}} روز پیش",
-    "daysAgo": "{{count}} روز پیش"
+    "daysAgo": "{{count}} روز پیش",
+    "pendingShipments": " محموله‌های انتظار",
+    "inProgress": "در حال پیشرفت"
   },
   "settings": {
     "title": "تنظیمات",
