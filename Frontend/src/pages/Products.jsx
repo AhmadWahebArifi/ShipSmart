@@ -288,7 +288,13 @@ const Products = () => {
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                     {t("products.stats.totalItems")}
                   </p>
-                  <p className="text-2xl font-semibold">{totalItems}</p>
+                  <p
+                    className={`text-2xl font-semibold ${
+                      isDark ? "text-white" : "text-gray-900"
+                    }`}
+                  >
+                    {totalItems}
+                  </p>
                 </div>
               </div>
             </div>
@@ -306,7 +312,13 @@ const Products = () => {
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                     {t("products.stats.totalQuantity")}
                   </p>
-                  <p className="text-2xl font-semibold">{totalQuantity}</p>
+                  <p
+                    className={`text-2xl font-semibold ${
+                      isDark ? "text-white" : "text-gray-900"
+                    }`}
+                  >
+                    {totalQuantity}
+                  </p>
                 </div>
               </div>
             </div>
@@ -324,7 +336,11 @@ const Products = () => {
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                     {t("products.stats.totalWeight")} (kg)
                   </p>
-                  <p className="text-2xl font-semibold">
+                  <p
+                    className={`text-2xl font-semibold ${
+                      isDark ? "text-white" : "text-gray-900"
+                    }`}
+                  >
                     {totalWeight.toFixed(2)}
                   </p>
                 </div>
@@ -344,7 +360,11 @@ const Products = () => {
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                     {t("products.stats.totalValue")}
                   </p>
-                  <p className="text-2xl font-semibold">
+                  <p
+                    className={`text-2xl font-semibold ${
+                      isDark ? "text-white" : "text-gray-900"
+                    }`}
+                  >
                     {totalValue.toFixed(2)} AFN
                   </p>
                 </div>
