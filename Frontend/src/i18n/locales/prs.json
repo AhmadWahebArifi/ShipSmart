@@ -77,6 +77,18 @@
     "status": "وضعیت",
     "created": "ایجاد شده",
     "actions": "عملیات",
+
+    "trackingNumberPlaceholder": "شماره رهگیری",
+    "descriptionPlaceholder": "توضیحات",
+    "vehicle": "وسیله نقلیه",
+    "optional": "اختیاری",
+    "routeInfo": "اطلاعات مسیر",
+    "routeNotFound": "اطلاعات مسیر در دسترس نیست",
+    "routeHops": "{{count}} توقف در مسیر",
+    "selectProvince": "یک ولایت انتخاب کنید",
+    "expectedDeparture": "تاریخ مورد انتظار حرکت",
+    "expectedArrival": "تاریخ مورد انتظار رسیدن",
+    "selectVehicle": "یک وسیله نقلیه انتخاب کنید",
     "form": {
       "fromProvincePlaceholder": "ولایت مبدأ را انتخاب کنید",
       "toProvincePlaceholder": "ولایت مقصد را انتخاب کنید",
@@ -89,12 +101,16 @@
       "expectedArrivalDate": "تاریخ مورد انتظار رسیدن",
       "vehicle": "وسیله نقلیه",
       "selectVehicle": "یک وسیله نقلیه انتخاب کنید",
-      "vehicleHelpText": "فقط وسایل نقلیه موجود نشان داده می شوند"
+      "vehicleHelpText": "فقط وسایل نقلیه موجود نشان داده می شوند",
+      "routeInfo": "اطلاعات مسیر",
+      "routeInfoPlaceholder": "مسیر به طور خودکار محاسبه خواهد شد",
+      "routeHops": "تعداد توقف‌های مسیر"
     },
     "table": {
       "trackingNumber": "شماره رهگیری",
       "from": "از",
       "to": "به",
+      "route": "مسیر",
       "status": "وضعیت",
       "created": "ایجاد شده",
       "actions": "عملیات",
@@ -102,7 +118,7 @@
       "expectedArrival": "تاریخ مورد انتظار رسیدن",
       "vehicle": "وسیله نقلیه"
     },
-    "status": {
+    "shipmentStatus": {
       "pending": "در انتظار",
       "in_progress": "در حال پیشرفت",
       "on_route": "در مسیر",
