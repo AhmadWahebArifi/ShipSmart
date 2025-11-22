@@ -25,14 +25,14 @@ testConnection();
 // Routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/shipments", require("./routes/shipments"));
-app.use("/api/routes", require("./routes/routes"));
+
 app.use("/api/vehicles", require("./routes/vehicles"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/notifications", require("./routes/notifications"));
 app.use("/api/products", require("./routes/products")); // Products management
 app.use(
   "/api/provincial-connections",
-  require("./routes/provincialConnections")
+  require("./routes/provincialConnections").router
 );
 
 // Test route
@@ -104,6 +104,12 @@ app.listen(PORT, () => {
   );
   console.log(
     "   GET  /api/provincial-connections/check-route/:from/:to - Check route between provinces"
+  );
+  console.log(
+    "   GET  /api/provincial-connections/find-routes/:from/:to - Find all routes between provinces"
+  );
+  console.log(
+    "   GET  /api/provincial-connections/shortest-route/:from/:to - Find shortest route between provinces"
   );
 });
 
