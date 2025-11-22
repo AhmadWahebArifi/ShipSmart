@@ -80,7 +80,15 @@ const User = sequelize.define(
     updatedAt: "updated_at",
     // Disable automatic index creation to avoid key limit
     indexes: [
-      // We'll manage indexes manually to stay within MySQL's 64-key limit
+      // Explicitly define unique indexes for username and email
+      {
+        unique: true,
+        fields: ["username"],
+      },
+      {
+        unique: true,
+        fields: ["email"],
+      },
     ],
     hooks: {
       beforeCreate: async (user) => {
