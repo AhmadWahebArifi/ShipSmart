@@ -31,6 +31,8 @@
     "updated": "Updated",
     "hoursAgo": "{{count}} hours ago",
     "dayAgo": "{{count}} day ago",
+    "pendingShipments": "Pending Shipments",
+    "inProgress": "In Progress",
     "daysAgo": "{{count}} days ago"
   },
   "settings": {
