@@ -10,6 +10,15 @@ import {
   HiArrowsRightLeft,
   HiMagnifyingGlass,
   HiChevronDown,
+  HiChartBar,
+  HiMapPin,
+  HiGlobeAlt,
+  HiClock,
+  HiArrowDownTray,
+  HiShare,
+  HiStar,
+  HiArrowTrendingUp,
+  HiUsers,
 } from "react-icons/hi2";
 import Swal from "sweetalert2";
 
@@ -39,6 +48,7 @@ const PROVINCE_MAPPING = {
     Kunduz: "کندز",
     Laghman: "لغمان",
     Logar: "لوگر",
+    "Maidan Wardak": "میدان وردک",
     Nimruz: "نیمروز",
     Nuristan: "نورستان",
     Paktia: "پکتیا",
@@ -76,6 +86,8 @@ const PROVINCE_MAPPING = {
     کندز: "Kunduz",
     لغمان: "Laghman",
     لوگر: "Logar",
+    "میدان وردک": "Maidan Wardak",
+    وردک: "Wardak",
     نیمروز: "Nimruz",
     نورستان: "Nuristan",
     پکتیا: "Paktia",
@@ -86,7 +98,6 @@ const PROVINCE_MAPPING = {
     سرپل: "Sar-e Pol",
     تخار: "Takhar",
     ارزگان: "Uruzgan",
-    وردک: "Wardak",
     زابل: "Zabul",
   },
   // English to Pashto mapping
@@ -113,6 +124,7 @@ const PROVINCE_MAPPING = {
     Kunduz: "کندز",
     Laghman: "لغمان",
     Logar: "لوگر",
+    "Maidan Wardak": "میدان وردګ",
     Nimruz: "نیمروز",
     Nuristan: "نورستان",
     Paktia: "پکتیا",
@@ -139,9 +151,9 @@ const PROVINCE_MAPPING = {
     بامیان: "Bamyan",
     دایکندی: "Daykundi",
     فراه: "Farah",
-    فاریاب: "فاریاب",
+    فاریاب: "Faryab",
     غزني: "Ghazni",
-    غور: "غور",
+    غور: "Ghor",
     هلمند: "Helmand",
     جوزجان: "Jowzjan",
     کاپیسا: "Kapisa",
@@ -150,6 +162,8 @@ const PROVINCE_MAPPING = {
     کندز: "Kunduz",
     لغمان: "Laghman",
     لوگر: "Logar",
+    "میدان وردګ": "Maidan Wardak",
+    وردګ: "Wardak",
     نیمروز: "Nimruz",
     نورستان: "Nuristan",
     پکتیا: "Paktia",
@@ -157,10 +171,9 @@ const PROVINCE_MAPPING = {
     پنجشیر: "Panjshir",
     پروان: "Parwan",
     سمنګان: "Samangan",
-    سرپل: "سرپل",
-    تخار: "تخار",
+    سرپل: "Sar-e Pol",
+    تخار: "Takhar",
     ارزګان: "Uruzgan",
-    وردګ: "Wardak",
     زابل: "Zabul",
   },
 };
@@ -184,11 +197,97 @@ const Routes = () => {
   const [toProvince, setToProvince] = useState("");
   const [searchResult, setSearchResult] = useState(null);
   const [expandedProvince, setExpandedProvince] = useState(null);
+  const [searchHistory, setSearchHistory] = useState([]);
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  const [routeStats, setRouteStats] = useState({});
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   // Fetch provincial connections
   useEffect(() => {
     fetchProvincialConnections();
+    loadSearchHistory();
   }, []);
+
+  // Calculate route statistics
+  const calculateRouteStats = () => {
+    const stats = {
+      totalProvinces: provinces.length,
+      provincesWithRoutes: Object.keys(connections).filter(
+        (p) => connections[p].length > 0
+      ).length,
+      totalConnections: Object.values(connections).reduce(
+        (sum, neighbors) => sum + neighbors.length,
+        0
+      ),
+      averageConnections: 0,
+      mostConnected: "",
+      leastConnected: "",
+      longestRoute: 0,
+      shortestRoute: 0,
+    };
+
+    if (stats.provincesWithRoutes > 0) {
+      stats.averageConnections = (
+        stats.totalConnections / stats.provincesWithRoutes
+      ).toFixed(1);
+
+      const connectionCounts = Object.entries(connections).map(
+        ([province, neighbors]) => ({
+          province,
+          count: neighbors.length,
+        })
+      );
+
+      connectionCounts.sort((a, b) => b.count - a.count);
+      stats.mostConnected = connectionCounts[0]?.province || "";
+      stats.leastConnected =
+        connectionCounts[connectionCounts.length - 1]?.province || "";
+    }
+
+    setRouteStats(stats);
+  };
+
+  // Load search history from localStorage
+  const loadSearchHistory = () => {
+    const history = localStorage.getItem("routeSearchHistory");
+    if (history) {
+      setSearchHistory(JSON.parse(history));
+    }
+  };
+
+  // Save search to history
+  const saveToSearchHistory = (from, to, route) => {
+    const newSearch = {
+      from,
+      to,
+      route: route?.route?.en || "No route found",
+      timestamp: new Date().toISOString(),
+      hops: route?.hops || 0,
+    };
+
+    const updatedHistory = [newSearch, ...searchHistory.slice(0, 9)]; // Keep last 10 searches
+    setSearchHistory(updatedHistory);
+    localStorage.setItem("routeSearchHistory", JSON.stringify(updatedHistory));
+  };
+
+  // Generate suggestions based on input
+  const generateSuggestions = (input, type) => {
+    if (!input) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    const filtered = provinces
+      .filter((province) =>
+        province.toLowerCase().includes(input.toLowerCase())
+      )
+      .slice(0, 5);
+
+    setSuggestions(filtered);
+    setShowSuggestions(true);
+  };
 
   const fetchProvincialConnections = async () => {
     try {
@@ -201,6 +300,7 @@ const Routes = () => {
           ? t("provinces", { returnObjects: true })
           : [];
         setProvinces(provinceKeys);
+        calculateRouteStats();
       }
     } catch (err) {
       console.error("Error fetching provincial connections:", err);
@@ -216,6 +316,62 @@ const Routes = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Export route data to CSV
+  const exportToCSV = () => {
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      "Province,Neighbors,Connection Count\n" +
+      Object.entries(connections)
+        .map(
+          ([province, neighbors]) =>
+            `"${province}","${neighbors.join("; ")}",${neighbors.length}`
+        )
+        .join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "afghanistan_provincial_routes.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    Swal.fire({
+      icon: "success",
+      title: "Export Successful",
+      text: "Route data has been exported to CSV",
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 2000,
+    });
+  };
+
+  // Share route
+  const shareRoute = (from, to, route) => {
+    const routeText = `Route from ${from} to ${to}: ${
+      route?.route?.en || "No route found"
+    }`;
+
+    if (navigator.share) {
+      navigator.share({
+        title: "Afghanistan Provincial Route",
+        text: routeText,
+      });
+    } else {
+      navigator.clipboard.writeText(routeText);
+      Swal.fire({
+        icon: "success",
+        title: "Copied to Clipboard",
+        text: "Route information has been copied",
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 2000,
+      });
     }
   };
 
@@ -258,6 +414,8 @@ const Routes = () => {
 
       if (response.data && response.data.success) {
         setSearchResult(response.data);
+        saveToSearchHistory(fromProvince, toProvince, response.data);
+        setShowSuggestions(false);
         Swal.fire({
           icon: response.data.connected ? "success" : "info",
           title: response.data.connected
@@ -369,6 +527,225 @@ const Routes = () => {
               </p>
             </div>
 
+            {/* Analytics Dashboard */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                <h2
+                  className={`text-xl font-semibold ${
+                    isDark ? "text-white" : "text-gray-800"
+                  }`}
+                >
+                  📊 Route Analytics
+                </h2>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setShowAnalytics(!showAnalytics)}
+                    className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                      isDark
+                        ? "bg-blue-600 hover:bg-blue-700 text-white"
+                        : "bg-blue-600 hover:bg-blue-700 text-white"
+                    }`}
+                  >
+                    <HiChartBar className="w-4 h-4" />
+                    {showAnalytics ? "Hide Analytics" : "Show Analytics"}
+                  </button>
+                  <button
+                    onClick={exportToCSV}
+                    className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                      isDark
+                        ? "bg-green-600 hover:bg-green-700 text-white"
+                        : "bg-green-600 hover:bg-green-700 text-white"
+                    }`}
+                  >
+                    <HiArrowDownTray className="w-4 h-4" />
+                    Export CSV
+                  </button>
+                </div>
+              </div>
+
+              {showAnalytics && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div
+                    className={`p-4 rounded-lg border ${
+                      isDark
+                        ? "bg-gray-800 border-gray-700"
+                        : "bg-white border-gray-200"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p
+                          className={`text-sm ${
+                            isDark ? "text-gray-400" : "text-gray-600"
+                          }`}
+                        >
+                          Total Provinces
+                        </p>
+                        <p
+                          className={`text-2xl font-bold ${
+                            isDark ? "text-white" : "text-gray-800"
+                          }`}
+                        >
+                          {routeStats.totalProvinces || 0}
+                        </p>
+                      </div>
+                      <HiGlobeAlt
+                        className={`w-8 h-8 ${
+                          isDark ? "text-blue-400" : "text-blue-600"
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    className={`p-4 rounded-lg border ${
+                      isDark
+                        ? "bg-gray-800 border-gray-700"
+                        : "bg-white border-gray-200"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p
+                          className={`text-sm ${
+                            isDark ? "text-gray-400" : "text-gray-600"
+                          }`}
+                        >
+                          Provinces with Routes
+                        </p>
+                        <p
+                          className={`text-2xl font-bold ${
+                            isDark ? "text-white" : "text-gray-800"
+                          }`}
+                        >
+                          {routeStats.provincesWithRoutes || 0}
+                        </p>
+                      </div>
+                      <HiMapPin
+                        className={`w-8 h-8 ${
+                          isDark ? "text-green-400" : "text-green-600"
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    className={`p-4 rounded-lg border ${
+                      isDark
+                        ? "bg-gray-800 border-gray-700"
+                        : "bg-white border-gray-200"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p
+                          className={`text-sm ${
+                            isDark ? "text-gray-400" : "text-gray-600"
+                          }`}
+                        >
+                          Total Connections
+                        </p>
+                        <p
+                          className={`text-2xl font-bold ${
+                            isDark ? "text-white" : "text-gray-800"
+                          }`}
+                        >
+                          {routeStats.totalConnections || 0}
+                        </p>
+                      </div>
+                      <HiArrowsRightLeft
+                        className={`w-8 h-8 ${
+                          isDark ? "text-purple-400" : "text-purple-600"
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    className={`p-4 rounded-lg border ${
+                      isDark
+                        ? "bg-gray-800 border-gray-700"
+                        : "bg-white border-gray-200"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p
+                          className={`text-sm ${
+                            isDark ? "text-gray-400" : "text-gray-600"
+                          }`}
+                        >
+                          Avg Connections
+                        </p>
+                        <p
+                          className={`text-2xl font-bold ${
+                            isDark ? "text-white" : "text-gray-800"
+                          }`}
+                        >
+                          {routeStats.averageConnections || 0}
+                        </p>
+                      </div>
+                      <HiArrowTrendingUp
+                        className={`w-8 h-8 ${
+                          isDark ? "text-orange-400" : "text-orange-600"
+                        }`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {showAnalytics && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div
+                    className={`p-4 rounded-lg border ${
+                      isDark
+                        ? "bg-gray-800 border-gray-700"
+                        : "bg-white border-gray-200"
+                    }`}
+                  >
+                    <h3
+                      className={`font-medium mb-2 ${
+                        isDark ? "text-white" : "text-gray-800"
+                      }`}
+                    >
+                      🏆 Most Connected
+                    </h3>
+                    <p
+                      className={`text-lg ${
+                        isDark ? "text-blue-400" : "text-blue-600"
+                      }`}
+                    >
+                      {routeStats.mostConnected || "N/A"}
+                    </p>
+                  </div>
+
+                  <div
+                    className={`p-4 rounded-lg border ${
+                      isDark
+                        ? "bg-gray-800 border-gray-700"
+                        : "bg-white border-gray-200"
+                    }`}
+                  >
+                    <h3
+                      className={`font-medium mb-2 ${
+                        isDark ? "text-white" : "text-gray-800"
+                      }`}
+                    >
+                      📍 Least Connected
+                    </h3>
+                    <p
+                      className={`text-lg ${
+                        isDark ? "text-orange-400" : "text-orange-600"
+                      }`}
+                    >
+                      {routeStats.leastConnected || "N/A"}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Error Message */}
             {error && (
               <div
@@ -384,121 +761,369 @@ const Routes = () => {
 
             {/* Search Form */}
             <div
-              className={`mb-8 p-6 rounded-xl shadow-lg border transition-all duration-300 ${
+              className={`rounded-xl shadow-lg border p-6 mb-8 transition-all duration-300 ${
                 isDark
                   ? "bg-gray-800 border-gray-700"
                   : "bg-white border-gray-200"
               }`}
             >
-              <h2
-                className={`text-xl font-semibold mb-4 ${
-                  isDark ? "text-white" : "text-gray-800"
-                }`}
-              >
-                {t("routes.checkRoute")}
-              </h2>
+              <div className="flex items-center gap-3 mb-6">
+                <HiMagnifyingGlass
+                  className={`w-6 h-6 ${
+                    isDark ? "text-blue-400" : "text-blue-600"
+                  }`}
+                />
+                <h2
+                  className={`text-xl font-semibold ${
+                    isDark ? "text-white" : "text-gray-800"
+                  }`}
+                >
+                  {t("routes.checkRoute")}
+                </h2>
+              </div>
 
-              <form
-                onSubmit={checkRoute}
-                className="grid grid-cols-1 md:grid-cols-3 gap-4"
-              >
-                <div>
-                  <label
-                    htmlFor="fromProvince"
-                    className={`block text-sm font-medium mb-1 ${
-                      isDark ? "text-gray-300" : "text-gray-700"
-                    }`}
-                  >
-                    {t("routes.fromProvince")}
-                  </label>
-                  <select
-                    id="fromProvince"
-                    value={fromProvince}
-                    onChange={(e) => setFromProvince(e.target.value)}
-                    className={`w-full px-3 py-2 rounded-md border ${
-                      isDark
-                        ? "border-gray-600 bg-gray-700 text-white focus:ring-blue-500 focus:border-blue-500"
-                        : "border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
-                    }`}
-                  >
-                    <option value="">{t("routes.selectProvince")}</option>
-                    {provinces.map((province, index) => (
-                      <option key={index} value={province}>
-                        {province}
-                      </option>
-                    ))}
-                  </select>
+              <form onSubmit={checkRoute} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* From Province */}
+                  <div className="relative">
+                    <label
+                      className={`block text-sm font-medium mb-2 ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}
+                    >
+                      {t("routes.fromProvince")}
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={fromProvince}
+                        onChange={(e) => {
+                          setFromProvince(e.target.value);
+                          generateSuggestions(e.target.value, "from");
+                        }}
+                        onFocus={() =>
+                          generateSuggestions(fromProvince, "from")
+                        }
+                        onBlur={() =>
+                          setTimeout(() => setShowSuggestions(false), 200)
+                        }
+                        placeholder={t("routes.selectProvince")}
+                        className={`w-full px-4 py-2 rounded-lg border transition-colors ${
+                          isDark
+                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
+                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500"
+                        } focus:outline-none focus:ring-2 focus:ring-blue-500/20`}
+                        list="from-suggestions"
+                      />
+                      {showSuggestions && suggestions.length > 0 && (
+                        <div
+                          className={`absolute z-10 w-full mt-1 rounded-lg border shadow-lg ${
+                            isDark
+                              ? "bg-gray-700 border-gray-600"
+                              : "bg-white border-gray-200"
+                          }`}
+                        >
+                          {suggestions.map((suggestion, index) => (
+                            <div
+                              key={index}
+                              onClick={() => {
+                                setFromProvince(suggestion);
+                                setShowSuggestions(false);
+                              }}
+                              className={`px-4 py-2 cursor-pointer transition-colors ${
+                                isDark
+                                  ? "hover:bg-gray-600"
+                                  : "hover:bg-gray-100"
+                              }`}
+                            >
+                              {suggestion}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* To Province */}
+                  <div className="relative">
+                    <label
+                      className={`block text-sm font-medium mb-2 ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}
+                    >
+                      {t("routes.toProvince")}
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={toProvince}
+                        onChange={(e) => {
+                          setToProvince(e.target.value);
+                          generateSuggestions(e.target.value, "to");
+                        }}
+                        onFocus={() => generateSuggestions(toProvince, "to")}
+                        onBlur={() =>
+                          setTimeout(() => setShowSuggestions(false), 200)
+                        }
+                        placeholder={t("routes.selectProvince")}
+                        className={`w-full px-4 py-2 rounded-lg border transition-colors ${
+                          isDark
+                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
+                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500"
+                        } focus:outline-none focus:ring-2 focus:ring-blue-500/20`}
+                        list="to-suggestions"
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="toProvince"
-                    className={`block text-sm font-medium mb-1 ${
-                      isDark ? "text-gray-300" : "text-gray-700"
-                    }`}
-                  >
-                    {t("routes.toProvince")}
-                  </label>
-                  <select
-                    id="toProvince"
-                    value={toProvince}
-                    onChange={(e) => setToProvince(e.target.value)}
-                    className={`w-full px-3 py-2 rounded-md border ${
-                      isDark
-                        ? "border-gray-600 bg-gray-700 text-white focus:ring-blue-500 focus:border-blue-500"
-                        : "border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
-                    }`}
-                  >
-                    <option value="">{t("routes.selectProvince")}</option>
-                    {provinces.map((province, index) => (
-                      <option key={index} value={province}>
-                        {province}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex items-end gap-2">
+                <div className="flex gap-3">
                   <button
                     type="submit"
-                    className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className={`px-6 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
+                      isDark
+                        ? "bg-blue-600 hover:bg-blue-700 text-white"
+                        : "bg-blue-600 hover:bg-blue-700 text-white"
+                    }`}
                   >
-                    <HiMagnifyingGlass className="-ml-1 mr-2 h-4 w-4" />
+                    <HiArrowsRightLeft className="w-4 h-4" />
                     {t("routes.check")}
                   </button>
                   <button
                     type="button"
                     onClick={resetSearch}
-                    className={`inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 ${
+                    className={`px-6 py-2 rounded-lg font-medium transition-colors ${
                       isDark
-                        ? "border-gray-600 text-gray-300 bg-gray-700 hover:bg-gray-600"
-                        : "border-gray-300 text-gray-700 bg-white hover:bg-gray-50"
+                        ? "bg-gray-700 hover:bg-gray-600 text-gray-300"
+                        : "bg-gray-200 hover:bg-gray-300 text-gray-700"
                     }`}
                   >
                     {t("common.reset")}
                   </button>
                 </div>
               </form>
-
-              {searchResult && (
-                <div
-                  className={`mt-4 p-4 rounded-lg border ${
-                    searchResult.connected
-                      ? isDark
-                        ? "bg-green-900/30 border-green-700 text-green-300"
-                        : "bg-green-50 border-green-200 text-green-700"
-                      : isDark
-                      ? "bg-yellow-900/30 border-yellow-700 text-yellow-300"
-                      : "bg-yellow-50 border-yellow-200 text-yellow-700"
-                  }`}
-                >
-                  <div className="flex items-center">
-                    <HiArrowsRightLeft className="w-5 h-5 mr-2" />
-                    <span className="font-medium">{searchResult.message}</span>
-                  </div>
-                </div>
-              )}
             </div>
+
+            {/* Search History */}
+            {searchHistory.length > 0 && (
+              <div
+                className={`rounded-xl shadow-lg border p-6 mb-8 transition-all duration-300 ${
+                  isDark
+                    ? "bg-gray-800 border-gray-700"
+                    : "bg-white border-gray-200"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3
+                    className={`text-lg font-semibold ${
+                      isDark ? "text-white" : "text-gray-800"
+                    }`}
+                  >
+                    <HiClock className="inline w-5 h-5 mr-2" />
+                    Recent Searches
+                  </h3>
+                  <button
+                    onClick={() => {
+                      setSearchHistory([]);
+                      localStorage.removeItem("routeSearchHistory");
+                    }}
+                    className={`text-sm px-3 py-1 rounded ${
+                      isDark
+                        ? "bg-red-900/30 text-red-400 hover:bg-red-900/50"
+                        : "bg-red-100 text-red-600 hover:bg-red-200"
+                    }`}
+                  >
+                    Clear History
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  {searchHistory.map((search, index) => (
+                    <div
+                      key={index}
+                      className={`flex items-center justify-between p-3 rounded-lg ${
+                        isDark ? "bg-gray-700/50" : "bg-gray-50"
+                      }`}
+                    >
+                      <div className="flex-1">
+                        <div
+                          className={`font-medium ${
+                            isDark ? "text-white" : "text-gray-800"
+                          }`}
+                        >
+                          {search.from} → {search.to}
+                        </div>
+                        <div
+                          className={`text-sm ${
+                            isDark ? "text-gray-400" : "text-gray-600"
+                          }`}
+                        >
+                          {search.route} ({search.hops} stops)
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            setFromProvince(search.from);
+                            setToProvince(search.to);
+                          }}
+                          className={`p-2 rounded ${
+                            isDark
+                              ? "bg-blue-900/30 text-blue-400 hover:bg-blue-900/50"
+                              : "bg-blue-100 text-blue-600 hover:bg-blue-200"
+                          }`}
+                        >
+                          <HiMagnifyingGlass className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() =>
+                            shareRoute(search.from, search.to, {
+                              route: { en: search.route },
+                              hops: search.hops,
+                            })
+                          }
+                          className={`p-2 rounded ${
+                            isDark
+                              ? "bg-green-900/30 text-green-400 hover:bg-green-900/50"
+                              : "bg-green-100 text-green-600 hover:bg-green-200"
+                          }`}
+                        >
+                          <HiShare className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Search Results */}
+            {searchResult && (
+              <div
+                className={`rounded-xl shadow-lg border p-6 mb-8 transition-all duration-300 ${
+                  searchResult.connected
+                    ? isDark
+                      ? "bg-green-900/30 border-green-700 text-green-300"
+                      : "bg-green-50 border-green-200 text-green-700"
+                    : isDark
+                    ? "bg-yellow-900/30 border-yellow-700 text-yellow-300"
+                    : "bg-yellow-50 border-yellow-200 text-yellow-700"
+                }`}
+              >
+                <div className="flex items-center mb-3">
+                  <HiArrowsRightLeft className="w-5 h-5 mr-2" />
+                  <span className="font-medium">{searchResult.message}</span>
+                </div>
+
+                {searchResult.route && (
+                  <div className="mt-3">
+                    <div
+                      className={`text-sm font-medium mb-2 ${
+                        isDark ? "text-green-300" : "text-green-700"
+                      }`}
+                    >
+                      {t("routes.routeDetails")} ({searchResult.hops}{" "}
+                      {t("routes.stops")}):
+                    </div>
+                    <div
+                      className={`p-3 rounded-lg ${
+                        isDark ? "bg-green-900/20" : "bg-green-100/50"
+                      }`}
+                    >
+                      <div
+                        className={`text-sm font-mono ${
+                          isDark ? "text-green-200" : "text-green-800"
+                        }`}
+                      >
+                        {searchResult.route[i18n.language] ||
+                          searchResult.route.en}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {searchResult.routeDetails &&
+                  searchResult.routeDetails.length > 0 && (
+                    <div className="mt-3">
+                      <div
+                        className={`text-sm font-medium mb-2 ${
+                          isDark ? "text-green-300" : "text-green-700"
+                        }`}
+                      >
+                        {t("routes.routeStops")}:
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {searchResult.routeDetails.map((stop, index) => (
+                          <div key={index} className="flex items-center">
+                            <span
+                              className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                                isDark
+                                  ? "bg-green-900/30 text-green-300"
+                                  : "bg-green-100 text-green-800"
+                              }`}
+                            >
+                              {index === 0 && "📍 "}
+                              {index === searchResult.routeDetails.length - 1 &&
+                                "🎯 "}
+                              {stop}
+                            </span>
+                            {index < searchResult.routeDetails.length - 1 && (
+                              <span
+                                className={`mx-1 ${
+                                  isDark ? "text-green-400" : "text-green-600"
+                                }`}
+                              >
+                                →
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                {/* Share buttons */}
+                <div className="mt-4 flex gap-2">
+                  <button
+                    onClick={() =>
+                      shareRoute(fromProvince, toProvince, searchResult)
+                    }
+                    className={`px-3 py-1 rounded-lg text-sm flex items-center gap-1 ${
+                      isDark
+                        ? "bg-green-900/30 text-green-400 hover:bg-green-900/50"
+                        : "bg-green-100 text-green-600 hover:bg-green-200"
+                    }`}
+                  >
+                    <HiShare className="w-3 h-3" />
+                    Share Route
+                  </button>
+                  <button
+                    onClick={() => {
+                      const routeText = `${fromProvince} → ${toProvince}: ${
+                        searchResult.route[i18n.language] ||
+                        searchResult.route.en
+                      }`;
+                      navigator.clipboard.writeText(routeText);
+                      Swal.fire({
+                        icon: "success",
+                        title: "Copied!",
+                        text: "Route copied to clipboard",
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 2000,
+                      });
+                    }}
+                    className={`px-3 py-1 rounded-lg text-sm flex items-center gap-1 ${
+                      isDark
+                        ? "bg-blue-900/30 text-blue-400 hover:bg-blue-900/50"
+                        : "bg-blue-100 text-blue-600 hover:bg-blue-200"
+                    }`}
+                  >
+                    📋 Copy
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Loading State */}
             {loading && (
