@@ -52,6 +52,7 @@
     "vehicles": "وسایل نقلیه",
     "analytics": "تحلیل‌ها",
     "settings": "تنظیمات",
+    "users": "مدیریت کاربران",
     "toggleTheme": "تغییر تم",
     "logout": "خروج",
     "products": "محصولات"
@@ -295,6 +296,51 @@
     "وردک",
     "زابل"
   ],
+  "users": {
+    "title": "مدیریت کاربران",
+    "subtitle": "مدیریت کاربران سیستم و سطح دسترسی آن‌ها",
+    "accessDeniedTitle": "عدم دسترسی",
+    "accessDeniedMessage": "شما اجازه دسترسی به مدیریت کاربران را ندارید.",
+    "addUser": "افزودن کاربر",
+    "usersCount": "کاربران ({{count}})",
+    "form": {
+      "createTitle": "ایجاد کاربر جدید",
+      "username": "نام کاربری",
+      "email": "ایمیل",
+      "password": "رمز عبور",
+      "fullName": "نام کامل",
+      "role": "نقش",
+      "branch": "شعبه",
+      "cancel": "انصراف",
+      "create": "ایجاد کاربر"
+    },
+    "roles": {
+      "user": "کاربر (شعبه)",
+      "admin": "مدیر",
+      "superadmin": "مدیر ارشد"
+    },
+    "table": {
+      "user": "کاربر",
+      "role": "نقش",
+      "branch": "شعبه",
+      "status": "وضعیت",
+      "actions": "عملیات",
+      "active": "فعال"
+    },
+    "confirmDeleteTitle": "حذف کاربر",
+    "confirmDeleteMessage": "آیا از حذف این کاربر اطمینان دارید؟ این عمل قابل بازگشت نیست.",
+    "confirmDeleteConfirm": "بله، حذف شود",
+    "confirmDeleteCancel": "انصراف",
+    "success": {
+      "created": "کاربر با موفقیت ایجاد شد",
+      "deleted": "کاربر با موفقیت حذف شد"
+    },
+    "errors": {
+      "fetchFailed": "خطا در دریافت کاربران.",
+      "createFailed": "خطا در ایجاد کاربر.",
+      "deleteFailed": "خطا در حذف کاربر."
+    }
+  },
   "vehicles": {
     "title": "وسایل نقلیه",
     "items": "مورد",
