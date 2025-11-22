@@ -33,7 +33,6 @@
     "dayAgo": "{{count}} ورځ دمخه",
     "daysAgo": "{{count}} ورځې دمخه",
     "pendingShipments": "منتظر بریښناک",
-
     "inProgress": "پرمختګ کې بریښناک"
   },
   "settings": {
@@ -78,6 +77,17 @@
     "status": "حالت",
     "created": "جوړ شوی",
     "actions": "کړنې",
+    "trackingNumberPlaceholder": "د تعقیب شمیره ولیکئ",
+    "descriptionPlaceholder": "تفصیل",
+    "vehicle": "موټر",
+    "optional": "اختیاري",
+    "routeInfo": "د لارې معلومات",
+    "routeNotFound": "د لارې معلومات شتون نلري",
+    "routeHops": "{{count}} توقف په لاره کې",
+    "selectProvince": "یو ولایت وټاکئ",
+    "expectedDeparture": "د لیږد مورد انتظار نیټه",
+    "expectedArrival": "د رسید مورد انتظار نیټه",
+    "selectVehicle": "یو موټر وټاکئ",
     "form": {
       "fromProvincePlaceholder": "د سرچینې ولایت وټاکئ",
       "toProvincePlaceholder": "د موخې ولایت وټاکئ",
@@ -90,12 +100,16 @@
       "expectedArrivalDate": "د رسید مورد انتظار نیټه",
       "vehicle": "موټر",
       "selectVehicle": "یو موټر وټاکئ",
-      "vehicleHelpText": "یوازې شته موټرونه ښودل کیږي"
+      "vehicleHelpText": "یوازې شته موټرونه ښودل کیږي",
+      "routeInfo": "د لارې معلومات",
+      "routeInfoPlaceholder": "لاره به پخپله محاسبه کړل کیږي",
+      "routeHops": "د لارې توقفونه"
     },
     "table": {
       "trackingNumber": "د تعقیب شمیره",
       "from": "له",
       "to": "ته",
+      "route": "لاره",
       "status": "حالت",
       "created": "جوړ شوی",
       "actions": "کړنې",
@@ -103,7 +117,7 @@
       "expectedArrival": "د رسید مورد انتظار نیټه",
       "vehicle": "موټر"
     },
-    "status": {
+    "shipmentStatus": {
       "pending": "منتظر",
       "in_progress": "پرمختګ کې",
       "on_route": "په لاره کې",
