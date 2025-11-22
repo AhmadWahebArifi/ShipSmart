@@ -30,6 +30,10 @@ app.use("/api/vehicles", require("./routes/vehicles"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/notifications", require("./routes/notifications"));
 app.use("/api/products", require("./routes/products")); // Products management
+app.use(
+  "/api/provincial-connections",
+  require("./routes/provincialConnections")
+);
 
 // Test route
 app.get("/", (req, res) => {
@@ -92,6 +96,15 @@ app.listen(PORT, () => {
   );
   console.log("   PUT  /api/users/:id              - Update user (Admin only)");
   console.log("   DELETE /api/users/:id            - Delete user (Admin only)");
+  console.log(
+    "   GET  /api/provincial-connections - Get provincial road connections"
+  );
+  console.log(
+    "   GET  /api/provincial-connections/:province - Get neighbors for a province"
+  );
+  console.log(
+    "   GET  /api/provincial-connections/check-route/:from/:to - Check route between provinces"
+  );
 });
 
 module.exports = app;
