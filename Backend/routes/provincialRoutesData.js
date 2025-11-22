@@ -23,22 +23,44 @@ const PROVINCIAL_CONNECTIONS = {
   Samangan: ["Baghlan", "Balkh"],
   Takhar: ["Badakhshan", "Kunduz"],
   Zabul: ["Ghazni", "Kandahar"],
-  // Additional provinces with no routes in Provinces.txt - added for completeness
-  Bamyan: [],
-  Daykundi: [],
-  Ghor: [],
-  Kapisa: [],
-  Khost: [],
-  Kunar: [],
-  Logar: [],
-  Nimruz: [],
-  Nuristan: [],
-  Paktia: [],
-  Paktika: [],
-  Panjshir: [],
-  "Sar-e Pol": [],
-  Uruzgan: [],
-  Wardak: [],
+  // Additional provinces that were missing neighbors in Provinces.txt.
+  // These neighbors are based on Afghanistan provincial geography so that
+  // no province is left isolated.
+  Bamyan: [
+    "Baghlan",
+    "Samangan",
+    "Sar-e Pol",
+    "Ghor",
+    "Daykundi",
+    "Parwan",
+    "Maidan Wardak",
+  ],
+  Daykundi: ["Bamyan", "Ghor", "Uruzgan", "Ghazni", "Maidan Wardak"],
+  Ghor: [
+    "Herat",
+    "Farah",
+    "Helmand",
+    "Uruzgan",
+    "Daykundi",
+    "Bamyan",
+    "Sar-e Pol",
+    "Faryab",
+    "Badghis",
+  ],
+  Kapisa: ["Parwan", "Panjshir", "Laghman", "Kabul"],
+  Khost: ["Paktia", "Paktika"],
+  Kunar: ["Nuristan", "Laghman", "Nangarhar"],
+  Logar: ["Kabul", "Maidan Wardak", "Paktia", "Ghazni"],
+  Nimruz: ["Helmand", "Farah"],
+  Nuristan: ["Kunar", "Laghman"],
+  Paktia: ["Khost", "Paktika", "Logar", "Ghazni"],
+  Paktika: ["Ghazni", "Zabul", "Paktia", "Khost"],
+  Panjshir: ["Baghlan", "Parwan", "Kapisa"],
+  "Sar-e Pol": ["Balkh", "Samangan", "Jowzjan", "Faryab", "Ghor", "Bamyan"],
+  Uruzgan: ["Daykundi", "Ghor", "Helmand", "Kandahar", "Zabul"],
+  // Note: we already have a detailed entry for "Maidan Wardak" above; this
+  // "Wardak" alias mirrors those neighbors so it is not left empty.
+  Wardak: ["Kabul", "Ghazni"],
 };
 
 // Full routes between provinces
