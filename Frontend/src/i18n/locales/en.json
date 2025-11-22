@@ -199,6 +199,28 @@
     "delivered": "Delivered",
     "canceled": "Canceled"
   },
+  "routes": {
+    "title": "Provincial Routes",
+    "description": "View and check connections between Afghan provinces",
+    "checkRoute": "Check Route Connection",
+    "fromProvince": "From Province",
+    "toProvince": "To Province",
+    "selectProvince": "Select a province",
+    "check": "Check Connection",
+    "provincialConnections": "Provincial Connections",
+    "province": "Province",
+    "neighbors": "Neighboring Provinces",
+    "neighborsOf": "Neighboring provinces of {{province}}",
+    "connected": "Route Connected",
+    "notConnected": "No Direct Connection",
+    "noConnections": "No provincial connections found",
+    "getStarted": "Provincial connection data will appear here.",
+    "errors": {
+      "fetchFailed": "Failed to load provincial connections. Please try again.",
+      "checkFailed": "Failed to check route connection. Please try again.",
+      "selectProvinces": "Please select both origin and destination provinces."
+    }
+  },
   "common": {
     "loading": "Loading",
     "saving": "Saving...",
