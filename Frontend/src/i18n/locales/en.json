@@ -52,6 +52,7 @@
     "vehicles": "Vehicles",
     "analytics": "Analytics",
     "settings": "Settings",
+    "users": "User Management",
     "toggleTheme": "Toggle Theme",
     "logout": "Logout",
     "products": "Products"
@@ -313,6 +314,7 @@
       "driverName": "Driver Name",
       "capacity": "Capacity",
       "tableStatus": "Status",
+      "status": "Status",
       "actions": "Actions"
     },
     "form": {
