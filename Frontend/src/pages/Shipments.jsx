@@ -507,6 +507,9 @@ const Shipment = () => {
                               {t("shipments.table.to")}
                             </th>
                             <th className="p-3 text-left">
+                              {t("shipments.table.route")}
+                            </th>
+                            <th className="p-3 text-left">
                               {t("shipments.table.expectedDeparture")}
                             </th>
                             <th className="p-3 text-left">
@@ -556,6 +559,13 @@ const Shipment = () => {
                                 }`}
                               >
                                 {shipment.to_province}
+                              </td>
+                              <td
+                                className={`p-3 ${
+                                  isDark ? "text-gray-300" : "text-gray-700"
+                                }`}
+                              >
+                                {shipment.route_info || "-"}
                               </td>
                               <td
                                 className={`p-3 ${
