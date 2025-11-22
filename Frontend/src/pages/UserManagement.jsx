@@ -5,6 +5,7 @@ import { useSidebar } from "../context/SidebarContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
 import axiosInstance from "../config/axios";
+import { useTranslation } from "react-i18next";
 import {
   HiUserGroup,
   HiUserPlus,
@@ -22,6 +23,7 @@ const MySwal = withReactContent(Swal);
 function UserManagement() {
   const { user: authUser } = useAuth();
   const { isDark } = useTheme();
+  const { t } = useTranslation();
   const {
     sidebarOpen,
     sidebarCollapsed,
@@ -61,7 +63,7 @@ function UserManagement() {
         setUsers(response.data.users);
       }
     } catch (err) {
-      setError("Failed to fetch users");
+      setError(t("users.errors.fetchFailed"));
       console.error("Error fetching users:", err);
     } finally {
       setLoading(false);
@@ -105,24 +107,28 @@ function UserManagement() {
           branch: "",
           name: "",
         });
-        showAlert("Success", "User created successfully", "success");
+        showAlert(t("common.success"), t("users.success.created"), "success");
       }
     } catch (err) {
-      setError("Failed to create user");
+      setError(t("users.errors.createFailed"));
       console.error("Error creating user:", err);
-      showAlert("Error", "Failed to create user", "error");
+      showAlert(
+        t("common.errors.generic"),
+        t("users.errors.createFailed"),
+        "error"
+      );
     }
   };
 
   const handleDeleteUser = async (userId) => {
     try {
       const result = await MySwal.fire({
-        title: "Delete User",
-        text: "Are you sure you want to delete this user? This action cannot be undone.",
+        title: t("users.confirmDeleteTitle"),
+        text: t("users.confirmDeleteMessage"),
         icon: "warning",
         showCancelButton: true,
-        confirmButtonText: "Yes, Delete",
-        cancelButtonText: "Cancel",
+        confirmButtonText: t("users.confirmDeleteConfirm"),
+        cancelButtonText: t("users.confirmDeleteCancel"),
         customClass: {
           confirmButton:
             "bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md mr-2",
@@ -136,11 +142,15 @@ function UserManagement() {
 
       await axiosInstance.delete(`/users/${userId}`);
       setUsers((prev) => prev.filter((user) => user.id !== userId));
-      showAlert("Success", "User deleted successfully", "success");
+      showAlert(t("common.success"), t("users.success.deleted"), "success");
     } catch (err) {
-      setError("Failed to delete user");
+      setError(t("users.errors.deleteFailed"));
       console.error("Error deleting user:", err);
-      showAlert("Error", "Failed to delete user", "error");
+      showAlert(
+        t("common.errors.generic"),
+        t("users.errors.deleteFailed"),
+        "error"
+      );
     }
   };
 
@@ -167,10 +177,10 @@ function UserManagement() {
                 isDark ? "text-white" : "text-gray-800"
               }`}
             >
-              Access Denied
+              {t("users.accessDeniedTitle")}
             </h2>
             <p className={`${isDark ? "text-gray-400" : "text-gray-600"}`}>
-              You don't have permission to access user management.
+              {t("users.accessDeniedMessage")}
             </p>
           </div>
         </div>
@@ -221,12 +231,12 @@ function UserManagement() {
                       isDark ? "text-white" : "text-gray-800"
                     }`}
                   >
-                    User Management
+                    {t("users.title")}
                   </h1>
                   <p
                     className={`${isDark ? "text-gray-400" : "text-gray-600"}`}
                   >
-                    Manage system users and their permissions
+                    {t("users.subtitle")}
                   </p>
                 </div>
               </div>
@@ -239,7 +249,7 @@ function UserManagement() {
                 } shadow-lg`}
               >
                 <HiUserPlus className="w-5 h-5" />
-                <span>Add User</span>
+                <span>{t("users.addUser")}</span>
               </button>
             </div>
           </div>
@@ -272,7 +282,7 @@ function UserManagement() {
                     isDark ? "text-white" : "text-gray-800"
                   }`}
                 >
-                  Create New User
+                  {t("users.form.createTitle")}
                 </h2>
                 <button
                   onClick={() => setShowCreateForm(false)}
@@ -293,7 +303,7 @@ function UserManagement() {
                         isDark ? "text-gray-300" : "text-gray-700"
                       }`}
                     >
-                      Username
+                      {t("users.form.username")}
                     </label>
                     <input
                       type="text"
@@ -314,7 +324,7 @@ function UserManagement() {
                         isDark ? "text-gray-300" : "text-gray-700"
                       }`}
                     >
-                      Email
+                      {t("users.form.email")}
                     </label>
                     <input
                       type="email"
@@ -335,7 +345,7 @@ function UserManagement() {
                         isDark ? "text-gray-300" : "text-gray-700"
                       }`}
                     >
-                      Password
+                      {t("users.form.password")}
                     </label>
                     <input
                       type="password"
@@ -356,7 +366,7 @@ function UserManagement() {
                         isDark ? "text-gray-300" : "text-gray-700"
                       }`}
                     >
-                      Full Name
+                      {t("users.form.fullName")}
                     </label>
                     <input
                       type="text"
@@ -376,7 +386,7 @@ function UserManagement() {
                         isDark ? "text-gray-300" : "text-gray-700"
                       }`}
                     >
-                      Role
+                      {t("users.form.role")}
                     </label>
                     <select
                       name="role"
@@ -388,10 +398,12 @@ function UserManagement() {
                           : "bg-white border-gray-300 text-gray-900"
                       }`}
                     >
-                      <option value="user">User (Branch)</option>
-                      <option value="admin">Admin</option>
+                      <option value="user">{t("users.roles.user")}</option>
+                      <option value="admin">{t("users.roles.admin")}</option>
                       {authUser.role === "superadmin" && (
-                        <option value="superadmin">SuperAdmin</option>
+                        <option value="superadmin">
+                          {t("users.roles.superadmin")}
+                        </option>
                       )}
                     </select>
                   </div>
@@ -401,7 +413,7 @@ function UserManagement() {
                         isDark ? "text-gray-300" : "text-gray-700"
                       }`}
                     >
-                      Branch
+                      {t("users.form.branch")}
                     </label>
                     <input
                       type="text"
@@ -426,7 +438,7 @@ function UserManagement() {
                         : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                     }`}
                   >
-                    Cancel
+                    {t("users.form.cancel")}
                   </button>
                   <button
                     type="submit"
@@ -436,7 +448,7 @@ function UserManagement() {
                         : "bg-blue-600 hover:bg-blue-700"
                     }`}
                   >
-                    Create User
+                    {t("users.form.create")}
                   </button>
                 </div>
               </form>
@@ -459,7 +471,7 @@ function UserManagement() {
                     isDark ? "text-gray-400" : "text-gray-600"
                   }`}
                 >
-                  Loading users...
+                  {t("users.loading")}
                 </p>
               </div>
             ) : (
@@ -474,7 +486,7 @@ function UserManagement() {
                       isDark ? "text-white" : "text-gray-800"
                     }`}
                   >
-                    Users ({users.length})
+                    {t("users.users")} ({users.length})
                   </h2>
                 </div>
                 <div className="overflow-x-auto">
@@ -486,35 +498,35 @@ function UserManagement() {
                             isDark ? "text-gray-300" : "text-gray-500"
                           }`}
                         >
-                          User
+                          {t("users.table.user")}
                         </th>
                         <th
                           className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                             isDark ? "text-gray-300" : "text-gray-500"
                           }`}
                         >
-                          Role
+                          {t("users.table.role")}
                         </th>
                         <th
                           className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                             isDark ? "text-gray-300" : "text-gray-500"
                           }`}
                         >
-                          Branch
+                          {t("users.table.branch")}
                         </th>
                         <th
                           className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                             isDark ? "text-gray-300" : "text-gray-500"
                           }`}
                         >
-                          Status
+                          {t("users.table.status")}
                         </th>
                         <th
                           className={`px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
                             isDark ? "text-gray-300" : "text-gray-500"
                           }`}
                         >
-                          Actions
+                          {t("users.table.actions")}
                         </th>
                       </tr>
                     </thead>
@@ -574,10 +586,10 @@ function UserManagement() {
                               }`}
                             >
                               {user.role === "superadmin"
-                                ? "SuperAdmin"
+                                ? t("users.roles.superadmin")
                                 : user.role === "admin"
-                                ? "Admin"
-                                : "User"}
+                                ? t("users.roles.admin")
+                                : t("users.roles.user")}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -597,7 +609,7 @@ function UserManagement() {
                                   : "bg-green-100 text-green-800"
                               }`}
                             >
-                              Active
+                              {t("users.table.active")}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
