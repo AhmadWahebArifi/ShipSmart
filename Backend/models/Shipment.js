@@ -85,6 +85,21 @@ const Shipment = sequelize.define(
         key: "id",
       },
     },
+    // Add route information for multi-hop shipments
+    route_info: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue: null,
+      comment:
+        "Route information for multi-hop shipments (e.g., Kabul → Wardak → Ghazni)",
+    },
+    route_hops: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+      comment:
+        "Number of hops in the route (0 for direct connection, null if not calculated)",
+    },
   },
   {
     tableName: "shipments",
@@ -93,7 +108,11 @@ const Shipment = sequelize.define(
     updatedAt: "updated_at",
     // Disable automatic index creation to avoid key limit
     indexes: [
-      // We'll manage indexes manually to stay within MySQL's 64-key limit
+      // Explicitly define the unique index for tracking_number
+      {
+        unique: true,
+        fields: ["tracking_number"],
+      },
     ],
   }
 );
