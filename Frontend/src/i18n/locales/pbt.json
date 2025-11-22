@@ -31,7 +31,10 @@
     "updated": "تازه شوی",
     "hoursAgo": "{{count}} ساعت دمخه",
     "dayAgo": "{{count}} ورځ دمخه",
-    "daysAgo": "{{count}} ورځې دمخه"
+    "daysAgo": "{{count}} ورځې دمخه",
+    "pendingShipments": "منتظر بریښناک",
+
+    "inProgress": "پرمختګ کې بریښناک"
   },
   "settings": {
     "title": "تنظیمات",
