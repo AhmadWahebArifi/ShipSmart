@@ -60,7 +60,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
       icon: HiChartBar,
       path: "/analytics",
     },
-    { id: "admin", label: "Profile", icon: HiUser, path: "/admin" },
+    { id: "admin", label: t("sidebar.profile"), icon: HiUser, path: "/admin" },
   ];
 
   // Add User Management link for admin users
