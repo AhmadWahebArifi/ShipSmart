@@ -52,6 +52,7 @@
     "vehicles": "Vehicles",
     "analytics": "Analytics",
     "settings": "Settings",
+    "profile": "Profile",
     "users": "User Management",
     "toggleTheme": "Toggle Theme",
     "logout": "Logout",
@@ -252,6 +253,7 @@
     "actions": "Actions",
     "total": "Total",
     "success": "Success",
+    "notSet": "Not set",
     "ok": "OK",
     "errors": {
       "generic": "An error occurred. Please try again.",
@@ -298,6 +300,31 @@
     "Wardak",
     "Zabul"
   ],
+  "profile": {
+    "title": "Profile Settings",
+    "subtitle": "View and manage your profile information",
+    "personalInformation": "Personal Information",
+    "editProfile": "Edit Profile",
+    "fullName": "Full Name",
+    "email": "Email Address",
+    "address": "Address",
+    "emailReadonly": "Email cannot be changed",
+    "changePhoto": "Change Photo",
+    "uploadPhoto": "Upload Photo",
+    "imageHelp": "Max size: 5MB (JPG, PNG, etc.)",
+    "editModalTitle": "Edit Personal Information",
+    "saveChanges": "Save Changes",
+    "updateSuccess": "Profile updated successfully!",
+    "loading": "Loading profile...",
+    "errors": {
+      "invalidImageType": "Please select a valid image file",
+      "imageTooLarge": "Image size must be less than 5MB",
+      "readError": "Error reading image file",
+      "updateFailed": "Failed to update profile",
+      "noServer": "No response from server. Please check backend connection.",
+      "unexpected": "An unexpected error occurred."
+    }
+  },
   "users": {
     "title": "User Management",
     "subtitle": "Manage system users and their permissions",
