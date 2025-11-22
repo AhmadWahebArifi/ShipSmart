@@ -42,6 +42,10 @@
     "selectLanguage": "انتخاب زبان",
     "backToDashboard": "بازگشت به داشبورد",
     "managePreferences": "تنظیمات و ترجیحات حساب خود را مدیریت کنید",
+    "appearance": "نمای ظاهری",
+    "themeDescription": "بین حالت روشن و تیره جابه‌جا شوید.",
+    "darkMode": "فعال کردن حالت تیره",
+    "lightMode": "فعال کردن حالت روشن",
     "moreSettings": "تنظیمات بیشتر",
     "additionalSettingsComingSoon": "تنظیمات اضافی به زودی..."
   },
@@ -52,6 +56,7 @@
     "vehicles": "وسایل نقلیه",
     "analytics": "تحلیل‌ها",
     "settings": "تنظیمات",
+    "profile": "پروفایل",
     "users": "مدیریت کاربران",
     "toggleTheme": "تغییر تم",
     "logout": "خروج",
@@ -250,6 +255,7 @@
     "actions": "عملیات",
     "total": "جمع کل",
     "success": "موفقیت",
+    "notSet": "تنظیم نشده",
     "ok": "تایید",
     "errors": {
       "generic": "خطایی رخ داده است. لطفاً دوباره تلاش کنید.",
@@ -296,12 +302,38 @@
     "وردک",
     "زابل"
   ],
+  "profile": {
+    "title": "تنظیمات پروفایل",
+    "subtitle": "مشاهده و مدیریت اطلاعات پروفایل شما",
+    "personalInformation": "اطلاعات شخصی",
+    "editProfile": "ویرایش پروفایل",
+    "fullName": "نام کامل",
+    "email": "آدرس ایمیل",
+    "address": "آدرس",
+    "emailReadonly": "ایمیل قابل تغییر نیست",
+    "changePhoto": "تغییر عکس",
+    "uploadPhoto": "آپلود عکس",
+    "imageHelp": "حداکثر اندازه: ۵ مگابایت (JPG, PNG و غیره)",
+    "editModalTitle": "ویرایش اطلاعات شخصی",
+    "saveChanges": "ذخیره تغییرات",
+    "updateSuccess": "پروفایل با موفقیت به‌روزرسانی شد!",
+    "loading": "در حال بارگذاری پروفایل...",
+    "errors": {
+      "invalidImageType": "لطفاً یک فایل تصویر معتبر انتخاب کنید",
+      "imageTooLarge": "حجم تصویر باید کمتر از ۵ مگابایت باشد",
+      "readError": "خطا در خواندن فایل تصویر",
+      "updateFailed": "به‌روزرسانی پروفایل ناموفق بود",
+      "noServer": "پاسخی از سرور دریافت نشد. لطفاً اتصال به بک‌اند را بررسی کنید.",
+      "unexpected": "یک خطای غیرمنتظره رخ داد."
+    }
+  },
   "users": {
     "title": "مدیریت کاربران",
     "subtitle": "مدیریت کاربران سیستم و سطح دسترسی آن‌ها",
     "accessDeniedTitle": "عدم دسترسی",
     "accessDeniedMessage": "شما اجازه دسترسی به مدیریت کاربران را ندارید.",
     "addUser": "افزودن کاربر",
+    "users": "کاربران",
     "usersCount": "کاربران ({{count}})",
     "form": {
       "createTitle": "ایجاد کاربر جدید",
