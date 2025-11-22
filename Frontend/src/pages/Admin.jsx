@@ -142,10 +142,12 @@ function Admin() {
       console.log("Sending profile update:", {
         name: dataToSend.name,
         address: dataToSend.address,
-        profile_pic: dataToSend.profile_pic 
-          ? `data:image/${dataToSend.profile_pic.substring(0, 50)}...` 
+        profile_pic: dataToSend.profile_pic
+          ? `data:image/${dataToSend.profile_pic.substring(0, 50)}...`
           : null,
-        profile_pic_length: dataToSend.profile_pic ? dataToSend.profile_pic.length : 0
+        profile_pic_length: dataToSend.profile_pic
+          ? dataToSend.profile_pic.length
+          : 0,
       });
 
       const response = await axiosInstance.put("/auth/profile", dataToSend);
@@ -224,7 +226,7 @@ function Admin() {
                   isDark ? "text-white" : "text-gray-800"
                 }`}
               >
-                Profile Settings
+                {t("profile.title")}
               </h1>
             </div>
             <p
@@ -232,14 +234,16 @@ function Admin() {
                 isDark ? "text-gray-400" : "text-gray-600"
               }`}
             >
-              View and manage your profile information
+              {t("profile.subtitle")}
             </p>
           </div>
 
           {/* Personal Info Card - View Mode */}
           <div
             className={`rounded-xl shadow-lg border p-6 transition-all ${
-              isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+              isDark
+                ? "bg-gray-800 border-gray-700"
+                : "bg-white border-gray-200"
             }`}
           >
             <div className="flex items-center justify-between mb-6">
@@ -248,7 +252,7 @@ function Admin() {
                   isDark ? "text-white" : "text-gray-800"
                 }`}
               >
-                Personal Information
+                {t("profile.personalInformation")}
               </h2>
               <button
                 onClick={openEditModal}
@@ -259,18 +263,20 @@ function Admin() {
                 } shadow-lg`}
               >
                 <HiPencil className="w-4 h-4" />
-                Edit Profile
+                {t("profile.editProfile")}
               </button>
             </div>
 
             {/* Profile Picture Display */}
             <div className="flex flex-col items-center mb-6 pb-6 border-b border-gray-600 dark:border-gray-700">
               <div className="relative mb-4">
-                {authUser?.profile_pic && 
-                 authUser.profile_pic.trim() !== "" && 
-                 authUser.profile_pic !== 'null' && 
-                 authUser.profile_pic !== 'undefined' &&
-                 (authUser.profile_pic.startsWith('data:image') || authUser.profile_pic.startsWith('data:') || authUser.profile_pic.length > 50) ? (
+                {authUser?.profile_pic &&
+                authUser.profile_pic.trim() !== "" &&
+                authUser.profile_pic !== "null" &&
+                authUser.profile_pic !== "undefined" &&
+                (authUser.profile_pic.startsWith("data:image") ||
+                  authUser.profile_pic.startsWith("data:") ||
+                  authUser.profile_pic.length > 50) ? (
                   <img
                     key={`profile-${authUser.profile_pic?.substring(0, 50)}`} // Force re-render when profile_pic changes
                     src={authUser.profile_pic}
@@ -282,7 +288,8 @@ function Admin() {
                       const parent = e.target.parentElement;
                       if (!parent.querySelector(".fallback-icon")) {
                         const fallback = document.createElement("div");
-                        fallback.className = "fallback-icon w-32 h-32 rounded-full flex items-center justify-center border-4";
+                        fallback.className =
+                          "fallback-icon w-32 h-32 rounded-full flex items-center justify-center border-4";
                         fallback.className += isDark
                           ? " border-gray-600 bg-gray-700"
                           : " border-gray-300 bg-gray-100";
@@ -325,7 +332,7 @@ function Admin() {
                 >
                   <div className="flex items-center gap-2">
                     <HiUser className="w-4 h-4" />
-                    Full Name
+                    {t("profile.fullName")}
                   </div>
                 </label>
                 <div
@@ -335,7 +342,7 @@ function Admin() {
                       : "bg-gray-50 border-gray-300 text-gray-900"
                   }`}
                 >
-                  {authUser?.name || "Not set"}
+                  {authUser?.name || t("common.notSet", "Not set")}
                 </div>
               </div>
 
@@ -348,7 +355,7 @@ function Admin() {
                 >
                   <div className="flex items-center gap-2">
                     <HiEnvelope className="w-4 h-4" />
-                    Email Address
+                    {t("profile.email")}
                   </div>
                 </label>
                 <div
@@ -358,14 +365,14 @@ function Admin() {
                       : "bg-gray-50 border-gray-300 text-gray-500"
                   }`}
                 >
-                  {authUser?.email || "Not set"}
+                  {authUser?.email || t("common.notSet", "Not set")}
                 </div>
                 <p
                   className={`text-xs mt-1 ${
                     isDark ? "text-gray-500" : "text-gray-400"
                   }`}
                 >
-                  Email cannot be changed
+                  {t("profile.emailReadonly")}
                 </p>
               </div>
 
@@ -378,7 +385,7 @@ function Admin() {
                 >
                   <div className="flex items-center gap-2">
                     <HiMapPin className="w-4 h-4" />
-                    Address
+                    {t("profile.address")}
                   </div>
                 </label>
                 <div
@@ -388,7 +395,7 @@ function Admin() {
                       : "bg-gray-50 border-gray-300 text-gray-900"
                   }`}
                 >
-                  {authUser?.address || "Not set"}
+                  {authUser?.address || t("common.notSet", "Not set")}
                 </div>
               </div>
             </div>
@@ -424,7 +431,7 @@ function Admin() {
                         isDark ? "text-white" : "text-gray-800"
                       }`}
                     >
-                      Edit Personal Information
+                      {t("profile.editModalTitle")}
                     </h3>
                     <button
                       onClick={closeEditModal}
@@ -465,7 +472,7 @@ function Admin() {
                       >
                         <div className="flex items-center gap-2">
                           <HiCheck className="w-5 h-5" />
-                          <span>{success}</span>
+                          <span>{success || t("profile.updateSuccess")}</span>
                         </div>
                       </div>
                     )}
@@ -518,7 +525,9 @@ function Admin() {
                         >
                           <HiCamera className="w-5 h-5" />
                           <span className="font-medium">
-                            {previewImage ? "Change Photo" : "Upload Photo"}
+                            {previewImage
+                              ? t("profile.changePhoto")
+                              : t("profile.uploadPhoto")}
                           </span>
                           <input
                             type="file"
@@ -532,7 +541,7 @@ function Admin() {
                             isDark ? "text-gray-400" : "text-gray-500"
                           }`}
                         >
-                          Max size: 5MB (JPG, PNG, etc.)
+                          {t("profile.imageHelp")}
                         </p>
                       </div>
 
@@ -545,7 +554,7 @@ function Admin() {
                         >
                           <div className="flex items-center gap-2">
                             <HiEnvelope className="w-4 h-4" />
-                            Email Address
+                            {t("profile.email")}
                           </div>
                         </label>
                         <input
@@ -577,7 +586,7 @@ function Admin() {
                         >
                           <div className="flex items-center gap-2">
                             <HiUser className="w-4 h-4" />
-                            Full Name
+                            {t("profile.fullName")}
                           </div>
                         </label>
                         <input
@@ -586,7 +595,7 @@ function Admin() {
                           name="name"
                           value={formData.name}
                           onChange={handleInputChange}
-                          placeholder="Enter your full name"
+                          placeholder={t("profile.fullName")}
                           className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
                             isDark
                               ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
@@ -605,7 +614,7 @@ function Admin() {
                         >
                           <div className="flex items-center gap-2">
                             <HiMapPin className="w-4 h-4" />
-                            Address
+                            {t("profile.address")}
                           </div>
                         </label>
                         <textarea
@@ -614,7 +623,7 @@ function Admin() {
                           value={formData.address}
                           onChange={handleInputChange}
                           rows={4}
-                          placeholder="Enter your address"
+                          placeholder={t("profile.address")}
                           className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none ${
                             isDark
                               ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
@@ -635,7 +644,7 @@ function Admin() {
                               : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                           }`}
                         >
-                          Cancel
+                          {t("common.cancel")}
                         </button>
                         <button
                           type="submit"
@@ -668,12 +677,12 @@ function Admin() {
                                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                 ></path>
                               </svg>
-                              Saving...
+                              {t("common.saving")}
                             </>
                           ) : (
                             <>
                               <HiCheck className="w-5 h-5" />
-                              Save Changes
+                              {t("profile.saveChanges")}
                             </>
                           )}
                         </button>
