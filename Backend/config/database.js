@@ -23,6 +23,11 @@ const sequelize = new Sequelize(
       acquire: 30000,
       idle: 10000,
     },
+    // Disable automatic syncing to prevent key limit issues
+    sync: {
+      force: false,
+      alter: false,
+    },
   }
 );
 
@@ -32,8 +37,9 @@ const testConnection = async () => {
     await sequelize.authenticate();
     console.log("✅ Database connection established successfully");
 
-    // Sync models
-    await sequelize.sync({ alter: true });
+    // Sync models with a more controlled approach
+    // Use alter: false to prevent automatic schema changes that might cause key limit issues
+    await sequelize.sync({ alter: false, force: false });
     console.log("✅ Database synchronized");
   } catch (error) {
     console.error("❌ Database connection error:");
