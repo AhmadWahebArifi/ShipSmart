@@ -12,7 +12,7 @@ const Vehicle = sequelize.define(
     vehicle_id: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
+      // Remove unique: true to avoid duplicate constraint creation
     },
     type: {
       type: DataTypes.STRING,
@@ -48,6 +48,14 @@ const Vehicle = sequelize.define(
     tableName: "vehicles",
     timestamps: true,
     underscored: true,
+    // Disable automatic index creation to avoid key limit
+    indexes: [
+      // Explicitly define the unique index for vehicle_id
+      {
+        unique: true,
+        fields: ["vehicle_id"],
+      },
+    ],
   }
 );
 
