@@ -295,11 +295,15 @@ const Routes = () => {
       const response = await axiosInstance.get("/provincial-connections");
       if (response.data && response.data.success) {
         setConnections(response.data.connections);
-        // Get localized province names from the translation files
-        const provinceKeys = i18n.exists("provinces")
-          ? t("provinces", { returnObjects: true })
-          : [];
-        setProvinces(provinceKeys);
+
+        // Build province list from backend connections so all provinces appear,
+        // even those without neighbors (e.g. Bamyan)
+        const englishProvinces = Object.keys(response.data.connections).sort();
+        const localizedProvinces = englishProvinces.map((province) =>
+          getLocalizedProvinceName(province)
+        );
+
+        setProvinces(localizedProvinces);
         calculateRouteStats();
       }
     } catch (err) {
@@ -785,7 +789,7 @@ const Routes = () => {
               <form onSubmit={checkRoute} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* From Province */}
-                  <div className="relative">
+                  <div>
                     <label
                       className={`block text-sm font-medium mb-2 ${
                         isDark ? "text-gray-300" : "text-gray-700"
@@ -793,59 +797,26 @@ const Routes = () => {
                     >
                       {t("routes.fromProvince")}
                     </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={fromProvince}
-                        onChange={(e) => {
-                          setFromProvince(e.target.value);
-                          generateSuggestions(e.target.value, "from");
-                        }}
-                        onFocus={() =>
-                          generateSuggestions(fromProvince, "from")
-                        }
-                        onBlur={() =>
-                          setTimeout(() => setShowSuggestions(false), 200)
-                        }
-                        placeholder={t("routes.selectProvince")}
-                        className={`w-full px-4 py-2 rounded-lg border transition-colors ${
-                          isDark
-                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
-                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500"
-                        } focus:outline-none focus:ring-2 focus:ring-blue-500/20`}
-                        list="from-suggestions"
-                      />
-                      {showSuggestions && suggestions.length > 0 && (
-                        <div
-                          className={`absolute z-10 w-full mt-1 rounded-lg border shadow-lg ${
-                            isDark
-                              ? "bg-gray-700 border-gray-600"
-                              : "bg-white border-gray-200"
-                          }`}
-                        >
-                          {suggestions.map((suggestion, index) => (
-                            <div
-                              key={index}
-                              onClick={() => {
-                                setFromProvince(suggestion);
-                                setShowSuggestions(false);
-                              }}
-                              className={`px-4 py-2 cursor-pointer transition-colors ${
-                                isDark
-                                  ? "hover:bg-gray-600"
-                                  : "hover:bg-gray-100"
-                              }`}
-                            >
-                              {suggestion}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                    <select
+                      value={fromProvince}
+                      onChange={(e) => setFromProvince(e.target.value)}
+                      className={`w-full px-4 py-2 rounded-lg border transition-colors ${
+                        isDark
+                          ? "bg-gray-700 border-gray-600 text-white focus:border-blue-500"
+                          : "bg-white border-gray-300 text-gray-900 focus:border-blue-500"
+                      } focus:outline-none focus:ring-2 focus:ring-blue-500/20`}
+                    >
+                      <option value="">{t("routes.selectProvince")}</option>
+                      {provinces.map((province, index) => (
+                        <option key={index} value={province}>
+                          {province}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   {/* To Province */}
-                  <div className="relative">
+                  <div>
                     <label
                       className={`block text-sm font-medium mb-2 ${
                         isDark ? "text-gray-300" : "text-gray-700"
@@ -853,27 +824,22 @@ const Routes = () => {
                     >
                       {t("routes.toProvince")}
                     </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={toProvince}
-                        onChange={(e) => {
-                          setToProvince(e.target.value);
-                          generateSuggestions(e.target.value, "to");
-                        }}
-                        onFocus={() => generateSuggestions(toProvince, "to")}
-                        onBlur={() =>
-                          setTimeout(() => setShowSuggestions(false), 200)
-                        }
-                        placeholder={t("routes.selectProvince")}
-                        className={`w-full px-4 py-2 rounded-lg border transition-colors ${
-                          isDark
-                            ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
-                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500"
-                        } focus:outline-none focus:ring-2 focus:ring-blue-500/20`}
-                        list="to-suggestions"
-                      />
-                    </div>
+                    <select
+                      value={toProvince}
+                      onChange={(e) => setToProvince(e.target.value)}
+                      className={`w-full px-4 py-2 rounded-lg border transition-colors ${
+                        isDark
+                          ? "bg-gray-700 border-gray-600 text-white focus:border-blue-500"
+                          : "bg-white border-gray-300 text-gray-900 focus:border-blue-500"
+                      } focus:outline-none focus:ring-2 focus:ring-blue-500/20`}
+                    >
+                      <option value="">{t("routes.selectProvince")}</option>
+                      {provinces.map((province, index) => (
+                        <option key={index} value={province}>
+                          {province}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
 
