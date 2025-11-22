@@ -42,6 +42,10 @@
     "selectLanguage": "Select Language",
     "backToDashboard": "Back to Dashboard",
     "managePreferences": "Manage your account settings and preferences",
+    "appearance": "Appearance",
+    "themeDescription": "Switch between light and dark mode.",
+    "darkMode": "Enable Dark Mode",
+    "lightMode": "Enable Light Mode",
     "moreSettings": "More Settings",
     "additionalSettingsComingSoon": "Additional settings coming soon..."
   },
@@ -331,6 +335,7 @@
     "accessDeniedTitle": "Access Denied",
     "accessDeniedMessage": "You don't have permission to access user management.",
     "addUser": "Add User",
+    "users": "Users",
     "usersCount": "Users ({{count}})",
     "form": {
       "createTitle": "Create New User",
