@@ -4,6 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
+import Header from "../components/Header";
 import axiosInstance from "../config/axios";
 import { useTranslation } from "react-i18next";
 import {
@@ -212,46 +213,21 @@ function UserManagement() {
         }`}
       >
         <div className="p-4 sm:p-6 lg:p-8">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              <div className="flex items-center gap-3">
-                <div
-                  className={`p-2 rounded-lg ${
-                    isDark
-                      ? "bg-blue-600/20 text-blue-400"
-                      : "bg-blue-100 text-blue-600"
-                  }`}
-                >
-                  <HiUserGroup className="w-6 h-6" />
-                </div>
-                <div>
-                  <h1
-                    className={`text-3xl font-bold ${
-                      isDark ? "text-white" : "text-gray-800"
-                    }`}
-                  >
-                    {t("users.title")}
-                  </h1>
-                  <p
-                    className={`${isDark ? "text-gray-400" : "text-gray-600"}`}
-                  >
-                    {t("users.subtitle")}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setShowCreateForm(true)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                  isDark
-                    ? "bg-blue-600 text-white hover:bg-blue-700"
-                    : "bg-blue-600 text-white hover:bg-blue-700"
-                } shadow-lg`}
-              >
-                <HiUserPlus className="w-5 h-5" />
-                <span>{t("users.addUser")}</span>
-              </button>
-            </div>
+          <Header title={t("users.title")} subtitle={t("users.subtitle")} />
+
+          {/* Add User Button */}
+          <div className="mb-6">
+            <button
+              onClick={() => setShowCreateForm(true)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                isDark
+                  ? "bg-blue-600 text-white hover:bg-blue-700"
+                  : "bg-blue-600 text-white hover:bg-blue-700"
+              } shadow-lg`}
+            >
+              <HiUserPlus className="w-5 h-5" />
+              <span>{t("users.addUser")}</span>
+            </button>
           </div>
 
           {/* Error Message */}
