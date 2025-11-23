@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
+import { useLoader } from "../context/LoaderContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
 import Header from "../components/Header";
@@ -24,6 +25,7 @@ const MySwal = withReactContent(Swal);
 function UserManagement() {
   const { user: authUser } = useAuth();
   const { isDark } = useTheme();
+  const { showLoaderWithText } = useLoader();
   const { t } = useTranslation();
   const {
     sidebarOpen,
@@ -52,9 +54,10 @@ function UserManagement() {
 
   useEffect(() => {
     if (canManageUsers) {
+      showLoaderWithText("Loading Users...", 1500);
       fetchUsers();
     }
-  }, [canManageUsers]);
+  }, [canManageUsers]); // Remove showLoaderWithText to prevent repeated calls
 
   const fetchUsers = async () => {
     try {
