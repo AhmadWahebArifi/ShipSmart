@@ -163,6 +163,73 @@ const formatRoute = (route, language = "en") => {
   return localizedRoute.join(" → ");
 };
 
+// Find all routes between two provinces up to a maximum number of hops
+const findRoutes = (fromProvince, toProvince, maxHops = 3) => {
+  const from = toEnglishProvinceName(fromProvince);
+  const to = toEnglishProvinceName(toProvince);
+
+  const routes = [];
+  const visited = new Set();
+
+  const dfs = (current, path) => {
+    if (path.length - 1 > maxHops) return;
+
+    if (current === to) {
+      routes.push([...path]);
+      return;
+    }
+
+    const neighbors = PROVINCIAL_CONNECTIONS[current] || [];
+    for (const neighbor of neighbors) {
+      const key = `${current}->${neighbor}`;
+      if (!visited.has(key)) {
+        visited.add(key);
+        path.push(neighbor);
+        dfs(neighbor, path);
+        path.pop();
+        visited.delete(key);
+      }
+    }
+  };
+
+  if (PROVINCIAL_CONNECTIONS[from] && PROVINCIAL_CONNECTIONS[to]) {
+    dfs(from, [from]);
+  }
+
+  return routes;
+};
+
+// Find the shortest route between two provinces using BFS
+const getShortestRoute = (fromProvince, toProvince) => {
+  const from = toEnglishProvinceName(fromProvince);
+  const to = toEnglishProvinceName(toProvince);
+
+  if (!PROVINCIAL_CONNECTIONS[from] || !PROVINCIAL_CONNECTIONS[to]) {
+    return null;
+  }
+
+  const queue = [[from, [from]]];
+  const visited = new Set([from]);
+
+  while (queue.length > 0) {
+    const [current, path] = queue.shift();
+
+    if (current === to) {
+      return path;
+    }
+
+    const neighbors = PROVINCIAL_CONNECTIONS[current] || [];
+    for (const neighbor of neighbors) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        queue.push([neighbor, [...path, neighbor]]);
+      }
+    }
+  }
+
+  return null;
+};
+
 const express = require("express");
 const router = express.Router();
 
@@ -431,4 +498,6 @@ module.exports = {
   toLocalizedProvinceName,
   getPredefinedRoute,
   formatRoute,
+  findRoutes,
+  getShortestRoute,
 };
