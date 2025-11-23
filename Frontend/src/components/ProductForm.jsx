@@ -40,7 +40,12 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
       setValue("weight", product.weight || "");
       setValue("price", product.price || "");
       setValue("sender", product.sender || "");
-      setValue("receiver", product.receiver || "");
+      // Remove old receiver field
+      // Add new receiver fields
+      setValue("receiver_name", product.receiver_name || "");
+      setValue("receiver_phone", product.receiver_phone || "");
+      setValue("receiver_email", product.receiver_email || "");
+      setValue("receiver_address", product.receiver_address || "");
       console.log("Setting basic form values for product:", product);
     }
   }, [product, setValue]);
@@ -327,27 +332,105 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               placeholder={t("products.form.senderPlaceholder")}
             />
           </div>
+        </div>
 
-          <div>
-            <label
-              htmlFor="receiver"
-              className={`block text-sm font-medium mb-1 ${
-                isDark ? "text-gray-300" : "text-gray-700"
-              }`}
-            >
-              {t("products.form.receiver")}
-            </label>
-            <input
-              id="receiver"
-              type="text"
-              {...register("receiver")}
-              className={`w-full px-3 py-2 rounded-md border ${
-                isDark
-                  ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
-                  : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
-              }`}
-              placeholder={t("products.form.receiverPlaceholder")}
-            />
+        {/* Detailed Receiver Information */}
+        <div className="border-t pt-4 mt-4 border-gray-200 dark:border-gray-700">
+          <h3
+            className={`text-lg font-medium mb-4 ${
+              isDark ? "text-gray-200" : "text-gray-800"
+            }`}
+          >
+            {t("products.receiverName")} Information
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label
+                htmlFor="receiver_name"
+                className={`block text-sm font-medium mb-1 ${
+                  isDark ? "text-gray-300" : "text-gray-700"
+                }`}
+              >
+                {t("products.receiverName")} *
+              </label>
+              <input
+                id="receiver_name"
+                type="text"
+                {...register("receiver_name", { required: true })}
+                className={`w-full px-3 py-2 rounded-md border ${
+                  isDark
+                    ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                    : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
+                }`}
+                placeholder={t("products.receiverName")}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="receiver_phone"
+                className={`block text-sm font-medium mb-1 ${
+                  isDark ? "text-gray-300" : "text-gray-700"
+                }`}
+              >
+                {t("products.receiverPhone")} *
+              </label>
+              <input
+                id="receiver_phone"
+                type="tel"
+                {...register("receiver_phone", { required: true })}
+                className={`w-full px-3 py-2 rounded-md border ${
+                  isDark
+                    ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                    : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
+                }`}
+                placeholder={t("products.receiverPhone")}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="receiver_email"
+                className={`block text-sm font-medium mb-1 ${
+                  isDark ? "text-gray-300" : "text-gray-700"
+                }`}
+              >
+                {t("products.receiverEmail")} (Optional)
+              </label>
+              <input
+                id="receiver_email"
+                type="email"
+                {...register("receiver_email")}
+                className={`w-full px-3 py-2 rounded-md border ${
+                  isDark
+                    ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                    : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
+                }`}
+                placeholder={t("products.receiverEmail")}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label
+                htmlFor="receiver_address"
+                className={`block text-sm font-medium mb-1 ${
+                  isDark ? "text-gray-300" : "text-gray-700"
+                }`}
+              >
+                {t("products.receiverAddress")} (Optional)
+              </label>
+              <textarea
+                id="receiver_address"
+                {...register("receiver_address")}
+                rows={3}
+                className={`w-full px-3 py-2 rounded-md border ${
+                  isDark
+                    ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                    : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
+                }`}
+                placeholder={t("products.receiverAddress")}
+              />
+            </div>
           </div>
         </div>
 
