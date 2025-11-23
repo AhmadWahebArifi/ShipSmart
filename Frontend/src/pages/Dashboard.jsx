@@ -4,15 +4,18 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
+import { useLoader } from "../context/LoaderContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
 import Header from "../components/Header";
+import { LineChart, PieChart, ChartCard } from "../components/Charts";
 import axiosInstance from "../config/axios";
 
 function Dashboard() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { isDark } = useTheme();
+  const { showLoaderWithText } = useLoader();
   const {
     sidebarOpen,
     sidebarCollapsed,
@@ -47,6 +50,10 @@ function Dashboard() {
       color: "bg-green-500",
     },
   ]);
+
+  // Chart data states
+  const [dailyShipments, setDailyShipments] = useState([]);
+  const [statusDistribution, setStatusDistribution] = useState([]);
 
   // Fetch shipment statistics
   useEffect(() => {
@@ -95,8 +102,86 @@ function Dashboard() {
       }
     };
 
+    // Fetch chart data
+    const fetchChartData = async () => {
+      try {
+        // Fetch daily shipments data
+        const dailyResponse = await axiosInstance.get("/shipments/daily-stats");
+        if (dailyResponse.data && dailyResponse.data.success) {
+          setDailyShipments(dailyResponse.data.data);
+        }
+
+        // Fetch status distribution data
+        const statusResponse = await axiosInstance.get(
+          "/shipments/status-distribution"
+        );
+        if (statusResponse.data && statusResponse.data.success) {
+          setStatusDistribution(statusResponse.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching chart data:", error);
+        // Set mock data for demo purposes
+        setDailyShipments([
+          { date: "Mon", count: 12 },
+          { date: "Tue", count: 19 },
+          { date: "Wed", count: 15 },
+          { date: "Thu", count: 25 },
+          { date: "Fri", count: 22 },
+          { date: "Sat", count: 18 },
+          { date: "Sun", count: 14 },
+        ]);
+
+        setStatusDistribution([
+          { status: "Pending", count: 15 },
+          { status: "In Progress", count: 28 },
+          { status: "On Route", count: 12 },
+          { status: "Delivered", count: 45 },
+        ]);
+      }
+    };
+
     fetchStats();
+    fetchChartData();
   }, [t]);
+
+  // Show loader on component mount
+  useEffect(() => {
+    showLoaderWithText("Loading Dashboard...", 1500);
+  }, []);
+
+  // Prepare chart data
+  const lineChartData = {
+    labels: dailyShipments.map((item) => item.date),
+    datasets: [
+      {
+        label: "Daily Shipments",
+        data: dailyShipments.map((item) => item.count),
+        borderColor: isDark ? "#60a5fa" : "#3b82f6",
+        backgroundColor: isDark
+          ? "rgba(96, 165, 250, 0.1)"
+          : "rgba(59, 130, 246, 0.1)",
+        tension: 0.4,
+        fill: true,
+      },
+    ],
+  };
+
+  const pieChartData = {
+    labels: statusDistribution.map((item) => item.status),
+    datasets: [
+      {
+        data: statusDistribution.map((item) => item.count),
+        backgroundColor: [
+          "#fbbf24", // yellow for pending
+          "#a78bfa", // purple for in progress
+          "#60a5fa", // blue for on route
+          "#34d399", // green for delivered
+        ],
+        borderColor: isDark ? "#1f2937" : "#ffffff",
+        borderWidth: 2,
+      },
+    ],
+  };
 
   return (
     <div
@@ -131,7 +216,10 @@ function Dashboard() {
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className={`rounded-xl shadow-lg p-6 border transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                onClick={() =>
+                  showLoaderWithText(`Loading ${stat.title}...`, 1500)
+                }
+                className={`rounded-xl shadow-lg p-6 border transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer ${
                   isDark
                     ? "bg-gray-800 border-gray-700"
                     : "bg-white border-gray-200"
@@ -162,6 +250,25 @@ function Dashboard() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Charts Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <ChartCard title="Daily Shipments Trend" isDark={isDark}>
+              <LineChart
+                data={lineChartData}
+                title="Shipments per Day"
+                isDark={isDark}
+              />
+            </ChartCard>
+
+            <ChartCard title="Shipment Status Distribution" isDark={isDark}>
+              <PieChart
+                data={pieChartData}
+                title="Status Overview"
+                isDark={isDark}
+              />
+            </ChartCard>
           </div>
 
           {/* Recent Activity */}
