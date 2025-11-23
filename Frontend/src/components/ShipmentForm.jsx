@@ -3,11 +3,14 @@ import { useTheme } from "../context/ThemeContext";
 import axiosInstance from "../config/axios";
 import { FiTruck, FiX, FiPlus, FiCheck, FiAlertTriangle } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../context/AuthContext";
 
 const ShipmentForm = ({ onSubmit, onCancel, shipment }) => {
   const { t, i18n } = useTranslation();
   const PROVINCES = t("provinces", { returnObjects: true });
   const { isDark } = useTheme();
+  const { user } = useAuth();
+  const isAdmin = user && (user.role === "admin" || user.role === "superadmin");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -24,6 +27,34 @@ const ShipmentForm = ({ onSubmit, onCancel, shipment }) => {
     expected_arrival_date: "",
     vehicle_id: "",
   });
+
+  // For new shipments, prefill from_province from logged-in user's location for non-admins
+  useEffect(() => {
+    if (!shipment && user && !isAdmin) {
+      let initialFrom = null;
+
+      if (user.province) {
+        initialFrom = user.province;
+      } else if (user.branch) {
+        const lowerBranch = user.branch.toLowerCase();
+        if (Array.isArray(PROVINCES)) {
+          const matchedProvince = PROVINCES.find((p) =>
+            String(p).toLowerCase().includes(lowerBranch)
+          );
+          initialFrom = matchedProvince || user.branch;
+        } else {
+          initialFrom = user.branch;
+        }
+      }
+
+      if (initialFrom) {
+        setFormData((prev) => ({
+          ...prev,
+          from_province: initialFrom,
+        }));
+      }
+    }
+  }, [shipment, user, isAdmin, PROVINCES]);
 
   // Fetch vehicles for the dropdown
   useEffect(() => {
@@ -256,6 +287,7 @@ const ShipmentForm = ({ onSubmit, onCancel, shipment }) => {
               name="from_province"
               value={formData.from_province}
               onChange={handleChange}
+              disabled={!isAdmin}
               required
               className={`w-full px-3 py-2 rounded-md border ${
                 isDark
