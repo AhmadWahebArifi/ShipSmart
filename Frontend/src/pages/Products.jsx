@@ -517,7 +517,7 @@ const Products = () => {
                     <tr>
                       <th
                         scope="col"
-                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                        className={`px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                           isDark ? "text-gray-300" : "text-gray-500"
                         }`}
                       >
@@ -525,7 +525,7 @@ const Products = () => {
                       </th>
                       <th
                         scope="col"
-                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                        className={`hidden sm:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                           isDark ? "text-gray-300" : "text-gray-500"
                         }`}
                       >
@@ -533,7 +533,7 @@ const Products = () => {
                       </th>
                       <th
                         scope="col"
-                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                        className={`hidden md:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                           isDark ? "text-gray-300" : "text-gray-500"
                         }`}
                       >
@@ -541,7 +541,7 @@ const Products = () => {
                       </th>
                       <th
                         scope="col"
-                        className={`px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
+                        className={`px-3 sm:px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
                           isDark ? "text-gray-300" : "text-gray-500"
                         }`}
                       >
@@ -549,7 +549,7 @@ const Products = () => {
                       </th>
                       <th
                         scope="col"
-                        className={`px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
+                        className={`hidden sm:table-cell px-3 sm:px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
                           isDark ? "text-gray-300" : "text-gray-500"
                         }`}
                       >
@@ -557,7 +557,7 @@ const Products = () => {
                       </th>
                       <th
                         scope="col"
-                        className={`px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
+                        className={`hidden lg:table-cell px-3 sm:px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
                           isDark ? "text-gray-300" : "text-gray-500"
                         }`}
                       >
@@ -565,7 +565,7 @@ const Products = () => {
                       </th>
                       <th
                         scope="col"
-                        className={`px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
+                        className={`hidden lg:table-cell px-3 sm:px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
                           isDark ? "text-gray-300" : "text-gray-500"
                         }`}
                       >
@@ -573,7 +573,7 @@ const Products = () => {
                       </th>
                       <th
                         scope="col"
-                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                        className={`hidden xl:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                           isDark ? "text-gray-300" : "text-gray-500"
                         }`}
                       >
@@ -581,7 +581,7 @@ const Products = () => {
                       </th>
                       <th
                         scope="col"
-                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                        className={`hidden xl:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                           isDark ? "text-gray-300" : "text-gray-500"
                         }`}
                       >
@@ -589,7 +589,7 @@ const Products = () => {
                       </th>
                       <th
                         scope="col"
-                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                        className={`hidden 2xl:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                           isDark ? "text-gray-300" : "text-gray-500"
                         }`}
                       >
@@ -597,13 +597,13 @@ const Products = () => {
                       </th>
                       <th
                         scope="col"
-                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                        className={`hidden 2xl:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                           isDark ? "text-gray-300" : "text-gray-500"
                         }`}
                       >
                         {t("products.receiverAddress")}
                       </th>
-                      <th scope="col" className="relative px-6 py-3">
+                      <th scope="col" className="relative px-3 sm:px-6 py-3">
                         <span className="sr-only">{t("common.actions")}</span>
                       </th>
                     </tr>
@@ -622,7 +622,7 @@ const Products = () => {
                           isDark ? "hover:bg-gray-800" : "hover:bg-gray-50"
                         }
                       >
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div
                               className={`flex-shrink-0 h-10 w-10 rounded-md flex items-center justify-center ${
@@ -653,7 +653,7 @@ const Products = () => {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="hidden sm:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
                           <div className="text-sm">
                             <div
                               className={`font-medium flex items-center ${
@@ -679,7 +679,7 @@ const Products = () => {
                             )}
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="hidden md:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
                           {product.shipment ? (
                             <span
                               className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
@@ -696,28 +696,28 @@ const Products = () => {
                           )}
                         </td>
                         <td
-                          className={`px-6 py-4 whitespace-nowrap text-right text-sm ${
+                          className={`px-3 sm:px-6 py-4 whitespace-nowrap text-right text-sm ${
                             isDark ? "text-gray-200" : "text-gray-900"
                           }`}
                         >
                           {product.quantity}
                         </td>
                         <td
-                          className={`px-6 py-4 whitespace-nowrap text-right text-sm ${
+                          className={`hidden sm:table-cell px-3 sm:px-6 py-4 whitespace-nowrap text-right text-sm ${
                             isDark ? "text-gray-200" : "text-gray-900"
                           }`}
                         >
                           {parseFloat(product.weight).toFixed(2)}
                         </td>
                         <td
-                          className={`px-6 py-4 whitespace-nowrap text-right text-sm ${
+                          className={`hidden lg:table-cell px-3 sm:px-6 py-4 whitespace-nowrap text-right text-sm ${
                             isDark ? "text-gray-200" : "text-gray-900"
                           }`}
                         >
                           {parseFloat(product.price).toFixed(2)}
                         </td>
                         <td
-                          className={`px-6 py-4 whitespace-nowrap text-right text-sm font-medium ${
+                          className={`hidden lg:table-cell px-3 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium ${
                             isDark ? "text-gray-200" : "text-gray-900"
                           }`}
                         >
@@ -726,7 +726,7 @@ const Products = () => {
                             parseInt(product.quantity)
                           ).toFixed(2)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="hidden xl:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
                           <div className="text-sm">
                             <div
                               className={`font-medium ${
@@ -745,7 +745,7 @@ const Products = () => {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="hidden xl:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
                           <div className="text-sm">
                             <div
                               className={`${
@@ -764,7 +764,7 @@ const Products = () => {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="hidden 2xl:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
                           <div className="text-sm">
                             <div
                               className={`${
@@ -783,7 +783,7 @@ const Products = () => {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="hidden 2xl:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
                           <div className="text-sm max-w-xs">
                             <div
                               className={`${
@@ -804,7 +804,7 @@ const Products = () => {
                           </div>
                         </td>
                         <td
-                          className={`px-6 py-4 whitespace-nowrap text-right text-sm font-medium ${
+                          className={`px-3 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium ${
                             isDark ? "text-gray-200" : "text-gray-900"
                           }`}
                         >
@@ -838,36 +838,33 @@ const Products = () => {
                   <tfoot className={`${isDark ? "bg-gray-800" : "bg-gray-50"}`}>
                     <tr>
                       <td
-                        colSpan="3"
-                        className={`px-6 py-3 text-sm font-medium ${
+                        colSpan="4"
+                        className={`px-3 sm:px-6 py-3 text-sm font-medium ${
                           isDark ? "text-gray-200" : "text-gray-900"
                         }`}
                       >
                         {t("common.total")}
                       </td>
                       <td
-                        className={`px-6 py-3 text-right text-sm font-medium ${
-                          isDark ? "text-gray-200" : "text-gray-900"
-                        }`}
-                      >
-                        {totalQuantity}
-                      </td>
-                      <td
-                        className={`px-6 py-3 text-right text-sm font-medium ${
+                        className={`hidden sm:table-cell px-3 sm:px-6 py-3 text-right text-sm font-medium ${
                           isDark ? "text-gray-200" : "text-gray-900"
                         }`}
                       >
                         {totalWeight.toFixed(2)}
                       </td>
                       <td
-                        className={`px-6 py-3 text-right text-sm font-medium ${
+                        className={`hidden lg:table-cell px-3 sm:px-6 py-3 text-right text-sm font-medium ${
                           isDark ? "text-gray-200" : "text-gray-900"
                         }`}
                         colSpan="2"
                       >
                         {totalValue.toFixed(2)} AFN
                       </td>
-                      <td className="px-6 py-3"></td>
+                      <td className="hidden xl:table-cell px-3 sm:px-6 py-3"></td>
+                      <td className="hidden xl:table-cell px-3 sm:px-6 py-3"></td>
+                      <td className="hidden 2xl:table-cell px-3 sm:px-6 py-3"></td>
+                      <td className="hidden 2xl:table-cell px-3 sm:px-6 py-3"></td>
+                      <td className="px-3 sm:px-6 py-3"></td>
                     </tr>
                   </tfoot>
                 </table>
