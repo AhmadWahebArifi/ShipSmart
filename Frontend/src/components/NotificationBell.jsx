@@ -47,6 +47,23 @@ const NotificationBell = () => {
 
   if (!isAdmin) return null;
 
+  const handleNotificationClick = (notification) => {
+    // Close dropdown first
+    setOpen(false);
+
+    // Navigate using window.location.assign
+    setTimeout(() => {
+      window.location.assign("/shipments");
+    }, 100);
+
+    // Mark notification as read in background
+    axiosInstance
+      .put(`/notifications/${notification.id}/read`)
+      .catch((error) =>
+        console.error("Error marking notification as read:", error)
+      );
+  };
+
   const toggleOpen = async () => {
     if (!open) {
       try {
@@ -115,26 +132,41 @@ const NotificationBell = () => {
               {notifications.map((n) => (
                 <li
                   key={n.id}
-                  onClick={() => {
-                    if (n.shipment && n.shipment.id) {
-                      navigate(`/shipments/${n.shipment.id}`);
-                    }
-                    setOpen(false);
-                  }}
-                  className={`px-3 py-2 border-b last:border-b-0 text-xs cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 ${
+                  className={`border-b last:border-b-0 ${
                     isDark ? "border-gray-800" : "border-gray-100"
                   }`}
                 >
-                  <div className="font-medium truncate">{n.message}</div>
-                  {n.shipment && (
-                    <div className="mt-0.5 opacity-70 truncate">
-                      {n.shipment.tracking_number} · {n.shipment.from_province}{" "}
-                      → {n.shipment.to_province}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNotificationClick(n);
+                    }}
+                    className={`w-full text-left px-3 py-2 text-xs cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors`}
+                  >
+                    <div className="font-medium truncate">{n.message}</div>
+                    {(() => {
+                      const shipmentData = n.shipment;
+                      if (
+                        shipmentData &&
+                        (shipmentData.tracking_number ||
+                          shipmentData.from_province)
+                      ) {
+                        return (
+                          <div className="mt-0.5 opacity-70 truncate">
+                            {shipmentData.tracking_number || "N/A"} ·{" "}
+                            {shipmentData.from_province || "N/A"} →{" "}
+                            {shipmentData.to_province || "N/A"}
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
+                    <div className="mt-0.5 opacity-60">
+                      {new Date(
+                        n.created_at || n.created_date
+                      ).toLocaleString()}
                     </div>
-                  )}
-                  <div className="mt-0.5 opacity-60">
-                    {new Date(n.created_at).toLocaleString()}
-                  </div>
+                  </button>
                 </li>
               ))}
             </ul>
