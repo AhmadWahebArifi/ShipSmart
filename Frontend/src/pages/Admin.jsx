@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
+import { useLoader } from "../context/LoaderContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
 import Header from "../components/Header";
@@ -22,6 +23,7 @@ function Admin() {
   const { t } = useTranslation();
   const { user: authUser, setUser, refreshUser } = useAuth();
   const { isDark } = useTheme();
+  const { showLoaderWithText } = useLoader();
   const {
     sidebarOpen,
     sidebarCollapsed,
@@ -45,10 +47,13 @@ function Admin() {
 
   // Refresh user data when component mounts to ensure latest profile picture is shown
   useEffect(() => {
-    if (refreshUser) {
-      refreshUser();
-    }
-  }, []); // Only run on mount
+    refreshUser();
+  }, []); // Only run once on mount
+
+  // Show loader on component mount
+  useEffect(() => {
+    showLoaderWithText("Loading Admin Panel...", 1500);
+  }, []); // Only run once on mount
 
   const openEditModal = (field = null) => {
     // Load current user data into form
