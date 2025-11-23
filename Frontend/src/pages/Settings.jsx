@@ -4,17 +4,12 @@ import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
-import {
-  HiCog6Tooth,
-  HiLanguage,
-  HiCheck,
-  HiMoon,
-  HiSun,
-} from "react-icons/hi2";
+import Header from "../components/Header";
+import { HiCog6Tooth, HiLanguage, HiCheck } from "react-icons/hi2";
 
 function Settings() {
   const { t, i18n } = useTranslation();
-  const { isDark, toggleTheme } = useTheme();
+  const { isDark } = useTheme();
   const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
   const {
     sidebarOpen,
@@ -60,34 +55,10 @@ function Settings() {
         }`}
       >
         <div className="p-4 sm:p-6 lg:p-8">
-          {/* Page Header */}
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-2">
-              <div
-                className={`p-2 rounded-lg ${
-                  isDark
-                    ? "bg-blue-600/20 text-blue-400"
-                    : "bg-blue-100 text-blue-600"
-                }`}
-              >
-                <HiCog6Tooth className="w-6 h-6" />
-              </div>
-              <h1
-                className={`text-3xl font-bold transition-colors ${
-                  isDark ? "text-white" : "text-gray-800"
-                }`}
-              >
-                {t("settings.title")}
-              </h1>
-            </div>
-            <p
-              className={`text-sm transition-colors ${
-                isDark ? "text-gray-400" : "text-gray-600"
-              }`}
-            >
-              {t("settings.managePreferences")}
-            </p>
-          </div>
+          <Header
+            title={t("settings.title")}
+            subtitle={t("settings.managePreferences")}
+          />
 
           {/* Language Settings Card */}
           <div
@@ -176,66 +147,6 @@ function Settings() {
                   </button>
                 );
               })}
-            </div>
-          </div>
-
-          {/* Theme / Appearance Settings Card */}
-          <div
-            className={`rounded-xl shadow-lg border p-6 mb-6 transition-all duration-300 ${
-              isDark
-                ? "bg-gray-800 border-gray-700"
-                : "bg-white border-gray-200"
-            }`}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div
-                  className={`p-2 rounded-lg ${
-                    isDark
-                      ? "bg-blue-600/20 text-blue-400"
-                      : "bg-blue-100 text-blue-600"
-                  }`}
-                >
-                  {isDark ? (
-                    <HiSun className="w-5 h-5" />
-                  ) : (
-                    <HiMoon className="w-5 h-5" />
-                  )}
-                </div>
-                <div>
-                  <h2
-                    className={`text-xl font-semibold ${
-                      isDark ? "text-white" : "text-gray-800"
-                    }`}
-                  >
-                    {t("settings.appearance")}
-                  </h2>
-                  <p
-                    className={`text-sm ${
-                      isDark ? "text-gray-400" : "text-gray-600"
-                    }`}
-                  >
-                    {t("settings.themeDescription")}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={toggleTheme}
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
-                  isDark
-                    ? "bg-gray-700 text-white hover:bg-gray-600"
-                    : "bg-gray-100 text-gray-800 hover:bg-gray-200"
-                }`}
-              >
-                {isDark ? (
-                  <HiSun className="w-4 h-4" />
-                ) : (
-                  <HiMoon className="w-4 h-4" />
-                )}
-                <span>
-                  {isDark ? t("settings.lightMode") : t("settings.darkMode")}
-                </span>
-              </button>
             </div>
           </div>
 
