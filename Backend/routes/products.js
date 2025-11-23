@@ -39,6 +39,11 @@ router.post("/", [authenticateToken, ...validateProduct], async (req, res) => {
       shipment_tracking_number,
       sender,
       receiver,
+      // Add new receiver fields
+      receiver_name,
+      receiver_phone,
+      receiver_email,
+      receiver_address,
     } = req.body;
 
     // Check if shipment exists
@@ -76,7 +81,13 @@ router.post("/", [authenticateToken, ...validateProduct], async (req, res) => {
       shipment_tracking_number,
       created_by: req.user.userId,
       sender: sender || null,
-      receiver: receiver || null,
+      // Remove old receiver field
+      // receiver: receiver || null,
+      // Add new receiver fields
+      receiver_name: receiver_name || null,
+      receiver_phone: receiver_phone || null,
+      receiver_email: receiver_email || null,
+      receiver_address: receiver_address || null,
     });
 
     // Reload with associations
@@ -202,6 +213,11 @@ router.get("/", authenticateToken, async (req, res) => {
         shipment_tracking_number: p.shipment_tracking_number,
         shipment: p.shipment,
         created_by: p.creator,
+        // Add receiver fields
+        receiver_name: p.receiver_name,
+        receiver_phone: p.receiver_phone,
+        receiver_email: p.receiver_email,
+        receiver_address: p.receiver_address,
         created_at: p.created_at,
         updated_at: p.updated_at,
       })),
@@ -343,6 +359,11 @@ router.put(
         shipment_tracking_number,
         sender,
         receiver,
+        // Add new receiver fields
+        receiver_name,
+        receiver_phone,
+        receiver_email,
+        receiver_address,
       } = req.body;
 
       const product = await Product.findByPk(req.params.id);
@@ -394,7 +415,14 @@ router.put(
         product.shipment_tracking_number = shipment_tracking_number;
       }
       if (sender !== undefined) product.sender = sender;
-      if (receiver !== undefined) product.receiver = receiver;
+      // Remove old receiver field
+      // if (receiver !== undefined) product.receiver = receiver;
+      // Add new receiver fields
+      if (receiver_name !== undefined) product.receiver_name = receiver_name;
+      if (receiver_phone !== undefined) product.receiver_phone = receiver_phone;
+      if (receiver_email !== undefined) product.receiver_email = receiver_email;
+      if (receiver_address !== undefined)
+        product.receiver_address = receiver_address;
 
       await product.save();
 
