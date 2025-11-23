@@ -78,18 +78,6 @@ const User = sequelize.define(
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",
-    // Disable automatic index creation to avoid key limit
-    indexes: [
-      // Explicitly define unique indexes for username and email
-      {
-        unique: true,
-        fields: ["username"],
-      },
-      {
-        unique: true,
-        fields: ["email"],
-      },
-    ],
     hooks: {
       beforeCreate: async (user) => {
         if (user.password) {
