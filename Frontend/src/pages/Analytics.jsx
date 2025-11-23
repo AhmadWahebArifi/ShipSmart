@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
+import { useLoader } from "../context/LoaderContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
 import Header from "../components/Header";
@@ -10,6 +11,7 @@ import axiosInstance from "../config/axios";
 function Analytics() {
   const { t } = useTranslation();
   const { isDark } = useTheme();
+  const { showLoaderWithText } = useLoader();
   const {
     sidebarOpen,
     sidebarCollapsed,
@@ -24,6 +26,7 @@ function Analytics() {
   const [vehicles, setVehicles] = useState([]);
 
   useEffect(() => {
+    showLoaderWithText("Loading Analytics...", 1500);
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -53,7 +56,7 @@ function Analytics() {
     };
 
     fetchData();
-  }, []);
+  }, []); // Empty dependency array to run only once
 
   // Derived shipment metrics
   const routeStatsMap = shipments.reduce((acc, s) => {
