@@ -4,6 +4,7 @@ import { useSidebar } from "../context/SidebarContext";
 import { useTranslation } from "react-i18next";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
+import Header from "../components/Header";
 import VehicleForm from "../components/VehicleForm";
 import {
   FiTruck,
@@ -188,30 +189,13 @@ const Vehicles = () => {
         }`}
       >
         <div className="p-4 sm:p-6 lg:p-8">
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div className="flex items-center gap-3">
-              <div
-                className={`p-2 rounded-lg ${
-                  isDark
-                    ? "bg-blue-600/20 text-blue-400"
-                    : "bg-blue-100 text-blue-600"
-                }`}
-              >
-                <FiTruck className="w-6 h-6" />
-              </div>
-              <h1
-                className={`text-2xl font-bold ${
-                  isDark ? "text-white" : "text-gray-900"
-                }`}
-              >
-                {t("vehicles.title")}
-              </h1>
-              <span className="px-3 py-1 text-sm rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                {totalVehicles} {t("vehicles.items")}
-              </span>
-            </div>
+          <Header
+            title={t("vehicles.title")}
+            subtitle={`${totalVehicles} ${t("vehicles.items")}`}
+          />
 
+          {/* Add Vehicle Button */}
+          <div className="mb-6">
             <button
               onClick={() => setShowAddForm(!showAddForm)}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
