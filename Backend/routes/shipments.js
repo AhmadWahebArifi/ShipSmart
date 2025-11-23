@@ -55,6 +55,16 @@ const PROVINCES = [
   "Zabul",
 ];
 
+// Helper to map a user's branch string to a province name
+const mapBranchToProvince = (branch) => {
+  if (!branch) return null;
+  const lowerBranch = branch.toLowerCase();
+  const match = PROVINCES.find((province) =>
+    lowerBranch.includes(province.toLowerCase())
+  );
+  return match || null;
+};
+
 // @route   GET /api/shipments/provinces
 // @desc    Get list of all provinces
 // @access  Public
@@ -106,13 +116,28 @@ router.get("/", authenticateToken, async (req, res) => {
       },
     ];
 
-    // Filter by user role
-    if (user.role === "superadmin" || user.role === "admin") {
-      // Admins can see all shipments
-    } else if (user.role === "user") {
-      // Regular users can only see shipments they sent or received
+    // Visibility rules
+    // Admins and superadmins see all shipments
+    if (user.role !== "superadmin" && user.role !== "admin") {
+      const Op = require("sequelize").Op;
+      // Other users see:
+      // - Shipments where their province/branch province is FROM or TO
+      // - Shipments they sent or received
+      const provinceFilters = [];
+
+      let userProvince = user.province;
+      if (!userProvince && user.branch) {
+        userProvince = mapBranchToProvince(user.branch) || null;
+      }
+
+      if (userProvince) {
+        provinceFilters.push({ from_province: userProvince });
+        provinceFilters.push({ to_province: userProvince });
+      }
+
       whereClause = {
-        [require("sequelize").Op.or]: [
+        [Op.or]: [
+          ...provinceFilters,
           { sender_id: user.id },
           { receiver_id: user.id },
         ],
@@ -201,16 +226,28 @@ router.get("/:id", authenticateToken, async (req, res) => {
     }
 
     // Check if user has permission to view this shipment
-    if (
-      user.role !== "superadmin" &&
-      user.role !== "admin" &&
-      shipment.sender_id !== user.id &&
-      shipment.receiver_id !== user.id
-    ) {
-      return res.status(403).json({
-        success: false,
-        message: "Access denied",
-      });
+    // Admins/superadmins can view everything
+    if (user.role !== "superadmin" && user.role !== "admin") {
+      let userProvince = user.province;
+      if (!userProvince && user.branch) {
+        userProvince = mapBranchToProvince(user.branch) || null;
+      }
+
+      const inFromProvince =
+        userProvince &&
+        shipment.from_province &&
+        userProvince.toLowerCase() === shipment.from_province.toLowerCase();
+      const inToProvince =
+        userProvince &&
+        shipment.to_province &&
+        userProvince.toLowerCase() === shipment.to_province.toLowerCase();
+
+      if (!inFromProvince && !inToProvince) {
+        return res.status(403).json({
+          success: false,
+          message: "Access denied",
+        });
+      }
     }
 
     res.json({
@@ -260,13 +297,29 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
       });
     }
 
+    const isAdminSender =
+      sender.role === "admin" || sender.role === "superadmin";
+
+    // For non-admin users, force from_province based on their profile
+    let effectiveFromProvince = from_province;
+    if (!isAdminSender) {
+      if (sender.province) {
+        effectiveFromProvince = sender.province;
+      } else if (sender.branch) {
+        const mapped = mapBranchToProvince(sender.branch);
+        if (mapped) {
+          effectiveFromProvince = mapped;
+        }
+      }
+    }
+
     // Validate required fields
-    if (!from_province || !to_province || !tracking_number) {
+    if (!effectiveFromProvince || !to_province || !tracking_number) {
       return res.status(400).json({
         success: false,
         message: "From province, to province, and tracking number are required",
         missing_fields: {
-          from_province: !from_province,
+          from_province: !effectiveFromProvince,
           to_province: !to_province,
           tracking_number: !tracking_number,
         },
@@ -274,7 +327,7 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
     }
 
     // Validate province names (case-insensitive and trim whitespace)
-    const normalizedFromProvince = from_province?.trim();
+    const normalizedFromProvince = effectiveFromProvince?.trim();
     const normalizedToProvince = to_province?.trim();
 
     // Debug logging to see what we're receiving
@@ -328,20 +381,8 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
       });
     }
 
-    // For regular users, check if they can send from their branch
-    if (sender.role === "user") {
-      if (sender.branch && !from_province.includes(sender.branch)) {
-        // Extract province name from branch (e.g., "New York Branch" -> check if from_province is related)
-        // This is a simplified check - in a real app, you'd have a more sophisticated mapping
-        const senderProvince = sender.branch.replace(" Branch", "");
-        if (from_province !== senderProvince) {
-          return res.status(403).json({
-            success: false,
-            message: "You can only send shipments from your branch location",
-          });
-        }
-      }
-    }
+    // For regular users, restrict sending to their own province (already enforced via effectiveFromProvince)
+    // Additional branch-based checks can be added here if needed
 
     // Calculate route information
     let routeInfo = null;
@@ -413,6 +454,32 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
     });
 
     console.log("Shipment created successfully with ID:", shipment.id);
+
+    // Create notifications for admins/superadmins about this shipment
+    try {
+      const adminUsers = await User.findAll({
+        where: {
+          role: ["admin", "superadmin"],
+        },
+      });
+
+      const notificationPayloads = adminUsers.map((admin) => ({
+        user_id: admin.id,
+        shipment_id: shipment.id,
+        type: "shipment_created",
+        message: `New shipment ${tracking_number} from ${exactFromProvince} to ${exactToProvince}`,
+        is_read: false,
+      }));
+
+      if (notificationPayloads.length > 0) {
+        await Notification.bulkCreate(notificationPayloads);
+      }
+    } catch (notifyError) {
+      console.error(
+        "Error creating admin notifications for shipment:",
+        notifyError
+      );
+    }
 
     // Reload with associations
     await shipment.reload({
@@ -608,6 +675,7 @@ router.put(
   authenticateToken,
   canModifyShipment,
   async (req, res) => {
+    console.log("Reached update status route");
     try {
       const { status } = req.body;
       const shipment = await Shipment.findByPk(req.params.id);
