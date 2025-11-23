@@ -80,6 +80,14 @@ function App() {
                 }
               />
               <Route
+                path="/shipments/:id"
+                element={
+                  <ProtectedRoute>
+                    <Shipments />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
                 path="/products"
                 element={
                   <ProtectedRoute>
