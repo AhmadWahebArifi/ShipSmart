@@ -6,6 +6,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
+import Header from "../components/Header";
 import ShipmentForm from "../components/ShipmentForm";
 import EditShipmentModal from "../components/EditShipmentModal";
 import axiosInstance from "../config/axios";
@@ -357,7 +358,7 @@ const Shipment = () => {
     <>
       <div
         className={`min-h-screen flex transition-colors duration-300 ${
-          isDark ? "bg-gray-900" : "bg-gray-100"
+          isDark ? "bg-gray-950" : "bg-gray-50"
         }`}
       >
         {/* Sidebar */}
@@ -378,26 +379,17 @@ const Shipment = () => {
           }`}
         >
           <div className="p-4 sm:p-6 lg:p-8">
-            {/* Header */}
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-2">
-                <div
-                  className={`p-2 rounded-lg ${
-                    isDark
-                      ? "bg-blue-600/20 text-blue-400"
-                      : "bg-blue-100 text-blue-600"
-                  }`}
-                >
-                  <HiCube className="w-6 h-6" />
-                </div>
-                <h1
-                  className={`text-3xl font-bold transition-colors ${
-                    isDark ? "text-white" : "text-gray-800"
-                  }`}
-                >
-                  📦 {t("shipments.title")}
-                </h1>
-              </div>
+            <Header title={`📦 ${t("shipments.title")}`} />
+
+            {/* Add Shipment Button */}
+            <div className="mb-6">
+              <button
+                onClick={() => setShowAddForm(!showAddForm)}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <HiCube className="-ml-1 mr-2 h-4 w-4" />
+                {t("shipments.addNewShipment")}
+              </button>
             </div>
 
             {/* Error Message */}
@@ -430,17 +422,6 @@ const Shipment = () => {
                 />
               </div>
             )}
-
-            {/* Add Shipment Button */}
-            <div className="mb-6">
-              <button
-                onClick={() => setShowAddForm(!showAddForm)}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                <HiCube className="-ml-1 mr-2 h-4 w-4" />
-                {t("shipments.addNewShipment")}
-              </button>
-            </div>
 
             {/* Shipment Table */}
             <div
