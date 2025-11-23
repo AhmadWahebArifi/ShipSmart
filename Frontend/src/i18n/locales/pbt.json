@@ -130,7 +130,8 @@
       "delivered": "ورکړل شوی",
       "canceled": "لغوه شوی"
     },
-    "confirmDelete": "ایا تاسو ډاډه یاست چې غواړئ دا بریښناک حذف کړئ؟ دا عمل بیرته راګرځیدونکی نه دی.",
+    "statusLabel": "حالت",
+    "confirmDelete": "ایا تاسو ډاړه یاست چې غواړئ دا بریښناک حذف کړئ؟ دا عمل بیرته راګرځیدونکی نه دی.",
     "confirmDeleteTitle": "بریښناک ړنګول",
     "confirmStatusChange": "ایا تاسو ډاډه یاست چې غواړئ حالت {{status}} ته بدل کړئ؟",
     "confirmStatusChangeTitle": "حالت بدلول",
@@ -152,7 +153,23 @@
         "trackingNumberRequired": "د تعقیب شمیره اړینه ده",
         "provincesSame": "د سرچینې او موخې ولایتونه یو شان نشي کیدای"
       }
-    }
+    },
+    "shipmentDetails": "بریښناک تفصیلات",
+    "from": "له",
+    "to": "ته",
+    "customerInfo": "پیرودونکی معلومات",
+    "receiverName": "د منونکی نوم",
+    "receiverPhone": "د منونکی تلیفون",
+    "receiverEmail": "د منونکی ایمیل",
+    "receiverAddress": "د منونکی پته",
+    "productsInShipment": "محصولات پدې بریښناک کې",
+    "noProductsFound": "پدې بریښناک کې هېڅ محصول ونه موندل شو",
+    "totalItems": "د ټولو توکو شمیر",
+    "productTypes": "د محصول ډولونه",
+    "totalWeight": "ټول وزن",
+    "importantDates": "important نیټې",
+    "createdAt": "په جوړولو کې",
+    "updatedAt": "په تازه کولو کې"
   },
   "products": {
     "title": "محصولات",
@@ -247,7 +264,15 @@
       "fetchFailed": "د محصولاتو پورته کولو کې ستونزه راغله. مهرباني وکړئ بیا هڅه وکړئ.",
       "shipmentRequired": "مهرباني وکړئ د دې محصول لپاره یو بریښناک وټاکئ.",
       "shipmentNotAvailable": "غوره شوی بریښناک د محصولاتو زیاتولو لپاره شتون نلري."
-    }
+    },
+    "quantity": "تعداد",
+    "weight": "وزن",
+    "value": "ارزښت",
+    "category": "دسته",
+    "receiverName": "د منونکی نوم",
+    "receiverPhone": "د منونکی تلیفون",
+    "receiverEmail": "د منونکی ایمیل",
+    "receiverAddress": "د منونکی پته"
   },
   "shipmentStatus": {
     "pending": "منتظر",
