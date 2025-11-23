@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
+import { useLoader } from "../context/LoaderContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
 import Header from "../components/Header";
@@ -64,9 +65,11 @@ const PROVINCES = [
   "Zabul",
 ];
 
-const Shipment = () => {
-  const { isDark } = useTheme();
+const Shipments = () => {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const { isDark } = useTheme();
+  const { showLoaderWithText } = useLoader(); // Added loader hook
   const { id } = useParams();
   const navigate = useNavigate();
   const {
@@ -135,12 +138,13 @@ const Shipment = () => {
 
   // Fetch shipments when component mounts
   useEffect(() => {
+    showLoaderWithText("Loading Shipments...", 1500);
     fetchShipments();
-  }, []);
+  }, []); // Empty dependency array to run only once
 
   // Handle URL parameter for specific shipment
   useEffect(() => {
-    if (id && shipments.length > 0) {
+    if (id && shipments.length > 0 && !loading) {
       const shipment = shipments.find((s) => s.id === parseInt(id));
 
       if (shipment) {
@@ -162,7 +166,7 @@ const Shipment = () => {
         navigate("/shipments", { replace: true });
       }
     }
-  }, [id, shipments, navigate]);
+  }, [id, shipments, navigate, loading]);
 
   const fetchShipments = async () => {
     try {
@@ -763,4 +767,4 @@ const Shipment = () => {
   );
 };
 
-export default Shipment;
+export default Shipments;
