@@ -6,6 +6,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
+import Header from "../components/Header";
 import axiosInstance from "../config/axios";
 
 function Dashboard() {
@@ -122,23 +123,8 @@ function Dashboard() {
       >
         {/* Main Content Area */}
         <main className="p-4 sm:p-6 lg:p-8">
-          {/* Welcome Section */}
-          <div className="mb-8">
-            <h2
-              className={`text-2xl font-semibold mb-2 transition-colors ${
-                isDark ? "text-white" : "text-gray-800"
-              }`}
-            >
-              {t("dashboard.welcome", { username: user?.username || "User" })}
-            </h2>
-            <p
-              className={`transition-colors ${
-                isDark ? "text-gray-400" : "text-gray-600"
-              }`}
-            >
-              {t("dashboard.overview")}
-            </p>
-          </div>
+          {/* Top header with welcome + notifications */}
+          <Header subtitle={t("dashboard.overview")} />
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
