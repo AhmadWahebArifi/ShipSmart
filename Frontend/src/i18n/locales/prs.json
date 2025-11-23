@@ -131,6 +131,7 @@
       "delivered": "تحویل شده",
       "canceled": "لغو شده"
     },
+    "statusLabel": "وضعیت",
     "confirmDelete": "آیا از حذف این محموله اطمینان دارید؟ این عمل قابل بازگشت نیست.",
     "confirmDeleteTitle": "حذف محموله",
     "confirmStatusChange": "آیا از تغییر وضعیت به {{status}} اطمینان دارید؟",
@@ -153,7 +154,23 @@
         "trackingNumberRequired": "شماره رهگیری الزامی است",
         "provincesSame": "ولایت مبدأ و مقصد نمی‌تواند یکسان باشد"
       }
-    }
+    },
+    "shipmentDetails": "جزئیات محموله",
+    "from": "از",
+    "to": "به",
+    "customerInfo": "اطلاعات مشتری",
+    "receiverName": "نام گیرنده",
+    "receiverPhone": "تلفن گیرنده",
+    "receiverEmail": "ایمیل گیرنده",
+    "receiverAddress": "آدرس گیرنده",
+    "productsInShipment": "محصولات در این محموله",
+    "noProductsFound": "محصولی در این محموله یافت نشد",
+    "totalItems": "تعداد کل اقلام",
+    "productTypes": "انواع محصولات",
+    "totalWeight": "وزن کل",
+    "importantDates": "تاریخ‌های مهم",
+    "createdAt": "تاریخ ایجاد",
+    "updatedAt": "تاریخ به‌روزرسانی"
   },
   "products": {
     "title": "محصولات",
@@ -212,7 +229,15 @@
       "fetchFailed": "خطا در بارگیری محصولات. لطفاً دوباره تلاش کنید.",
       "shipmentRequired": "لطفاً یک محموله برای این محصول انتخاب کنید.",
       "shipmentNotAvailable": "محموله انتخاب شده برای افزودن محصولات در دسترس نیست."
-    }
+    },
+    "quantity": "تعداد",
+    "weight": "وزن",
+    "value": "ارزش",
+    "category": "دسته بندی",
+    "receiverName": "نام گیرنده",
+    "receiverPhone": "تلفن گیرنده",
+    "receiverEmail": "ایمیل گیرنده",
+    "receiverAddress": "آدرس گیرنده"
   },
   "shipmentStatus": {
     "pending": "در انتظار",
@@ -260,7 +285,8 @@
     "errors": {
       "generic": "خطایی رخ داده است. لطفاً دوباره تلاش کنید.",
       "required": "این فیلد الزامی است"
-    }
+    },
+    "notAvailable": "در دسترس نیست"
   },
   "validation": {
     "required": "این فیلد الزامی است",
