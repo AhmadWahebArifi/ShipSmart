@@ -149,7 +149,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
           {/* Toggle Button (Desktop) */}
           <button
             onClick={onToggleCollapse}
-            className={`hidden lg:flex p-2 rounded-lg transition-colors ml-2 flex-shrink-0 ${
+            className={`hidden lg:flex p-2 rounded-lg transition-colors ml-1 flex-shrink-0 ${
               isDark
                 ? "text-gray-400 hover:text-white hover:bg-gray-800"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
