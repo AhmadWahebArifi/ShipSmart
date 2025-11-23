@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
 import Sidebar from "../components/Sidebar";
@@ -9,6 +9,7 @@ import MobileMenuButton from "../components/MobileMenuButton";
 import Header from "../components/Header";
 import ShipmentForm from "../components/ShipmentForm";
 import EditShipmentModal from "../components/EditShipmentModal";
+import ShipmentDetailPopup from "../components/ShipmentDetailPopup";
 import axiosInstance from "../config/axios";
 import {
   HiCube,
@@ -18,6 +19,7 @@ import {
   HiCheck,
   HiX,
   HiTruck,
+  HiEye,
 } from "react-icons/hi";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -65,6 +67,8 @@ const PROVINCES = [
 const Shipment = () => {
   const { isDark } = useTheme();
   const { t } = useTranslation();
+  const { id } = useParams();
+  const navigate = useNavigate();
   const {
     sidebarOpen,
     sidebarCollapsed,
@@ -79,6 +83,8 @@ const Shipment = () => {
   const [editingShipment, setEditingShipment] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentShipment, setCurrentShipment] = useState(null);
+  const [detailPopupOpen, setDetailPopupOpen] = useState(false);
+  const [selectedShipment, setSelectedShipment] = useState(null);
 
   const showAlert = (title, message, type = "success") => {
     MySwal.fire({
@@ -99,6 +105,12 @@ const Shipment = () => {
     setShipments([newShipment, ...shipments]);
     setShowAddForm(false);
     showAlert(t("common.success"), t("shipments.success.added"), "success");
+  };
+
+  // Handle opening shipment detail popup
+  const handleViewShipment = (shipment) => {
+    setSelectedShipment(shipment);
+    setDetailPopupOpen(true);
   };
 
   // Handle updating a shipment
@@ -125,6 +137,32 @@ const Shipment = () => {
   useEffect(() => {
     fetchShipments();
   }, []);
+
+  // Handle URL parameter for specific shipment
+  useEffect(() => {
+    if (id && shipments.length > 0) {
+      const shipment = shipments.find((s) => s.id === parseInt(id));
+
+      if (shipment) {
+        // Just highlight the shipment by adding a temporary class or state
+        setCurrentShipment(shipment);
+        // Scroll to the shipment after a short delay
+        setTimeout(() => {
+          const element = document.getElementById(`shipment-${shipment.id}`);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+            // Add highlight effect
+            element.classList.add("ring-2", "ring-blue-500");
+            setTimeout(() => {
+              element.classList.remove("ring-2", "ring-blue-500");
+            }, 3000);
+          }
+        }, 500);
+        // Clear the URL parameter after highlighting
+        navigate("/shipments", { replace: true });
+      }
+    }
+  }, [id, shipments, navigate]);
 
   const fetchShipments = async () => {
     try {
@@ -514,6 +552,7 @@ const Shipment = () => {
                           {shipments.map((shipment) => (
                             <tr
                               key={shipment.id}
+                              id={`shipment-${shipment.id}`}
                               className={`border-t transition ${
                                 isDark
                                   ? "border-gray-700 hover:bg-gray-700/50"
@@ -649,6 +688,19 @@ const Shipment = () => {
                                     </option>
                                   </select>
 
+                                  {/* View Button */}
+                                  <button
+                                    onClick={() => handleViewShipment(shipment)}
+                                    className={`p-1 rounded ${
+                                      isDark
+                                        ? "text-green-400 hover:bg-gray-600"
+                                        : "text-green-600 hover:bg-gray-200"
+                                    }`}
+                                    title="View Details"
+                                  >
+                                    <HiEye className="w-4 h-4" />
+                                  </button>
+
                                   {/* Edit Button */}
                                   {shipment.status !== "delivered" &&
                                     shipment.status !== "on_route" && (
@@ -701,6 +753,11 @@ const Shipment = () => {
         shipment={currentShipment}
         onSave={handleEditShipment}
         isDark={isDark}
+      />
+      <ShipmentDetailPopup
+        shipment={selectedShipment}
+        isOpen={detailPopupOpen}
+        onClose={() => setDetailPopupOpen(false)}
       />
     </>
   );
