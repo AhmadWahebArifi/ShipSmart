@@ -5,6 +5,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
+import Header from "../components/Header";
 import axiosInstance from "../config/axios";
 import {
   HiUserCircle,
@@ -209,34 +210,7 @@ function Admin() {
         }`}
       >
         <div className="p-4 sm:p-6 lg:p-8">
-          {/* Page Header */}
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-2">
-              <div
-                className={`p-2 rounded-lg ${
-                  isDark
-                    ? "bg-blue-600/20 text-blue-400"
-                    : "bg-blue-100 text-blue-600"
-                }`}
-              >
-                <HiUserCircle className="w-6 h-6" />
-              </div>
-              <h1
-                className={`text-3xl font-bold ${
-                  isDark ? "text-white" : "text-gray-800"
-                }`}
-              >
-                {t("profile.title")}
-              </h1>
-            </div>
-            <p
-              className={`text-sm ${
-                isDark ? "text-gray-400" : "text-gray-600"
-              }`}
-            >
-              {t("profile.subtitle")}
-            </p>
-          </div>
+          <Header title={t("profile.title")} subtitle={t("profile.subtitle")} />
 
           {/* Personal Info Card - View Mode */}
           <div
