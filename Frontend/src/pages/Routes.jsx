@@ -4,6 +4,7 @@ import { useSidebar } from "../context/SidebarContext";
 import { useTranslation } from "react-i18next";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
+import Header from "../components/Header";
 import axiosInstance from "../config/axios";
 import {
   HiMap,
@@ -483,7 +484,7 @@ const Routes = () => {
     <>
       <div
         className={`min-h-screen flex transition-colors duration-300 ${
-          isDark ? "bg-gray-900" : "bg-gray-100"
+          isDark ? "bg-gray-950" : "bg-gray-50"
         }`}
       >
         {/* Sidebar */}
@@ -504,70 +505,49 @@ const Routes = () => {
           }`}
         >
           <div className="p-4 sm:p-6 lg:p-8">
-            {/* Header */}
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-2">
-                <div
-                  className={`p-2 rounded-lg ${
+            <Header
+              title={`🛣️ ${t("routes.title")}`}
+              subtitle={t("routes.description")}
+            />
+
+            {/* Action Buttons */}
+            <div className="mb-6">
+              <div className="flex gap-2 flex-wrap">
+                <button
+                  onClick={() => setShowAnalytics(!showAnalytics)}
+                  className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
                     isDark
-                      ? "bg-blue-600/20 text-blue-400"
-                      : "bg-blue-100 text-blue-600"
+                      ? "bg-blue-600 hover:bg-blue-700 text-white"
+                      : "bg-blue-600 hover:bg-blue-700 text-white"
                   }`}
                 >
-                  <HiMap className="w-6 h-6" />
-                </div>
-                <h1
-                  className={`text-3xl font-bold transition-colors ${
-                    isDark ? "text-white" : "text-gray-800"
+                  <HiChartBar className="w-4 h-4" />
+                  {showAnalytics ? "Hide Analytics" : "Show Analytics"}
+                </button>
+                <button
+                  onClick={exportToCSV}
+                  className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                    isDark
+                      ? "bg-green-600 hover:bg-green-700 text-white"
+                      : "bg-green-600 hover:bg-green-700 text-white"
                   }`}
                 >
-                  🛣️ {t("routes.title")}
-                </h1>
+                  <HiArrowDownTray className="w-4 h-4" />
+                  Export CSV
+                </button>
               </div>
-              <p
-                className={`mt-2 ${isDark ? "text-gray-400" : "text-gray-600"}`}
-              >
-                {t("routes.description")}
-              </p>
             </div>
 
             {/* Analytics Dashboard */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-4">
+            {showAnalytics && (
+              <div className="mb-8">
                 <h2
-                  className={`text-xl font-semibold ${
+                  className={`text-xl font-semibold mb-4 ${
                     isDark ? "text-white" : "text-gray-800"
                   }`}
                 >
                   📊 Route Analytics
                 </h2>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setShowAnalytics(!showAnalytics)}
-                    className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
-                      isDark
-                        ? "bg-blue-600 hover:bg-blue-700 text-white"
-                        : "bg-blue-600 hover:bg-blue-700 text-white"
-                    }`}
-                  >
-                    <HiChartBar className="w-4 h-4" />
-                    {showAnalytics ? "Hide Analytics" : "Show Analytics"}
-                  </button>
-                  <button
-                    onClick={exportToCSV}
-                    className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
-                      isDark
-                        ? "bg-green-600 hover:bg-green-700 text-white"
-                        : "bg-green-600 hover:bg-green-700 text-white"
-                    }`}
-                  >
-                    <HiArrowDownTray className="w-4 h-4" />
-                    Export CSV
-                  </button>
-                </div>
-              </div>
-
-              {showAnalytics && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div
                     className={`p-4 rounded-lg border ${
@@ -697,58 +677,57 @@ const Routes = () => {
                     </div>
                   </div>
                 </div>
-              )}
+                {showAnalytics && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div
+                      className={`p-4 rounded-lg border ${
+                        isDark
+                          ? "bg-gray-800 border-gray-700"
+                          : "bg-white border-gray-200"
+                      }`}
+                    >
+                      <h3
+                        className={`font-medium mb-2 ${
+                          isDark ? "text-white" : "text-gray-800"
+                        }`}
+                      >
+                        🏆 Most Connected
+                      </h3>
+                      <p
+                        className={`text-lg ${
+                          isDark ? "text-blue-400" : "text-blue-600"
+                        }`}
+                      >
+                        {routeStats.mostConnected || "N/A"}
+                      </p>
+                    </div>
 
-              {showAnalytics && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                  <div
-                    className={`p-4 rounded-lg border ${
-                      isDark
-                        ? "bg-gray-800 border-gray-700"
-                        : "bg-white border-gray-200"
-                    }`}
-                  >
-                    <h3
-                      className={`font-medium mb-2 ${
-                        isDark ? "text-white" : "text-gray-800"
+                    <div
+                      className={`p-4 rounded-lg border ${
+                        isDark
+                          ? "bg-gray-800 border-gray-700"
+                          : "bg-white border-gray-200"
                       }`}
                     >
-                      🏆 Most Connected
-                    </h3>
-                    <p
-                      className={`text-lg ${
-                        isDark ? "text-blue-400" : "text-blue-600"
-                      }`}
-                    >
-                      {routeStats.mostConnected || "N/A"}
-                    </p>
+                      <h3
+                        className={`font-medium mb-2 ${
+                          isDark ? "text-white" : "text-gray-800"
+                        }`}
+                      >
+                        📍 Least Connected
+                      </h3>
+                      <p
+                        className={`text-lg ${
+                          isDark ? "text-orange-400" : "text-orange-600"
+                        }`}
+                      >
+                        {routeStats.leastConnected || "N/A"}
+                      </p>
+                    </div>
                   </div>
-
-                  <div
-                    className={`p-4 rounded-lg border ${
-                      isDark
-                        ? "bg-gray-800 border-gray-700"
-                        : "bg-white border-gray-200"
-                    }`}
-                  >
-                    <h3
-                      className={`font-medium mb-2 ${
-                        isDark ? "text-white" : "text-gray-800"
-                      }`}
-                    >
-                      📍 Least Connected
-                    </h3>
-                    <p
-                      className={`text-lg ${
-                        isDark ? "text-orange-400" : "text-orange-600"
-                      }`}
-                    >
-                      {routeStats.leastConnected || "N/A"}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
 
             {/* Error Message */}
             {error && (
