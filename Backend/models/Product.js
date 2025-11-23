@@ -64,8 +64,25 @@ const Product = sequelize.define(
       allowNull: true,
       defaultValue: null,
     },
-    receiver: {
+    // Add detailed receiver fields
+    receiver_name: {
       type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
+    receiver_phone: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
+    receiver_email: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+      // Removed email validation to make it optional
+    },
+    receiver_address: {
+      type: DataTypes.TEXT,
       allowNull: true,
       defaultValue: null,
     },
