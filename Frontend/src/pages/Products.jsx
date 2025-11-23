@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
 import { useTranslation } from "react-i18next";
+import { useLoader } from "../context/LoaderContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
 import Header from "../components/Header";
@@ -23,6 +24,7 @@ import Swal from "sweetalert2";
 const Products = () => {
   const { t } = useTranslation();
   const { isDark } = useTheme();
+  const { showLoaderWithText } = useLoader();
   const { trackNumber } = useParams();
   const { sidebarOpen, closeSidebar, sidebarCollapsed, toggleSidebar } =
     useSidebar();
@@ -39,8 +41,9 @@ const Products = () => {
   });
 
   useEffect(() => {
+    showLoaderWithText("Loading Products...", 1500);
     fetchProducts();
-  }, []);
+  }, []); // Empty dependency array to run only once
 
   const fetchProducts = async () => {
     try {
