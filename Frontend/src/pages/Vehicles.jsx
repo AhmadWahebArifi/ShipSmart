@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
 import { useTranslation } from "react-i18next";
+import { useLoader } from "../context/LoaderContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
 import Header from "../components/Header";
@@ -20,6 +21,7 @@ import Swal from "sweetalert2";
 const Vehicles = () => {
   const { t } = useTranslation();
   const { isDark } = useTheme();
+  const { showLoaderWithText } = useLoader();
   const { sidebarOpen, closeSidebar, sidebarCollapsed, toggleSidebar } =
     useSidebar();
 
@@ -32,8 +34,9 @@ const Vehicles = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
+    showLoaderWithText("Loading Vehicles...", 1500);
     fetchVehicles();
-  }, []);
+  }, []); // Empty dependency array to run only once
 
   const fetchVehicles = async () => {
     try {
