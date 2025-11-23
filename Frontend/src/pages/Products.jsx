@@ -14,7 +14,6 @@ import {
   FiTruck,
   FiEdit2,
   FiTrash2,
-  FiInfo,
   FiFilter,
   FiSearch,
 } from "react-icons/fi";
@@ -48,8 +47,12 @@ const Products = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      // Build query params
+      // Build query params - only fetch products that have shipment_id
       const params = new URLSearchParams();
+
+      // Only fetch products that are associated with shipments
+      params.append("has_shipment", "true");
+
       if (filters.shipmentTrackNumber) {
         params.append("shipment_tracking_number", filters.shipmentTrackNumber);
       }
@@ -57,9 +60,29 @@ const Products = () => {
         params.append("search", searchTerm);
       }
 
-      const response = await axiosInstance.get(
-        `/products?${params.toString()}`
-      );
+      let response;
+      try {
+        response = await axiosInstance.get(`/products?${params.toString()}`);
+      } catch (error) {
+        // Fallback: try without has_shipment parameter and filter client-side
+        console.log(
+          "Backend doesn't support has_shipment filter, using fallback..."
+        );
+        response = await axiosInstance.get(
+          `/products?${new URLSearchParams({
+            shipment_tracking_number: filters.shipmentTrackNumber || "",
+            search: searchTerm || "",
+          })}`
+        );
+
+        // Filter client-side to only show products with shipment_id
+        if (response.data && response.data.success) {
+          response.data.products = response.data.products.filter(
+            (product) => product.shipment_id || product.shipment_tracking_number
+          );
+        }
+      }
+
       if (response.data && response.data.success) {
         console.log("Products with shipments:", response.data.products);
         setProducts(response.data.products || []);
@@ -548,6 +571,38 @@ const Products = () => {
                       >
                         {t("products.table.total")} (AFN)
                       </th>
+                      <th
+                        scope="col"
+                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          isDark ? "text-gray-300" : "text-gray-500"
+                        }`}
+                      >
+                        {t("products.receiverName")}
+                      </th>
+                      <th
+                        scope="col"
+                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          isDark ? "text-gray-300" : "text-gray-500"
+                        }`}
+                      >
+                        {t("products.receiverPhone")}
+                      </th>
+                      <th
+                        scope="col"
+                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          isDark ? "text-gray-300" : "text-gray-500"
+                        }`}
+                      >
+                        {t("products.receiverEmail")}
+                      </th>
+                      <th
+                        scope="col"
+                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          isDark ? "text-gray-300" : "text-gray-500"
+                        }`}
+                      >
+                        {t("products.receiverAddress")}
+                      </th>
                       <th scope="col" className="relative px-6 py-3">
                         <span className="sr-only">{t("common.actions")}</span>
                       </th>
@@ -670,6 +725,83 @@ const Products = () => {
                             parseFloat(product.price) *
                             parseInt(product.quantity)
                           ).toFixed(2)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm">
+                            <div
+                              className={`font-medium ${
+                                isDark ? "text-gray-200" : "text-gray-900"
+                              }`}
+                            >
+                              {product.receiver_name || (
+                                <span
+                                  className={
+                                    isDark ? "text-gray-500" : "text-gray-400"
+                                  }
+                                >
+                                  {t("common.notAvailable")}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm">
+                            <div
+                              className={`${
+                                isDark ? "text-gray-200" : "text-gray-900"
+                              }`}
+                            >
+                              {product.receiver_phone || (
+                                <span
+                                  className={
+                                    isDark ? "text-gray-500" : "text-gray-400"
+                                  }
+                                >
+                                  {t("common.notAvailable")}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm">
+                            <div
+                              className={`${
+                                isDark ? "text-gray-200" : "text-gray-900"
+                              }`}
+                            >
+                              {product.receiver_email || (
+                                <span
+                                  className={
+                                    isDark ? "text-gray-500" : "text-gray-400"
+                                  }
+                                >
+                                  {t("common.notAvailable")}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm max-w-xs">
+                            <div
+                              className={`${
+                                isDark ? "text-gray-200" : "text-gray-900"
+                              } truncate`}
+                              title={product.receiver_address}
+                            >
+                              {product.receiver_address || (
+                                <span
+                                  className={
+                                    isDark ? "text-gray-500" : "text-gray-400"
+                                  }
+                                >
+                                  {t("common.notAvailable")}
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </td>
                         <td
                           className={`px-6 py-4 whitespace-nowrap text-right text-sm font-medium ${
