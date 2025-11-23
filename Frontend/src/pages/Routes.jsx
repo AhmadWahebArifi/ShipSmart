@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
 import { useTranslation } from "react-i18next";
+import { useLoader } from "../context/LoaderContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
 import Header from "../components/Header";
+import { PieChart, ChartCard } from "../components/Charts";
 import axiosInstance from "../config/axios";
 import {
   HiMap,
@@ -181,6 +183,7 @@ const PROVINCE_MAPPING = {
 
 const Routes = () => {
   const { isDark } = useTheme();
+  const { showLoaderWithText } = useLoader();
   const { t, i18n } = useTranslation();
   const {
     sidebarOpen,
@@ -189,6 +192,10 @@ const Routes = () => {
     closeSidebar,
     toggleSidebarCollapse,
   } = useSidebar();
+
+  useEffect(() => {
+    showLoaderWithText("Loading Routes...", 1500);
+  }, []); // Empty dependency array to run only once
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -203,6 +210,7 @@ const Routes = () => {
   const [routeStats, setRouteStats] = useState({});
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [routeDistribution, setRouteDistribution] = useState([]);
 
   // Fetch provincial connections
   useEffect(() => {
@@ -306,6 +314,20 @@ const Routes = () => {
 
         setProvinces(localizedProvinces);
         calculateRouteStats();
+
+        // Prepare route distribution data for pie chart
+        const distribution = [];
+        Object.entries(response.data.connections).forEach(
+          ([province, neighbors]) => {
+            distribution.push({
+              province: getLocalizedProvinceName(province),
+              connections: neighbors.length,
+            });
+          }
+        );
+        setRouteDistribution(
+          distribution.sort((a, b) => b.connections - a.connections).slice(0, 8)
+        ); // Top 8 provinces
       }
     } catch (err) {
       console.error("Error fetching provincial connections:", err);
@@ -462,22 +484,45 @@ const Routes = () => {
 
   // Get localized province name
   const getLocalizedProvinceName = (province) => {
-    if (i18n.language === "prs") {
+    if (t && i18n.language === "prs") {
       return PROVINCE_MAPPING.enToPrs[province] || province;
-    } else if (i18n.language === "pbt") {
+    } else if (t && i18n.language === "pbt") {
       return PROVINCE_MAPPING.enToPbt[province] || province;
+    } else {
+      return province;
     }
-    return province;
   };
 
   // Get English province name from localized name
   const getEnglishProvinceName = (province) => {
-    if (i18n.language === "prs") {
+    if (i18n && i18n.language === "prs") {
       return PROVINCE_MAPPING.prsToEn[province] || province;
-    } else if (i18n.language === "pbt") {
+    } else if (i18n && i18n.language === "pbt") {
       return PROVINCE_MAPPING.pbtToEn[province] || province;
     }
     return province;
+  };
+
+  // Prepare chart data for route distribution
+  const routeChartData = {
+    labels: routeDistribution.map((item) => item.province),
+    datasets: [
+      {
+        data: routeDistribution.map((item) => item.connections),
+        backgroundColor: [
+          "#3b82f6",
+          "#ef4444",
+          "#10b981",
+          "#f59e0b",
+          "#8b5cf6",
+          "#ec4899",
+          "#06b6d4",
+          "#84cc16",
+        ],
+        borderColor: isDark ? "#1f2937" : "#ffffff",
+        borderWidth: 2,
+      },
+    ],
   };
 
   return (
@@ -1085,6 +1130,20 @@ const Routes = () => {
                 </div>
               </div>
             )}
+
+            {/* Route Distribution Chart */}
+            <div className="mt-6">
+              <ChartCard
+                title="Top Provinces by Route Connections"
+                isDark={isDark}
+              >
+                <PieChart
+                  data={routeChartData}
+                  title="Provincial Route Distribution"
+                  isDark={isDark}
+                />
+              </ChartCard>
+            </div>
 
             {/* Provincial Connections */}
             {!loading && provinces.length > 0 && (
