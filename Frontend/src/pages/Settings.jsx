@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
+import { useLoader } from "../context/LoaderContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
 import Header from "../components/Header";
@@ -10,6 +11,7 @@ import { HiCog6Tooth, HiLanguage, HiCheck } from "react-icons/hi2";
 function Settings() {
   const { t, i18n } = useTranslation();
   const { isDark } = useTheme();
+  const { showLoaderWithText } = useLoader();
   const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
   const {
     sidebarOpen,
@@ -30,6 +32,10 @@ function Settings() {
     i18n.changeLanguage(langCode);
     localStorage.setItem("language", langCode);
   };
+
+  React.useEffect(() => {
+    showLoaderWithText("Loading Settings...", 1500);
+  }, []); // Empty dependency array to run only once
 
   return (
     <div
