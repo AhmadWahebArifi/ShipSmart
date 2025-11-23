@@ -19,6 +19,7 @@ import UserManagement from "./pages/UserManagement";
 import NotFound from "./pages/NotFound";
 import Vehicles from "./pages/Vehicles";
 import RoutesPage from "./pages/Routes";
+import Analytics from "./pages/Analytics";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -107,6 +108,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <RoutesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/analytics"
+                element={
+                  <ProtectedRoute>
+                    <Analytics />
                   </ProtectedRoute>
                 }
               />
