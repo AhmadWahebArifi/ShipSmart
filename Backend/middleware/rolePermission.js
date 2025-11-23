@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User, Shipment } = require("../models");
 
 // Middleware to check if user has specific role
 const requireRole = (roles) => {
@@ -36,71 +36,108 @@ const requireRole = (roles) => {
   };
 };
 
-// Middleware to check if user can modify shipment based on destination
-const canModifyShipment = () => {
-  return async (req, res, next) => {
-    try {
-      // Check if user is authenticated
-      if (!req.user) {
-        return res.status(401).json({
-          success: false,
-          message: "Authentication required",
-        });
-      }
-
-      // SuperAdmins and Admins can modify any shipment
-      if (req.user.role === "superadmin" || req.user.role === "admin") {
-        return next();
-      }
-
-      // Regular users can only modify shipments where destination matches their branch
-      if (req.user.role === "user") {
-        const { shipmentId } = req.params;
-        const { destination } = req.body;
-
-        // If updating an existing shipment
-        if (shipmentId) {
-          // Here you would typically fetch the shipment from database and check
-          // if its destination matches the user's branch
-          // For now, we'll just check the branch field
-          if (req.user.branch && destination) {
-            if (destination.includes(req.user.branch)) {
-              return next();
-            } else {
-              return res.status(403).json({
-                success: false,
-                message: "You can only modify shipments for your branch",
-              });
-            }
-          }
-        } else {
-          // Creating a new shipment
-          if (req.user.branch && destination) {
-            if (destination.includes(req.user.branch)) {
-              return next();
-            } else {
-              return res.status(403).json({
-                success: false,
-                message: "You can only create shipments for your branch",
-              });
-            }
-          }
-        }
-      }
-
-      // If we reach here, user doesn't have permission
-      return res.status(403).json({
+// Middleware to check if user can modify a shipment
+const canModifyShipment = async (req, res, next) => {
+  try {
+    // Check if user is authenticated
+    if (!req.user) {
+      return res.status(401).json({
         success: false,
-        message: "Insufficient permissions",
-      });
-    } catch (error) {
-      console.error("Permission check error:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Error checking permissions",
+        message: "Authentication required",
       });
     }
-  };
+
+    // SuperAdmins and Admins can modify any shipment
+    if (req.user.role === "superadmin" || req.user.role === "admin") {
+      return next();
+    }
+
+    // For other roles, enforce shipment- and province-based rules
+    const shipmentId = req.params.id;
+
+    if (!shipmentId) {
+      return res.status(400).json({
+        success: false,
+        message: "Shipment ID is required",
+      });
+    }
+
+    // Load user and shipment from DB
+    const [dbUser, shipment] = await Promise.all([
+      User.findByPk(req.user.userId),
+      Shipment.findByPk(shipmentId),
+    ]);
+
+    if (!dbUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (!shipment) {
+      return res.status(404).json({
+        success: false,
+        message: "Shipment not found",
+      });
+    }
+
+    const requestedStatus = req.body?.status;
+    const currentStatus = shipment.status;
+
+    const hasProvince = !!dbUser.province;
+    const hasBranch = !!dbUser.branch;
+
+    const isFromProvinceUser =
+      shipment.from_province &&
+      ((hasProvince &&
+        dbUser.province.toLowerCase() ===
+          shipment.from_province.toLowerCase()) ||
+        (hasBranch &&
+          dbUser.branch
+            .toLowerCase()
+            .includes(shipment.from_province.toLowerCase())));
+
+    const isToProvinceUser =
+      shipment.to_province &&
+      ((hasProvince &&
+        dbUser.province.toLowerCase() === shipment.to_province.toLowerCase()) ||
+        (hasBranch &&
+          dbUser.branch
+            .toLowerCase()
+            .includes(shipment.to_province.toLowerCase())));
+
+    // Allowed statuses for FROM province user: pending, in_progress, on_route, canceled
+    const fromProvinceAllowed =
+      isFromProvinceUser &&
+      requestedStatus &&
+      ["pending", "in_progress", "on_route", "canceled"].includes(
+        requestedStatus
+      );
+
+    // Allowed transition for TO province user: on_route -> delivered
+    const toProvinceAllowed =
+      isToProvinceUser &&
+      requestedStatus &&
+      currentStatus === "on_route" &&
+      requestedStatus === "delivered";
+
+    if (fromProvinceAllowed || toProvinceAllowed) {
+      return next();
+    }
+
+    // If we reach here, user doesn't have permission
+    return res.status(403).json({
+      success: false,
+      message: "Insufficient permissions to modify this shipment",
+    });
+  } catch (error) {
+    console.error("Permission check error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error checking permissions",
+    });
+  }
 };
 
 // Middleware to check if user can send products to other branches
