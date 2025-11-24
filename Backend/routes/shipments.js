@@ -574,12 +574,12 @@ router.put("/:id", authenticateToken, canModifyShipment, async (req, res) => {
     }
 
     // Check if provinces are the same
-    // if (from_province && to_province && from_province === to_province) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "From and to provinces cannot be the same",
-    //   });
-    // }
+    if (from_province && to_province && from_province === to_province) {
+      return res.status(400).json({
+        success: false,
+        message: "From and to provinces cannot be the same",
+      });
+    }
 
     // Update shipment
     const updatedShipment = await shipment.update({
