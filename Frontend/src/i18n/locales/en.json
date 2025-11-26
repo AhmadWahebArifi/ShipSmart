@@ -176,6 +176,7 @@
   },
   "products": {
     "title": "Products",
+    "receiverInfo": "Receiver Info",
     "items": "items",
     "addProduct": "Add Product",
     "editProduct": "Edit Product",
