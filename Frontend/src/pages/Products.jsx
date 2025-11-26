@@ -16,6 +16,8 @@ import {
   FiTrash2,
   FiFilter,
   FiSearch,
+  FiUser,
+  FiX,
 } from "react-icons/fi";
 import axiosInstance from "../config/axios";
 import Swal from "sweetalert2";
@@ -34,6 +36,7 @@ const Products = () => {
   const [error, setError] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null); // New state for receiver popup
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
     shipmentTrackNumber: trackNumber || "",
@@ -577,31 +580,7 @@ const Products = () => {
                           isDark ? "text-gray-300" : "text-gray-500"
                         }`}
                       >
-                        {t("products.receiverName")}
-                      </th>
-                      <th
-                        scope="col"
-                        className={`hidden xl:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("products.receiverPhone")}
-                      </th>
-                      <th
-                        scope="col"
-                        className={`hidden 2xl:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("products.receiverEmail")}
-                      </th>
-                      <th
-                        scope="col"
-                        className={`hidden 2xl:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("products.receiverAddress")}
+                        {t("products.table.receiver")}
                       </th>
                       <th scope="col" className="relative px-3 sm:px-6 py-3">
                         <span className="sr-only">{t("common.actions")}</span>
@@ -727,81 +706,29 @@ const Products = () => {
                           ).toFixed(2)}
                         </td>
                         <td className="hidden xl:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm">
-                            <div
-                              className={`font-medium ${
-                                isDark ? "text-gray-200" : "text-gray-900"
+                          {product.receiver_name ||
+                          product.receiver_phone ||
+                          product.receiver_email ||
+                          product.receiver_address ? (
+                            <button
+                              onClick={() => setSelectedProduct(product)}
+                              className={`flex items-center gap-1 p-1 rounded ${
+                                isDark
+                                  ? "text-blue-400 hover:bg-gray-600"
+                                  : "text-blue-600 hover:bg-gray-200"
                               }`}
+                              title={t("products.viewReceiverInfo")}
                             >
-                              {product.receiver_name || (
-                                <span
-                                  className={
-                                    isDark ? "text-gray-500" : "text-gray-400"
-                                  }
-                                >
-                                  {t("common.notAvailable")}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="hidden xl:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm">
-                            <div
-                              className={`${
-                                isDark ? "text-gray-200" : "text-gray-900"
-                              }`}
-                            >
-                              {product.receiver_phone || (
-                                <span
-                                  className={
-                                    isDark ? "text-gray-500" : "text-gray-400"
-                                  }
-                                >
-                                  {t("common.notAvailable")}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="hidden 2xl:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm">
-                            <div
-                              className={`${
-                                isDark ? "text-gray-200" : "text-gray-900"
-                              }`}
-                            >
-                              {product.receiver_email || (
-                                <span
-                                  className={
-                                    isDark ? "text-gray-500" : "text-gray-400"
-                                  }
-                                >
-                                  {t("common.notAvailable")}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="hidden 2xl:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm max-w-xs">
-                            <div
-                              className={`${
-                                isDark ? "text-gray-200" : "text-gray-900"
-                              } truncate`}
-                              title={product.receiver_address}
-                            >
-                              {product.receiver_address || (
-                                <span
-                                  className={
-                                    isDark ? "text-gray-500" : "text-gray-400"
-                                  }
-                                >
-                                  {t("common.notAvailable")}
-                                </span>
-                              )}
-                            </div>
-                          </div>
+                              <FiUser className="w-4 h-4" />
+                              <span className="text-xs">
+                                {t("products.receiverInfo")}
+                              </span>
+                            </button>
+                          ) : (
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              {t("common.notAvailable")}
+                            </span>
+                          )}
                         </td>
                         <td
                           className={`px-3 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium ${
@@ -861,9 +788,6 @@ const Products = () => {
                         {totalValue.toFixed(2)} AFN
                       </td>
                       <td className="hidden xl:table-cell px-3 sm:px-6 py-3"></td>
-                      <td className="hidden xl:table-cell px-3 sm:px-6 py-3"></td>
-                      <td className="hidden 2xl:table-cell px-3 sm:px-6 py-3"></td>
-                      <td className="hidden 2xl:table-cell px-3 sm:px-6 py-3"></td>
                       <td className="px-3 sm:px-6 py-3"></td>
                     </tr>
                   </tfoot>
@@ -871,6 +795,134 @@ const Products = () => {
               </div>
             )}
           </div>
+
+          {/* Receiver Info Popup */}
+          {selectedProduct && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div
+                className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                onClick={() => setSelectedProduct(null)}
+              ></div>
+              <div
+                className={`relative rounded-xl shadow-2xl max-w-md w-full ${
+                  isDark
+                    ? "bg-gray-800 border border-gray-700"
+                    : "bg-white border border-gray-200"
+                }`}
+              >
+                <div
+                  className={`flex items-center justify-between p-4 border-b ${
+                    isDark ? "border-gray-700" : "border-gray-200"
+                  }`}
+                >
+                  <h3
+                    className={`text-lg font-semibold ${
+                      isDark ? "text-white" : "text-gray-800"
+                    }`}
+                  >
+                    {t("products.receiverInfo")}
+                  </h3>
+                  <button
+                    onClick={() => setSelectedProduct(null)}
+                    className={`p-1 rounded-full ${
+                      isDark
+                        ? "text-gray-400 hover:text-white hover:bg-gray-700"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                    }`}
+                  >
+                    <FiX className="w-5 h-5" />
+                  </button>
+                </div>
+                <div className="p-4">
+                  <div className="space-y-3">
+                    <div>
+                      <p
+                        className={`text-sm font-medium ${
+                          isDark ? "text-gray-400" : "text-gray-500"
+                        }`}
+                      >
+                        {t("products.receiverName")}
+                      </p>
+                      <p
+                        className={`mt-1 ${
+                          isDark ? "text-white" : "text-gray-900"
+                        }`}
+                      >
+                        {selectedProduct.receiver_name ||
+                          t("common.notAvailable")}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p
+                        className={`text-sm font-medium ${
+                          isDark ? "text-gray-400" : "text-gray-500"
+                        }`}
+                      >
+                        {t("products.receiverPhone")}
+                      </p>
+                      <p
+                        className={`mt-1 ${
+                          isDark ? "text-white" : "text-gray-900"
+                        }`}
+                      >
+                        {selectedProduct.receiver_phone ||
+                          t("common.notAvailable")}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p
+                        className={`text-sm font-medium ${
+                          isDark ? "text-gray-400" : "text-gray-500"
+                        }`}
+                      >
+                        {t("products.receiverEmail")}
+                      </p>
+                      <p
+                        className={`mt-1 ${
+                          isDark ? "text-white" : "text-gray-900"
+                        }`}
+                      >
+                        {selectedProduct.receiver_email ||
+                          t("common.notAvailable")}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p
+                        className={`text-sm font-medium ${
+                          isDark ? "text-gray-400" : "text-gray-500"
+                        }`}
+                      >
+                        {t("products.receiverAddress")}
+                      </p>
+                      <p
+                        className={`mt-1 ${
+                          isDark ? "text-white" : "text-gray-900"
+                        }`}
+                      >
+                        {selectedProduct.receiver_address ||
+                          t("common.notAvailable")}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      onClick={() => setSelectedProduct(null)}
+                      className={`px-4 py-2 rounded-lg font-medium ${
+                        isDark
+                          ? "bg-gray-700 text-white hover:bg-gray-600"
+                          : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                      }`}
+                    >
+                      {t("common.close")}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
