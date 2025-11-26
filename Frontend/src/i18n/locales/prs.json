@@ -110,7 +110,9 @@
       "vehicleHelpText": "فقط وسایل نقلیه موجود نشان داده می شوند",
       "routeInfo": "اطلاعات مسیر",
       "routeInfoPlaceholder": "مسیر به طور خودکار محاسبه خواهد شد",
-      "routeHops": "تعداد توقف‌های مسیر"
+      "routeHops": "تعداد توقف‌های مسیر",
+      "routeHopsPlaceholder": "تعداد توقف‌های مسیر را وارد کنید",
+      "status": "وضعیت"
     },
     "table": {
       "trackingNumber": "شماره رهگیری",
