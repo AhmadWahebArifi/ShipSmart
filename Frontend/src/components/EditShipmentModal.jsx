@@ -297,7 +297,7 @@ const EditShipmentModal = ({ isOpen, onClose, shipment, onSave, isDark }) => {
                       isDark ? "text-gray-300" : "text-gray-700"
                     }`}
                   >
-                    {t("shipments.status")}
+                    {t("shipments.statusLabel")}
                   </label>
                   <select
                     name="status"
