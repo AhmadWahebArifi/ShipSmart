@@ -8,6 +8,7 @@ import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
 import Header from "../components/Header";
 import ProductForm from "../components/ProductForm";
+import ProductPrint from "../components/ProductPrint";
 import {
   FiPackage,
   FiPlus,
@@ -18,6 +19,7 @@ import {
   FiSearch,
   FiUser,
   FiX,
+  FiPrinter,
 } from "react-icons/fi";
 import axiosInstance from "../config/axios";
 import Swal from "sweetalert2";
@@ -37,6 +39,7 @@ const Products = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null); // New state for receiver popup
+  const [printProduct, setPrintProduct] = useState(null); // New state for print popup
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
     shipmentTrackNumber: trackNumber || "",
@@ -750,6 +753,13 @@ const Products = () => {
                             >
                               <FiTrash2 className="h-4 w-4" />
                             </button>
+                            <button
+                              onClick={() => setPrintProduct(product)}
+                              className="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300 ml-2"
+                              title={t("products.print")}
+                            >
+                              <FiPrinter className="h-4 w-4" />
+                            </button>
                             <Link
                               to={`/shipments?trackingNumber=${product.shipment_tracking_number}`}
                               className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 ml-2"
@@ -922,6 +932,14 @@ const Products = () => {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* Print Product Popup */}
+          {printProduct && (
+            <ProductPrint
+              product={printProduct}
+              onClose={() => setPrintProduct(null)}
+            />
           )}
         </div>
       </div>
