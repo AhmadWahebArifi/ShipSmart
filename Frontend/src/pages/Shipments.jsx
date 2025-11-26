@@ -706,20 +706,17 @@ const Shipments = () => {
                                   </button>
 
                                   {/* Edit Button */}
-                                  {shipment.status !== "delivered" &&
-                                    shipment.status !== "on_route" && (
-                                      <button
-                                        onClick={() => openEditModal(shipment)}
-                                        className={`p-1 rounded ${
-                                          isDark
-                                            ? "text-blue-400 hover:bg-gray-600"
-                                            : "text-blue-600 hover:bg-gray-200"
-                                        }`}
-                                        title={t("common.edit")}
-                                      >
-                                        <HiPencil className="w-4 h-4" />
-                                      </button>
-                                    )}
+                                  <button
+                                    onClick={() => openEditModal(shipment)}
+                                    className={`p-1 rounded ${
+                                      isDark
+                                        ? "text-blue-400 hover:bg-gray-600"
+                                        : "text-blue-600 hover:bg-gray-200"
+                                    }`}
+                                    title={t("common.edit")}
+                                  >
+                                    <HiPencil className="w-4 h-4" />
+                                  </button>
 
                                   {/* Delete Button */}
                                   <button
