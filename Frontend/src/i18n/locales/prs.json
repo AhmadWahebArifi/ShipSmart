@@ -89,7 +89,8 @@
     "optional": "اختیاری",
     "routeInfo": "اطلاعات مسیر",
     "routeNotFound": "اطلاعات مسیر در دسترس نیست",
-    "routeHops": "{{count}} توقف در مسیر",
+    "routeHopsCount": "{{count}} توقف در مسیر",
+    "viewRoute": "مشاهده مسیر",
     "selectProvince": "یک ولایت انتخاب کنید",
     "expectedDepartureDate": "تاریخ مورد انتظار حرکت",
     "expectedArrivalDate": "تاریخ مورد انتظار رسیدن",
@@ -282,6 +283,8 @@
     "total": "جمع کل",
     "success": "موفقیت",
     "notSet": "تنظیم نشده",
+    "close": "بستن",
+
     "ok": "تایید",
     "errors": {
       "generic": "خطایی رخ داده است. لطفاً دوباره تلاش کنید.",
