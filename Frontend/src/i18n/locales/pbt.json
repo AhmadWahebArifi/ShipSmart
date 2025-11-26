@@ -109,7 +109,9 @@
       "vehicleHelpText": "یوازې شته موټرونه ښودل کیږي",
       "routeInfo": "د لارې معلومات",
       "routeInfoPlaceholder": "لاره به پخپله محاسبه کړل کیږي",
-      "routeHops": "د لارې توقفونه"
+      "routeHops": "د لارې توقفونه",
+      "routeHopsPlaceholder": "د لارې د توقفونو شمیره ولیکئ",
+      "status": "حالت"
     },
     "table": {
       "trackingNumber": "د تعقیب شمیره",
