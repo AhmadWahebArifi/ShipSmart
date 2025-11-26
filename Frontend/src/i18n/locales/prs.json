@@ -179,6 +179,7 @@
     "items": "مورد",
     "addProduct": "افزودن محصول",
     "editProduct": "ویرایش محصول",
+    "receiverInfo": "اطلاعات گیرنده",
     "noProducts": "محصولی یافت نشد",
     "getStarted": "با افزودن یک محصول جدید شروع کنید.",
     "searchPlaceholder": "جستجوی محصولات...",
