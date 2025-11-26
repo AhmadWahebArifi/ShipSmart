@@ -185,6 +185,7 @@
   "products": {
     "title": "محصولات",
     "items": "توکي",
+    "receiverInfo": "پیرودونکی معلومات",
     "addProduct": "محصول زیات کړئ",
     "editProduct": "محصول سمول",
     "noProducts": "هیڅ محصول ونه موندل شو",
