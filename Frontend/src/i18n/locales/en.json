@@ -89,7 +89,8 @@
     "optional": "Optional",
     "routeInfo": "Route Information",
     "routeNotFound": "Route information not available",
-    "routeHops": "{{count}} stop(s) in route",
+    "routeHopsCount": "{{count}} stop(s) in route",
+    "viewRoute": "View Route",
     "selectProvince": "Select a province",
     "expectedDepartureDate": "Expected Departure Date",
     "expectedArrivalDate": "Expected Arrival Date",
@@ -286,6 +287,8 @@
     "success": "Success",
     "notSet": "Not set",
     "ok": "OK",
+    "close": "Close",
+    "notAvailable": "Not available",
     "errors": {
       "generic": "An error occurred. Please try again.",
       "required": "This field is required"
