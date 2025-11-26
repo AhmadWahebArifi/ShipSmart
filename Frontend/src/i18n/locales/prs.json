@@ -80,7 +80,6 @@
     "fromProvince": "از ولایت",
     "toProvince": "به ولایت",
     "description": "توضیحات",
-    "status": "وضعیت",
     "created": "ایجاد شده",
     "actions": "عملیات",
 
@@ -124,7 +123,8 @@
       "actions": "عملیات",
       "expectedDeparture": "تاریخ مورد انتظار حرکت",
       "expectedArrival": "تاریخ مورد انتظار رسیدن",
-      "vehicle": "وسیله نقلیه"
+      "vehicle": "وسیله نقلیه",
+      "status": "حالت"
     },
     "status": {
       "pending": "در انتظار",
@@ -133,15 +133,6 @@
       "delivered": "تحویل شده",
       "canceled": "لغو شده"
     },
-    "statusLabel": "وضعیت",
-    "shipmentStatus": {
-      "pending": "در انتظار",
-      "in_progress": "در حال پیشرفت",
-      "on_route": "در مسیر",
-      "delivered": "تحویل شده",
-      "canceled": "لغو شده"
-    },
-    "statusLabel": "وضعیت",
     "confirmDelete": "آیا از حذف این محموله اطمینان دارید؟ این عمل قابل بازگشت نیست.",
     "confirmDeleteTitle": "حذف محموله",
     "confirmStatusChange": "آیا از تغییر وضعیت به {{status}} اطمینان دارید؟",
