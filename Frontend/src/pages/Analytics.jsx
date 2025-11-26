@@ -139,12 +139,20 @@ function Analytics() {
             )}
           />
           {loading && (
-            <p className="mt-2 text-sm text-blue-500">
+            <p
+              className={`mt-2 text-sm ${
+                isDark ? "text-blue-400" : "text-blue-500"
+              }`}
+            >
               {t("analytics.loading", "Loading analytics data...")}
             </p>
           )}
           {error && (
-            <p className="mt-2 text-sm text-red-500">
+            <p
+              className={`mt-2 text-sm ${
+                isDark ? "text-red-400" : "text-red-500"
+              }`}
+            >
               {t("analytics.error", "Failed to load analytics data:")} {error}
             </p>
           )}
@@ -165,14 +173,22 @@ function Analytics() {
                     : "bg-white border-gray-200"
                 }`}
               >
-                <p className="text-sm font-medium mb-3">
+                <p
+                  className={`text-sm font-medium mb-3 ${
+                    isDark ? "text-gray-200" : "text-gray-700"
+                  }`}
+                >
                   {t(
                     "analytics.shipmentsPerRouteChart",
                     "Shipments per route (top 10)"
                   )}
                 </p>
                 {topRoutes.length === 0 && !loading && (
-                  <p className="text-xs text-gray-500">
+                  <p
+                    className={`text-xs ${
+                      isDark ? "text-gray-400" : "text-gray-500"
+                    }`}
+                  >
                     {t("analytics.noRouteData", "No shipment route data yet.")}
                   </p>
                 )}
@@ -236,7 +252,11 @@ function Analytics() {
                     : "bg-white border-gray-200"
                 }`}
               >
-                <p className="text-sm font-medium mb-3">
+                <p
+                  className={`text-sm font-medium mb-3 ${
+                    isDark ? "text-gray-200" : "text-gray-700"
+                  }`}
+                >
                   {t(
                     "analytics.vehicleUtilizationBar",
                     "Vehicle utilization (active vs available)"
@@ -315,7 +335,11 @@ function Analytics() {
                       : "bg-white border-gray-200"
                   }`}
                 >
-                  <p className="text-sm font-medium mb-1">
+                  <p
+                    className={`text-sm font-medium mb-1 ${
+                      isDark ? "text-gray-200" : "text-gray-700"
+                    }`}
+                  >
                     {t(
                       "analytics.avgDeliveryTime",
                       "Average delivery time (hours)"
@@ -338,7 +362,11 @@ function Analytics() {
                       : "bg-white border-gray-200"
                   }`}
                 >
-                  <p className="text-sm font-medium mb-1">
+                  <p
+                    className={`text-sm font-medium mb-1 ${
+                      isDark ? "text-gray-200" : "text-gray-700"
+                    }`}
+                  >
                     {t(
                       "analytics.completedDeliveries",
                       "Completed deliveries with time data"
@@ -359,7 +387,11 @@ function Analytics() {
                       : "bg-white border-gray-200"
                   }`}
                 >
-                  <p className="text-sm font-medium mb-1">
+                  <p
+                    className={`text-sm font-medium mb-1 ${
+                      isDark ? "text-gray-200" : "text-gray-700"
+                    }`}
+                  >
                     {t(
                       "analytics.totalShipmentsCount",
                       "Total shipments in dataset"
