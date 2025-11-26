@@ -109,7 +109,9 @@
       "vehicleHelpText": "Only available vehicles are shown",
       "routeInfo": "Route Information",
       "routeInfoPlaceholder": "Route will be calculated automatically",
-      "routeHops": "Route Hops"
+      "routeHops": "Route Hops",
+      "routeHopsPlaceholder": "Enter number of route hops",
+      "status": "Status"
     },
     "table": {
       "trackingNumber": "Tracking #",
