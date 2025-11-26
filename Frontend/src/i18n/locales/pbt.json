@@ -80,7 +80,6 @@
     "fromProvince": "له ولایت",
     "toProvince": "ته ولایت",
     "description": "تفصیل",
-    "status": "حالت",
     "created": "جوړ شوی",
     "actions": "کړنې",
     "trackingNumberPlaceholder": "د تعقیب شمیره ولیکئ",
@@ -123,7 +122,8 @@
       "actions": "کړنې",
       "expectedDeparture": "د لیږد مورد انتظار نیټه",
       "expectedArrival": "د رسید مورد انتظار نیټه",
-      "vehicle": "موټر"
+      "vehicle": "موټر",
+      "status": "حالت"
     },
     "status": {
       "pending": "منتظر",
