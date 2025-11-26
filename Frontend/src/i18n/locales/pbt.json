@@ -203,7 +203,8 @@
       "total": "ټولټال",
       "actions": "کړنې",
       "sender": "لیږونکی",
-      "receiver": "ترلاسه کونکی"
+      "receiver": "ترلاسه کونکی",
+      "receiverInfo": "د ترلاسه کونکي معلومات"
     },
     "provinces": [
       "کابل",
@@ -283,7 +284,8 @@
     "receiverName": "د منونکی نوم",
     "receiverPhone": "د منونکی تلیفون",
     "receiverEmail": "د منونکی ایمیل",
-    "receiverAddress": "د منونکی پته"
+    "receiverAddress": "د منونکی پته",
+    "viewReceiverInfo": "د ترلاسه کونکي معلومات وګورئ"
   },
   "shipmentStatus": {
     "pending": "منتظر",
