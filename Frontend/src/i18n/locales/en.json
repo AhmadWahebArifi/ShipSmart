@@ -91,8 +91,8 @@
     "routeNotFound": "Route information not available",
     "routeHops": "{{count}} stop(s) in route",
     "selectProvince": "Select a province",
-    "expectedDeparture": "Expected Departure Date",
-    "expectedArrival": "Expected Arrival Date",
+    "expectedDepartureDate": "Expected Departure Date",
+    "expectedArrivalDate": "Expected Arrival Date",
     "selectVehicle": "Select a vehicle",
     "form": {
       "fromProvincePlaceholder": "Select origin province",
@@ -123,8 +123,7 @@
       "actions": "Actions",
       "expectedDeparture": "Expected Departure",
       "expectedArrival": "Expected Arrival",
-      "vehicle": "Vehicle",
-      "status": "Status"
+      "vehicle": "Vehicle"
     },
     "status": {
       "pending": "Pending",
