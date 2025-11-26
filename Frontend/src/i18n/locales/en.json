@@ -195,7 +195,8 @@
       "total": "Total",
       "actions": "Actions",
       "sender": "Sender",
-      "receiver": "Receiver"
+      "receiver": "Receiver",
+      "receiverInfo": "Receiver Info"
     },
     "form": {
       "name": "Product Name",
@@ -239,7 +240,8 @@
     "receiverName": "Receiver Name",
     "receiverPhone": "Receiver Phone",
     "receiverEmail": "Receiver Email",
-    "receiverAddress": "Receiver Address"
+    "receiverAddress": "Receiver Address",
+    "viewReceiverInfo": "View Receiver Info"
   },
   "shipmentStatus": {
     "pending": "Pending",
