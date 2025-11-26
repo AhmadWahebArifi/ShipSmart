@@ -88,7 +88,8 @@
     "optional": "اختیاري",
     "routeInfo": "د لارې معلومات",
     "routeNotFound": "د لارې معلومات شتون نلري",
-    "routeHops": "{{count}} توقف په لاره کې",
+    "routeHopsCount": "{{count}} توقف په لاره کې",
+    "viewRoute": "لاره وګورئ",
     "selectProvince": "یو ولایت وټاکئ",
     "expectedDepartureDate": "د لیږد مورد انتظار نیټه",
     "expectedArrivalDate": "د رسید مورد انتظار نیټه",
@@ -399,6 +400,8 @@
     "notSet": "نه دی ټاکل شوی",
     "ok": "هو",
     "warning": "خبرتیا",
+    "close": "بند",
+    "notAvailable": "نه موجود",
     "errors": {
       "generic": "یوه تېروتنه راغله. مهرباني وکړئ بیا هڅه وکړئ.",
       "required": "دا ځای اړین دی"
