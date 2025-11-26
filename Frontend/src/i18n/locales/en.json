@@ -242,7 +242,11 @@
     "receiverPhone": "Receiver Phone",
     "receiverEmail": "Receiver Email",
     "receiverAddress": "Receiver Address",
-    "viewReceiverInfo": "View Receiver Info"
+    "viewReceiverInfo": "View Receiver Info",
+    "print": "Print",
+    "printProductInfo": "Product Information",
+    "productDetails": "Product Details",
+    "noShipmentInfo": "No shipment information available"
   },
   "shipmentStatus": {
     "pending": "Pending",
