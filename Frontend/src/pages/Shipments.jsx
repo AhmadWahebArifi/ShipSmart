@@ -21,6 +21,7 @@ import {
   HiX,
   HiTruck,
   HiEye,
+  HiMap,
 } from "react-icons/hi";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -88,6 +89,7 @@ const Shipments = () => {
   const [currentShipment, setCurrentShipment] = useState(null);
   const [detailPopupOpen, setDetailPopupOpen] = useState(false);
   const [selectedShipment, setSelectedShipment] = useState(null);
+  const [routePopupShipment, setRoutePopupShipment] = useState(null); // New state for route popup
 
   const showAlert = (title, message, type = "success") => {
     MySwal.fire({
@@ -589,7 +591,24 @@ const Shipments = () => {
                                   isDark ? "text-gray-300" : "text-gray-700"
                                 }`}
                               >
-                                {shipment.route_info || "-"}
+                                {shipment.route_info ? (
+                                  <button
+                                    onClick={() => setRoutePopupShipment(shipment)}
+                                    className={`flex items-center gap-1 p-1 rounded ${
+                                      isDark
+                                        ? "text-blue-400 hover:bg-gray-600"
+                                        : "text-blue-600 hover:bg-gray-200"
+                                    }`}
+                                    title={t("shipments.viewRoute")}
+                                  >
+                                    <HiMap className="w-4 h-4" />
+                                    <span className="text-xs">
+                                      {t("shipments.routeHopsCount", { count: shipment.route_hops || 0 })}
+                                    </span>
+                                  </button>
+                                ) : (
+                                  "-"
+                                )}
                               </td>
                               <td
                                 className={`p-3 ${
@@ -706,17 +725,21 @@ const Shipments = () => {
                                   </button>
 
                                   {/* Edit Button */}
-                                  <button
-                                    onClick={() => openEditModal(shipment)}
-                                    className={`p-1 rounded ${
-                                      isDark
-                                        ? "text-blue-400 hover:bg-gray-600"
-                                        : "text-blue-600 hover:bg-gray-200"
-                                    }`}
-                                    title={t("common.edit")}
-                                  >
-                                    <HiPencil className="w-4 h-4" />
-                                  </button>
+                                  {shipment.status !== "delivered" &&
+                                    shipment.status !== "on_route" &&
+                                    shipment.status !== "canceled" && (
+                                      <button
+                                        onClick={() => openEditModal(shipment)}
+                                        className={`p-1 rounded ${
+                                          isDark
+                                            ? "text-blue-400 hover:bg-gray-600"
+                                            : "text-blue-600 hover:bg-gray-200"
+                                        }`}
+                                        title={t("common.edit")}
+                                      >
+                                        <HiPencil className="w-4 h-4" />
+                                      </button>
+                                    )}
 
                                   {/* Delete Button */}
                                   <button
@@ -760,6 +783,81 @@ const Shipments = () => {
         isOpen={detailPopupOpen}
         onClose={() => setDetailPopupOpen(false)}
       />
+
+      {/* Route Popup */}
+      {routePopupShipment && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setRoutePopupShipment(null)}
+          ></div>
+          <div
+            className={`relative rounded-xl shadow-2xl max-w-md w-full ${
+              isDark ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
+            }`}
+          >
+            <div
+              className={`flex items-center justify-between p-4 border-b ${
+                isDark ? "border-gray-700" : "border-gray-200"
+              }`}
+            >
+              <h3
+                className={`text-lg font-semibold ${
+                  isDark ? "text-white" : "text-gray-800"
+                }`}
+              >
+                {t("shipments.routeInfo")}
+              </h3>
+              <button
+                onClick={() => setRoutePopupShipment(null)}
+                className={`p-1 rounded-full ${
+                  isDark
+                    ? "text-gray-400 hover:text-white hover:bg-gray-700"
+                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                }`}
+              >
+                <HiX className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4">
+              <div
+                className={`p-3 rounded-lg ${
+                  isDark ? "bg-gray-700" : "bg-gray-50"
+                }`}
+              >
+                <p
+                  className={`font-medium ${
+                    isDark ? "text-white" : "text-gray-800"
+                  }`}
+                >
+                  {routePopupShipment.route_info}
+                </p>
+                {routePopupShipment.route_hops > 0 && (
+                  <p
+                    className={`text-sm mt-2 ${
+                      isDark ? "text-gray-300" : "text-gray-600"
+                    }`}
+                  >
+                    {t("shipments.routeHopsCount", { count: routePopupShipment.route_hops })}
+                  </p>
+                )}
+              </div>
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={() => setRoutePopupShipment(null)}
+                  className={`px-4 py-2 rounded-lg font-medium ${
+                    isDark
+                      ? "bg-gray-700 text-white hover:bg-gray-600"
+                      : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                  }`}
+                >
+                  {t("common.close")}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
