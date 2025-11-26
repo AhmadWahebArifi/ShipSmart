@@ -195,7 +195,8 @@
       "total": "جمع کل",
       "actions": "عملیات",
       "sender": "فرستنده",
-      "receiver": "گیرنده"
+      "receiver": "گیرنده",
+      "receiverInfo": "اطلاعات گیرنده"
     },
     "form": {
       "name": "نام محصول",
@@ -239,7 +240,8 @@
     "receiverName": "نام گیرنده",
     "receiverPhone": "تلفن گیرنده",
     "receiverEmail": "ایمیل گیرنده",
-    "receiverAddress": "آدرس گیرنده"
+    "receiverAddress": "آدرس گیرنده",
+    "viewReceiverInfo": "مشاهده اطلاعات گیرنده"
   },
   "shipmentStatus": {
     "pending": "در انتظار",
