@@ -39,6 +39,14 @@ const PROVINCES = [
   "Zabul",
 ];
 
+const SHIPMENT_STATUSES = [
+  "pending",
+  "in_progress",
+  "on_route",
+  "delivered",
+  "canceled",
+];
+
 const EditShipmentModal = ({ isOpen, onClose, shipment, onSave, isDark }) => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
@@ -46,6 +54,11 @@ const EditShipmentModal = ({ isOpen, onClose, shipment, onSave, isDark }) => {
     to_province: "",
     tracking_number: "",
     description: "",
+    status: "pending",
+    expected_departure_date: "",
+    expected_arrival_date: "",
+    route_info: "",
+    route_hops: "",
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -57,6 +70,17 @@ const EditShipmentModal = ({ isOpen, onClose, shipment, onSave, isDark }) => {
         to_province: shipment.to_province || "",
         tracking_number: shipment.tracking_number || "",
         description: shipment.description || "",
+        status: shipment.status || "pending",
+        expected_departure_date: shipment.expected_departure_date
+          ? new Date(shipment.expected_departure_date)
+              .toISOString()
+              .split("T")[0]
+          : "",
+        expected_arrival_date: shipment.expected_arrival_date
+          ? new Date(shipment.expected_arrival_date).toISOString().split("T")[0]
+          : "",
+        route_info: shipment.route_info || "",
+        route_hops: shipment.route_hops || "",
       });
     }
   }, [shipment]);
@@ -98,7 +122,13 @@ const EditShipmentModal = ({ isOpen, onClose, shipment, onSave, isDark }) => {
     setError("");
 
     try {
-      const result = await onSave(shipment.id, formData);
+      // Prepare data for submission
+      const submitData = {
+        ...formData,
+        route_hops: formData.route_hops ? parseInt(formData.route_hops) : null,
+      };
+
+      const result = await onSave(shipment.id, submitData);
       if (result.success) {
         onClose();
       } else {
@@ -252,6 +282,122 @@ const EditShipmentModal = ({ isOpen, onClose, shipment, onSave, isDark }) => {
                   onChange={handleChange}
                   placeholder={t("shipments.form.trackingNumberPlaceholder")}
                   required
+                  className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
+                    isDark
+                      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                      : "bg-white border-gray-300 text-gray-900"
+                  }`}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${
+                      isDark ? "text-gray-300" : "text-gray-700"
+                    }`}
+                  >
+                    {t("shipments.status")}
+                  </label>
+                  <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
+                      isDark
+                        ? "bg-gray-700 border-gray-600 text-white"
+                        : "bg-white border-gray-300 text-gray-900"
+                    }`}
+                  >
+                    {SHIPMENT_STATUSES.map((status) => (
+                      <option key={status} value={status}>
+                        {t(`shipments.status.${status}`)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${
+                      isDark ? "text-gray-300" : "text-gray-700"
+                    }`}
+                  >
+                    {t("shipments.routeHops")}
+                  </label>
+                  <input
+                    type="number"
+                    name="route_hops"
+                    value={formData.route_hops}
+                    onChange={handleChange}
+                    placeholder={t("shipments.form.routeHopsPlaceholder")}
+                    className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
+                      isDark
+                        ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                        : "bg-white border-gray-300 text-gray-900"
+                    }`}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${
+                      isDark ? "text-gray-300" : "text-gray-700"
+                    }`}
+                  >
+                    {t("shipments.expectedDepartureDate")}
+                  </label>
+                  <input
+                    type="date"
+                    name="expected_departure_date"
+                    value={formData.expected_departure_date}
+                    onChange={handleChange}
+                    className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
+                      isDark
+                        ? "bg-gray-700 border-gray-600 text-white"
+                        : "bg-white border-gray-300 text-gray-900"
+                    }`}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    className={`block text-sm font-medium mb-2 ${
+                      isDark ? "text-gray-300" : "text-gray-700"
+                    }`}
+                  >
+                    {t("shipments.expectedArrivalDate")}
+                  </label>
+                  <input
+                    type="date"
+                    name="expected_arrival_date"
+                    value={formData.expected_arrival_date}
+                    onChange={handleChange}
+                    className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
+                      isDark
+                        ? "bg-gray-700 border-gray-600 text-white"
+                        : "bg-white border-gray-300 text-gray-900"
+                    }`}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label
+                  className={`block text-sm font-medium mb-2 ${
+                    isDark ? "text-gray-300" : "text-gray-700"
+                  }`}
+                >
+                  {t("shipments.routeInfo")}
+                </label>
+                <input
+                  type="text"
+                  name="route_info"
+                  value={formData.route_info}
+                  onChange={handleChange}
+                  placeholder={t("shipments.form.routeInfoPlaceholder")}
                   className={`border rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-blue-500 outline-none ${
                     isDark
                       ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
