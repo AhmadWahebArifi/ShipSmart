@@ -92,8 +92,8 @@
     "routeNotFound": "اطلاعات مسیر در دسترس نیست",
     "routeHops": "{{count}} توقف در مسیر",
     "selectProvince": "یک ولایت انتخاب کنید",
-    "expectedDeparture": "تاریخ مورد انتظار حرکت",
-    "expectedArrival": "تاریخ مورد انتظار رسیدن",
+    "expectedDepartureDate": "تاریخ مورد انتظار حرکت",
+    "expectedArrivalDate": "تاریخ مورد انتظار رسیدن",
     "selectVehicle": "یک وسیله نقلیه انتخاب کنید",
     "form": {
       "fromProvincePlaceholder": "ولایت مبدأ را انتخاب کنید",
@@ -119,13 +119,21 @@
       "from": "از",
       "to": "به",
       "route": "مسیر",
-      "status": "وضعیت",
+      "tableStatus": "وضعیت",
       "created": "ایجاد شده",
       "actions": "عملیات",
       "expectedDeparture": "تاریخ مورد انتظار حرکت",
       "expectedArrival": "تاریخ مورد انتظار رسیدن",
       "vehicle": "وسیله نقلیه"
     },
+    "status": {
+      "pending": "در انتظار",
+      "in_progress": "در حال پیشرفت",
+      "on_route": "در مسیر",
+      "delivered": "تحویل شده",
+      "canceled": "لغو شده"
+    },
+    "statusLabel": "وضعیت",
     "shipmentStatus": {
       "pending": "در انتظار",
       "in_progress": "در حال پیشرفت",
