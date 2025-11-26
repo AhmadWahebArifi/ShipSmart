@@ -91,8 +91,8 @@
     "routeNotFound": "د لارې معلومات شتون نلري",
     "routeHops": "{{count}} توقف په لاره کې",
     "selectProvince": "یو ولایت وټاکئ",
-    "expectedDeparture": "د لیږد مورد انتظار نیټه",
-    "expectedArrival": "د رسید مورد انتظار نیټه",
+    "expectedDepartureDate": "د لیږد مورد انتظار نیټه",
+    "expectedArrivalDate": "د رسید مورد انتظار نیټه",
     "selectVehicle": "یو موټر وټاکئ",
     "form": {
       "fromProvincePlaceholder": "د سرچینې ولایت وټاکئ",
@@ -118,13 +118,21 @@
       "from": "له",
       "to": "ته",
       "route": "لاره",
-      "status": "حالت",
+      "tableStatus": "حالت",
       "created": "جوړ شوی",
       "actions": "کړنې",
       "expectedDeparture": "د لیږد مورد انتظار نیټه",
       "expectedArrival": "د رسید مورد انتظار نیټه",
       "vehicle": "موټر"
     },
+    "status": {
+      "pending": "منتظر",
+      "in_progress": "پرمختګ کې",
+      "on_route": "په لاره کې",
+      "delivered": "ورکړل شوی",
+      "canceled": "لغوه شوی"
+    },
+    "statusLabel": "حالت",
     "shipmentStatus": {
       "pending": "منتظر",
       "in_progress": "پرمختګ کې",
