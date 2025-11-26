@@ -286,7 +286,11 @@
     "receiverPhone": "د منونکی تلیفون",
     "receiverEmail": "د منونکی ایمیل",
     "receiverAddress": "د منونکی پته",
-    "viewReceiverInfo": "د ترلاسه کونکي معلومات وګورئ"
+    "viewReceiverInfo": "د ترلاسه کونکي معلومات وګورئ",
+    "print": "چاپ",
+    "printProductInfo": "د محصول معلومات",
+    "productDetails": "د محصول جزئیات",
+    "noShipmentInfo": "د بریښناک معلومات شتون نلري"
   },
   "shipmentStatus": {
     "pending": "منتظر",
