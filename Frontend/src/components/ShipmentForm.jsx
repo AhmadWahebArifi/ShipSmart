@@ -263,7 +263,7 @@ const ShipmentForm = ({ onSubmit, onCancel, shipment }) => {
               </p>
               {routeInfo.hops > 0 && (
                 <p className="text-xs mt-1 opacity-75">
-                  {t("shipments.routeHops", { count: routeInfo.hops })}
+                  {t("shipments.routeHopsCount", { count: routeInfo.hops })}
                 </p>
               )}
             </div>
