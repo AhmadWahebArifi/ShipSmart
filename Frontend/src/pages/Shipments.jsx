@@ -593,7 +593,9 @@ const Shipments = () => {
                               >
                                 {shipment.route_info ? (
                                   <button
-                                    onClick={() => setRoutePopupShipment(shipment)}
+                                    onClick={() =>
+                                      setRoutePopupShipment(shipment)
+                                    }
                                     className={`flex items-center gap-1 p-1 rounded ${
                                       isDark
                                         ? "text-blue-400 hover:bg-gray-600"
@@ -603,7 +605,9 @@ const Shipments = () => {
                                   >
                                     <HiMap className="w-4 h-4" />
                                     <span className="text-xs">
-                                      {t("shipments.routeHopsCount", { count: shipment.route_hops || 0 })}
+                                      {t("shipments.routeHopsCount", {
+                                        count: shipment.route_hops || 0,
+                                      })}
                                     </span>
                                   </button>
                                 ) : (
@@ -793,7 +797,9 @@ const Shipments = () => {
           ></div>
           <div
             className={`relative rounded-xl shadow-2xl max-w-md w-full ${
-              isDark ? "bg-gray-800 border border-gray-700" : "bg-white border border-gray-200"
+              isDark
+                ? "bg-gray-800 border border-gray-700"
+                : "bg-white border border-gray-200"
             }`}
           >
             <div
@@ -838,7 +844,9 @@ const Shipments = () => {
                       isDark ? "text-gray-300" : "text-gray-600"
                     }`}
                   >
-                    {t("shipments.routeHopsCount", { count: routePopupShipment.route_hops })}
+                    {t("shipments.routeHopsCount", {
+                      count: routePopupShipment.route_hops,
+                    })}
                   </p>
                 )}
               </div>
