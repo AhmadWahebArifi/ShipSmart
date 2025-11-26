@@ -121,7 +121,8 @@
       "actions": "Actions",
       "expectedDeparture": "Expected Departure",
       "expectedArrival": "Expected Arrival",
-      "vehicle": "Vehicle"
+      "vehicle": "Vehicle",
+      "status": "Status"
     },
     "status": {
       "pending": "Pending",
@@ -446,9 +447,5 @@
     "errors": {
       "fetchFailed": "Failed to load vehicles. Please try again."
     }
-  },
-  "common": {
-    "notAvailable": "Not Available",
-    "total": "Total"
   }
 }
