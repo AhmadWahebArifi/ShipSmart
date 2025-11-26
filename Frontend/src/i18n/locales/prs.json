@@ -242,7 +242,11 @@
     "receiverPhone": "تلفن گیرنده",
     "receiverEmail": "ایمیل گیرنده",
     "receiverAddress": "آدرس گیرنده",
-    "viewReceiverInfo": "مشاهده اطلاعات گیرنده"
+    "viewReceiverInfo": "مشاهده اطلاعات گیرنده",
+    "print": "چاپ",
+    "printProductInfo": "اطلاعات محصول",
+    "productDetails": "جزئیات محصول",
+    "noShipmentInfo": "اطلاعات محموله در دسترس نیست"
   },
   "shipmentStatus": {
     "pending": "در انتظار",
