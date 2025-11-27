@@ -225,7 +225,7 @@ const ProductPrint = ({ product, onClose }) => {
                     </tr>
                     <tr>
                       <td className="py-1 pr-2 font-medium">
-                        {t("shipments.status")}:
+                        {t("shipments.table.status")}:
                       </td>
                       <td className="py-1 text-right">
                         <span
