@@ -197,7 +197,9 @@
       "actions": "Actions",
       "sender": "Sender",
       "receiver": "Receiver",
-      "receiverInfo": "Receiver Info"
+      "receiverInfo": "Receiver Info",
+      "senderInfo": "Sender Info",
+      "viewSenderInfo": "View Sender Info"
     },
     "form": {
       "name": "Product Name",
@@ -211,6 +213,15 @@
       "selectShipment": "Select a shipment",
       "sender": "Sender",
       "senderPlaceholder": "Enter sender name",
+      "senderPhone": "Sender Phone",
+      "senderPhonePlaceholder": "Enter sender phone number",
+      "senderEmail": "Sender Email",
+      "senderEmailPlaceholder": "Enter sender email address",
+      "senderAddress": "Sender Address",
+      "senderAddressPlaceholder": "Enter sender address",
+      "discount": "Discount",
+      "remaining": "Remaining Amount",
+      "debt": "Debt",
       "receiver": "Receiver",
       "receiverPlaceholder": "Enter receiver name"
     },
@@ -295,6 +306,7 @@
     "notSet": "Not set",
     "ok": "OK",
     "close": "Close",
+    "optional": "Optional",
     "notAvailable": "Not available",
     "errors": {
       "generic": "An error occurred. Please try again.",
