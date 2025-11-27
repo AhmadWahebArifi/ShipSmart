@@ -40,6 +40,11 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
       setValue("weight", product.weight || "");
       setValue("price", product.price || "");
       setValue("sender", product.sender || "");
+      setValue("sender_phone", product.sender_phone || "");
+      setValue("sender_email", product.sender_email || "");
+      setValue("sender_address", product.sender_address || "");
+      setValue("discount", product.discount || "");
+      setValue("remaining", product.remaining || "");
       // Remove old receiver field
       // Add new receiver fields
       setValue("receiver_name", product.receiver_name || "");
@@ -332,6 +337,74 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               placeholder={t("products.form.senderPlaceholder")}
             />
           </div>
+
+          <div>
+            <label
+              htmlFor="sender_phone"
+              className={`block text-sm font-medium mb-1 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              {t("products.form.senderPhone")}
+            </label>
+            <input
+              id="sender_phone"
+              type="tel"
+              {...register("sender_phone")}
+              className={`w-full px-3 py-2 rounded-md border ${
+                isDark
+                  ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                  : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
+              }`}
+              placeholder={t("products.form.senderPhonePlaceholder")}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label
+              htmlFor="sender_email"
+              className={`block text-sm font-medium mb-1 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              {t("products.form.senderEmail")} ({t("common.optional")})
+            </label>
+            <input
+              id="sender_email"
+              type="email"
+              {...register("sender_email")}
+              className={`w-full px-3 py-2 rounded-md border ${
+                isDark
+                  ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                  : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
+              }`}
+              placeholder={t("products.form.senderEmailPlaceholder")}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="sender_address"
+              className={`block text-sm font-medium mb-1 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              {t("products.form.senderAddress")} ({t("common.optional")})
+            </label>
+            <input
+              id="sender_address"
+              type="text"
+              {...register("sender_address")}
+              className={`w-full px-3 py-2 rounded-md border ${
+                isDark
+                  ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                  : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
+              }`}
+              placeholder={t("products.form.senderAddressPlaceholder")}
+            />
+          </div>
         </div>
 
         {/* Detailed Receiver Information */}
@@ -534,6 +607,78 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
             {errors.price && (
               <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                 {errors.price.message}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Discount and Remaining Amount */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label
+              htmlFor="discount"
+              className={`block text-sm font-medium mb-1 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              {t("products.form.discount")} (%) ({t("common.optional")})
+            </label>
+            <input
+              id="discount"
+              type="number"
+              step="0.01"
+              min="0"
+              max="100"
+              {...register("discount", {
+                min: { value: 0, message: t("validation.min", { min: 0 }) },
+                max: { value: 100, message: "Discount cannot exceed 100%" },
+              })}
+              className={`w-full px-3 py-2 rounded-md border ${
+                errors.discount
+                  ? "border-red-500"
+                  : isDark
+                  ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                  : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
+              }`}
+              placeholder="0.00"
+            />
+            {errors.discount && (
+              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                {errors.discount.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label
+              htmlFor="remaining"
+              className={`block text-sm font-medium mb-1 ${
+                isDark ? "text-gray-300" : "text-gray-700"
+              }`}
+            >
+              {t("products.form.remaining")} (AFN) - {t("products.form.debt")} (
+              {t("common.optional")})
+            </label>
+            <input
+              id="remaining"
+              type="number"
+              step="0.01"
+              min="0"
+              {...register("remaining", {
+                min: { value: 0, message: t("validation.min", { min: 0 }) },
+              })}
+              className={`w-full px-3 py-2 rounded-md border ${
+                errors.remaining
+                  ? "border-red-500"
+                  : isDark
+                  ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                  : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
+              }`}
+              placeholder="0.00"
+            />
+            {errors.remaining && (
+              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                {errors.remaining.message}
               </p>
             )}
           </div>
