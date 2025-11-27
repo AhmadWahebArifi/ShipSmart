@@ -184,6 +184,7 @@
   "products": {
     "title": "محصولات",
     "items": "توکي",
+    "contactInfo": "تماس معلومات",
     "receiverInfo": "پیرودونکی معلومات",
     "addProduct": "محصول زیات کړئ",
     "editProduct": "محصول سمول",
@@ -206,7 +207,10 @@
       "receiver": "ترلاسه کونکی",
       "receiverInfo": "د ترلاسه کونکي معلومات",
       "senderInfo": "د لیږونکي معلومات",
-      "viewSenderInfo": "د لیږونکي معلومات وګورئ"
+      "viewSenderInfo": "د لیږونکي معلومات وګورئ",
+      "contactInfo": "د اړیکې معلومات",
+      "viewContactInfo": "د اړیکې معلومات وګورئ",
+      "outstandingBalance": "پاتې بیلانس"
     },
     "provinces": [
       "کابل",
@@ -408,6 +412,7 @@
     "edit": "سمول",
     "delete": "ړنګول",
     "cancel": "لغوه کول",
+    "info": "معلومات",
     "save": "خوندي کول",
     "update": "تازه کول",
     "reset": "بیا تنظیمول",
