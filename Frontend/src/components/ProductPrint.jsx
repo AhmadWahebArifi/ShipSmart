@@ -8,26 +8,43 @@ const ProductPrint = ({ product, onClose }) => {
   const { isDark } = useTheme();
   const componentRef = useRef();
 
+  // 1. Define custom CSS for the print window
+  // This forces the body of the print window to flex-center its content
+  const pageStyle = `
+    @page {
+      size: auto;
+      margin: 20mm;
+    }
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact;
+        display: flex;
+        justify-content: center; /* Horizontally center */
+        align-items: flex-start; /* Start from top (better for long receipts than center) */
+      }
+    }
+  `;
+
   const handlePrint = useReactToPrint({
     contentRef: componentRef,
     documentTitle: `${t("products.title")} - ${product.name}`,
+    pageStyle: pageStyle, // Pass the styles here
   });
 
-  // Function to get status color based on shipment status
   const getStatusColor = (status) => {
     switch (status) {
       case "delivered":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800 print:bg-green-100 print:text-green-800";
       case "canceled":
-        return "bg-red-100 text-red-800";
+        return "bg-red-100 text-red-800 print:bg-red-100 print:text-red-800";
       case "on_route":
-        return "bg-blue-100 text-blue-800";
+        return "bg-blue-100 text-blue-800 print:bg-blue-100 print:text-blue-800";
       case "in_progress":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-100 text-yellow-800 print:bg-yellow-100 print:text-yellow-800";
       case "pending":
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 print:bg-gray-100 print:text-gray-800";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 print:bg-gray-100 print:text-gray-800";
     }
   };
 
@@ -38,16 +55,27 @@ const ProductPrint = ({ product, onClose }) => {
         onClick={onClose}
       ></div>
 
+      {/* 
+         CHANGES IN THIS CONTAINER:
+         1. print:mx-auto -> Auto margins for horizontal centering
+         2. print:w-full -> Ensures it uses available width up to max-w
+         3. print:max-w-2xl -> Keeps the card shape instead of stretching full page
+         4. print:bg-white print:text-black -> Forces light mode for printing (saves ink/looks better)
+         5. print:shadow-none -> Removes drop shadow on paper
+         6. print:border-none -> Removes border on paper
+      */}
       <div
         ref={componentRef}
-        className={`relative rounded-xl shadow-2xl max-w-2xl w-full ${
-          isDark
-            ? "bg-gray-800 border border-gray-700"
-            : "bg-white border border-gray-200"
-        }`}
+        className={`relative rounded-xl shadow-2xl max-w-2xl w-full 
+          print:mx-auto print:w-full print:max-w-2xl print:shadow-none print:border-none
+          print:bg-white print:text-black
+          ${
+            isDark
+              ? "bg-gray-800 border border-gray-700"
+              : "bg-white border border-gray-200"
+          }`}
         style={{ fontSize: "12px" }}
       >
-        {/* Hide close button during printing */}
         <div className="print:hidden">
           <div
             className={`flex items-center justify-between p-4 border-b ${
@@ -86,12 +114,14 @@ const ProductPrint = ({ product, onClose }) => {
           </div>
         </div>
 
-        <div className="p-4 print:p-3">
+        <div className="p-4 print:p-0">
+          {" "}
+          {/* Removed padding for print to let margins handle it */}
           {/* Product Header */}
-          <div className="flex items-start justify-between mb-4 print:mb-3">
+          <div className="flex items-start justify-between mb-4 print:mb-6">
             <div>
               <h2
-                className={`text-xl print:text-lg font-bold ${
+                className={`text-xl print:text-2xl font-bold print:text-black ${
                   isDark ? "text-white" : "text-gray-900"
                 }`}
               >
@@ -99,7 +129,7 @@ const ProductPrint = ({ product, onClose }) => {
               </h2>
               {product.description && (
                 <p
-                  className={`mt-1 text-sm print:text-xs ${
+                  className={`mt-1 text-sm print:text-sm print:text-gray-600 ${
                     isDark ? "text-gray-300" : "text-gray-600"
                   }`}
                 >
@@ -108,14 +138,16 @@ const ProductPrint = ({ product, onClose }) => {
               )}
             </div>
             <div
-              className={`px-2 py-1 print:px-1 print:py-0.5 rounded-full text-xs print:text-xs font-medium ${
-                isDark
-                  ? "bg-blue-900/30 text-blue-400"
-                  : "bg-blue-100 text-blue-800"
-              }`}
+              className={`px-2 py-1 print:px-2 print:py-1 rounded-full text-xs font-medium 
+                print:bg-blue-100 print:text-blue-800
+                ${
+                  isDark
+                    ? "bg-blue-900/30 text-blue-400"
+                    : "bg-blue-100 text-blue-800"
+                }`}
             >
               <svg
-                className="w-4 h-4 print:w-3 print:h-3 inline mr-1"
+                className="w-4 h-4 inline mr-1"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -130,30 +162,29 @@ const ProductPrint = ({ product, onClose }) => {
               {t("products.title")}
             </div>
           </div>
-
           {/* Product Details Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-4 print:gap-3 mb-4 print:mb-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-4 print:gap-6 mb-4 print:mb-6">
             <div
-              className={`p-3 print:p-2 rounded-lg ${
+              className={`p-3 print:p-4 rounded-lg print:bg-gray-50 print:border print:border-gray-200 ${
                 isDark ? "bg-gray-700/50" : "bg-gray-50"
               }`}
             >
               <h4
-                className={`text-xs font-semibold uppercase tracking-wider mb-2 print:mb-1 ${
+                className={`text-xs font-semibold uppercase tracking-wider mb-2 print:text-gray-500 ${
                   isDark ? "text-gray-400" : "text-gray-500"
                 }`}
               >
                 {t("products.productDetails")}
               </h4>
-              <table className="w-full text-xs print:text-xs">
+              <table className="w-full text-xs print:text-sm">
                 <tbody>
-                  <tr className="border-b border-gray-200 dark:border-gray-600">
+                  <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
                     <td className="py-1 pr-2 font-medium">
                       {t("products.table.quantity")}:
                     </td>
                     <td className="py-1 text-right">{product.quantity}</td>
                   </tr>
-                  <tr className="border-b border-gray-200 dark:border-gray-600">
+                  <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
                     <td className="py-1 pr-2 font-medium">
                       {t("products.table.weight")} (kg):
                     </td>
@@ -161,7 +192,7 @@ const ProductPrint = ({ product, onClose }) => {
                       {parseFloat(product.weight).toFixed(2)}
                     </td>
                   </tr>
-                  <tr className="border-b border-gray-200 dark:border-gray-600">
+                  <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
                     <td className="py-1 pr-2 font-medium">
                       {t("products.table.price")} (AFN):
                     </td>
@@ -185,21 +216,21 @@ const ProductPrint = ({ product, onClose }) => {
 
             {/* Shipment Information */}
             <div
-              className={`p-3 print:p-2 rounded-lg ${
+              className={`p-3 print:p-4 rounded-lg print:bg-gray-50 print:border print:border-gray-200 ${
                 isDark ? "bg-gray-700/50" : "bg-gray-50"
               }`}
             >
               <h4
-                className={`text-xs font-semibold uppercase tracking-wider mb-2 print:mb-1 ${
+                className={`text-xs font-semibold uppercase tracking-wider mb-2 print:text-gray-500 ${
                   isDark ? "text-gray-400" : "text-gray-500"
                 }`}
               >
                 {t("shipments.title")}
               </h4>
               {product.shipment ? (
-                <table className="w-full text-xs print:text-xs">
+                <table className="w-full text-xs print:text-sm">
                   <tbody>
-                    <tr className="border-b border-gray-200 dark:border-gray-600">
+                    <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
                       <td className="py-1 pr-2 font-medium">
                         {t("shipments.trackingNumber")}:
                       </td>
@@ -207,7 +238,7 @@ const ProductPrint = ({ product, onClose }) => {
                         {product.shipment_tracking_number}
                       </td>
                     </tr>
-                    <tr className="border-b border-gray-200 dark:border-gray-600">
+                    <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
                       <td className="py-1 pr-2 font-medium">
                         {t("shipments.fromProvince")}:
                       </td>
@@ -215,7 +246,7 @@ const ProductPrint = ({ product, onClose }) => {
                         {product.shipment.from_province}
                       </td>
                     </tr>
-                    <tr className="border-b border-gray-200 dark:border-gray-600">
+                    <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
                       <td className="py-1 pr-2 font-medium">
                         {t("shipments.toProvince")}:
                       </td>
@@ -251,28 +282,27 @@ const ProductPrint = ({ product, onClose }) => {
               )}
             </div>
           </div>
-
           {/* Receiver Information */}
           {(product.receiver_name ||
             product.receiver_phone ||
             product.receiver_email ||
             product.receiver_address) && (
             <div
-              className={`p-3 print:p-2 rounded-lg mb-4 print:mb-3 ${
+              className={`p-3 print:p-4 rounded-lg mb-4 print:mb-0 print:bg-gray-50 print:border print:border-gray-200 ${
                 isDark ? "bg-gray-700/50" : "bg-gray-50"
               }`}
             >
               <h4
-                className={`text-xs font-semibold uppercase tracking-wider mb-2 print:mb-1 ${
+                className={`text-xs font-semibold uppercase tracking-wider mb-2 print:text-gray-500 ${
                   isDark ? "text-gray-400" : "text-gray-500"
                 }`}
               >
                 {t("products.receiverInfo")}
               </h4>
-              <table className="w-full text-xs print:text-xs">
+              <table className="w-full text-xs print:text-sm">
                 <tbody>
                   {product.receiver_name && (
-                    <tr className="border-b border-gray-200 dark:border-gray-600">
+                    <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
                       <td className="py-1 pr-2 font-medium">
                         {t("products.receiverName")}:
                       </td>
@@ -280,7 +310,7 @@ const ProductPrint = ({ product, onClose }) => {
                     </tr>
                   )}
                   {product.receiver_phone && (
-                    <tr className="border-b border-gray-200 dark:border-gray-600">
+                    <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
                       <td className="py-1 pr-2 font-medium">
                         {t("products.receiverPhone")}:
                       </td>
@@ -288,7 +318,7 @@ const ProductPrint = ({ product, onClose }) => {
                     </tr>
                   )}
                   {product.receiver_email && (
-                    <tr className="border-b border-gray-200 dark:border-gray-600">
+                    <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
                       <td className="py-1 pr-2 font-medium">
                         {t("products.receiverEmail")}:
                       </td>
@@ -307,8 +337,6 @@ const ProductPrint = ({ product, onClose }) => {
               </table>
             </div>
           )}
-
-          {/* Print Button - Hidden during printing */}
           <div className="flex justify-end space-x-3 print:hidden">
             <button
               onClick={onClose}
