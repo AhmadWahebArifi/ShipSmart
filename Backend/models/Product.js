@@ -64,6 +64,21 @@ const Product = sequelize.define(
       allowNull: true,
       defaultValue: null,
     },
+    sender_phone: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
+    sender_email: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: null,
+    },
+    sender_address: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      defaultValue: null,
+    },
     // Add detailed receiver fields
     receiver_name: {
       type: DataTypes.STRING,
@@ -85,6 +100,23 @@ const Product = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
       defaultValue: null,
+    },
+    // Add discount and remaining amount fields
+    discount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      defaultValue: null,
+      validate: {
+        min: 0,
+      },
+    },
+    remaining: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      defaultValue: null,
+      validate: {
+        min: 0,
+      },
     },
   },
   {
