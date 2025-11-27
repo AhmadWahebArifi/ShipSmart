@@ -197,7 +197,9 @@
       "actions": "عملیات",
       "sender": "فرستنده",
       "receiver": "گیرنده",
-      "receiverInfo": "اطلاعات گیرنده"
+      "receiverInfo": "اطلاعات گیرنده",
+      "senderInfo": "اطلاعات فرستنده",
+      "viewSenderInfo": "مشاهده اطلاعات فرستنده"
     },
     "form": {
       "name": "نام محصول",
@@ -211,6 +213,15 @@
       "selectShipment": "یک محموله انتخاب کنید",
       "sender": "فرستنده",
       "senderPlaceholder": "نام فرستنده را وارد کنید",
+      "senderPhone": "تلفن فرستنده",
+      "senderPhonePlaceholder": "شماره تلفن فرستنده را وارد کنید",
+      "senderEmail": "ایمیل فرستنده",
+      "senderEmailPlaceholder": "آدرس ایمیل فرستنده را وارد کنید",
+      "senderAddress": "آدرس فرستنده",
+      "senderAddressPlaceholder": "آدرس فرستنده را وارد کنید",
+      "discount": "تخفیف",
+      "remaining": "مبلغ باقی‌مانده",
+      "debt": "بدهی",
       "receiver": "گیرنده",
       "receiverPlaceholder": "نام گیرنده را وارد کنید"
     },
@@ -291,6 +302,7 @@
     "success": "موفقیت",
     "notSet": "تنظیم نشده",
     "close": "بستن",
+    "optional": "اختیاری",
 
     "ok": "تایید",
     "errors": {
