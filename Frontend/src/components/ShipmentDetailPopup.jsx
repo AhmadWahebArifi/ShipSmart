@@ -427,6 +427,125 @@ const ShipmentDetailPopup = ({ shipment, isOpen, onClose }) => {
                             </div>
                           )}
 
+                          {/* Price and Discount Information */}
+                          {product.price && (
+                            <div>
+                              <p
+                                className={`text-xs font-medium ${
+                                  isDark ? "text-gray-500" : "text-gray-500"
+                                }`}
+                              >
+                                {t("products.price")}
+                              </p>
+                              <p
+                                className={`text-sm font-semibold ${
+                                  isDark ? "text-green-400" : "text-green-600"
+                                }`}
+                              >
+                                {parseFloat(product.price).toFixed(2)} AFN
+                              </p>
+                            </div>
+                          )}
+
+                          {product.discount && (
+                            <div>
+                              <p
+                                className={`text-xs font-medium ${
+                                  isDark ? "text-gray-500" : "text-gray-500"
+                                }`}
+                              >
+                                {t("products.form.discount")}
+                              </p>
+                              <span
+                                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                  isDark
+                                    ? "bg-orange-900/30 text-orange-300"
+                                    : "bg-orange-100 text-orange-800"
+                                }`}
+                              >
+                                {parseFloat(product.discount).toFixed(1)}%
+                              </span>
+                            </div>
+                          )}
+
+                          {product.remaining && (
+                            <div>
+                              <p
+                                className={`text-xs font-medium ${
+                                  isDark ? "text-gray-500" : "text-gray-500"
+                                }`}
+                              >
+                                {t("products.table.outstandingBalance")}
+                              </p>
+                              <span
+                                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                  isDark
+                                    ? "bg-red-900/30 text-red-300"
+                                    : "bg-red-100 text-red-800"
+                                }`}
+                              >
+                                {parseFloat(product.remaining).toFixed(2)} AFN
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Sender Information */}
+                          {(product.sender ||
+                            product.sender_phone ||
+                            product.sender_email ||
+                            product.sender_address) && (
+                            <div className="col-span-2 md:col-span-4 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                              <p
+                                className={`text-xs font-medium mb-2 ${
+                                  isDark ? "text-gray-500" : "text-gray-500"
+                                }`}
+                              >
+                                {t("products.form.sender")} {t("common.info")}
+                              </p>
+                              <div className="space-y-1">
+                                {product.sender && (
+                                  <p
+                                    className={`text-sm ${
+                                      isDark ? "text-white" : "text-gray-800"
+                                    }`}
+                                  >
+                                    {product.sender}
+                                  </p>
+                                )}
+                                {product.sender_phone && (
+                                  <p
+                                    className={`text-sm ${
+                                      isDark ? "text-gray-400" : "text-gray-600"
+                                    }`}
+                                  >
+                                    {t("products.form.senderPhone")}:{" "}
+                                    {product.sender_phone}
+                                  </p>
+                                )}
+                                {product.sender_email && (
+                                  <p
+                                    className={`text-sm ${
+                                      isDark ? "text-gray-400" : "text-gray-600"
+                                    }`}
+                                  >
+                                    {t("products.form.senderEmail")}:{" "}
+                                    {product.sender_email}
+                                  </p>
+                                )}
+                                {product.sender_address && (
+                                  <p
+                                    className={`text-sm ${
+                                      isDark ? "text-gray-400" : "text-gray-600"
+                                    }`}
+                                  >
+                                    {t("products.form.senderAddress")}:{" "}
+                                    {product.sender_address}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
                           {/* Receiver Information */}
                           {(product.receiver_name ||
                             product.receiver_phone ||
