@@ -22,6 +22,24 @@ const ProductPrint = ({ product, onClose }) => {
         justify-content: center; /* Horizontally center */
         align-items: flex-start; /* Start from top (better for long receipts than center) */
       }
+      /* Force light mode for printing regardless of theme */
+      .print-container,
+      .print-container * {
+        color: black !important;
+        background: white !important;
+        border-color: #e5e7eb !important;
+      }
+      .print-container .text-green-600,
+      .print-container .text-orange-600 {
+        color: inherit !important;
+        font-weight: 600 !important;
+      }
+      .print-container .text-green-600 {
+        color: #059669 !important;
+      }
+      .print-container .text-orange-600 {
+        color: #ea580c !important;
+      }
     }
   `;
 
@@ -34,17 +52,17 @@ const ProductPrint = ({ product, onClose }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case "delivered":
-        return "bg-green-100 text-green-800 print:bg-green-100 print:text-green-800";
+        return "bg-green-100 text-green-800 print:bg-green-100 print:text-green-800 print:text-green-700";
       case "canceled":
-        return "bg-red-100 text-red-800 print:bg-red-100 print:text-red-800";
+        return "bg-red-100 text-red-800 print:bg-red-100 print:text-red-800 print:text-red-700";
       case "on_route":
-        return "bg-blue-100 text-blue-800 print:bg-blue-100 print:text-blue-800";
+        return "bg-blue-100 text-blue-800 print:bg-blue-100 print:text-blue-800 print:text-blue-700";
       case "in_progress":
-        return "bg-yellow-100 text-yellow-800 print:bg-yellow-100 print:text-yellow-800";
+        return "bg-yellow-100 text-yellow-800 print:bg-yellow-100 print:text-yellow-800 print:text-yellow-700";
       case "pending":
-        return "bg-gray-100 text-gray-800 print:bg-gray-100 print:text-gray-800";
+        return "bg-gray-100 text-gray-800 print:bg-gray-100 print:text-gray-800 print:text-gray-700";
       default:
-        return "bg-gray-100 text-gray-800 print:bg-gray-100 print:text-gray-800";
+        return "bg-gray-100 text-gray-800 print:bg-gray-100 print:text-gray-800 print:text-gray-700";
     }
   };
 
@@ -200,13 +218,38 @@ const ProductPrint = ({ product, onClose }) => {
                       {parseFloat(product.price).toFixed(2)}
                     </td>
                   </tr>
+                  {product.discount && (
+                    <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
+                      <td className="py-1 pr-2 font-medium">
+                        {t("products.form.discount")} (%):
+                      </td>
+                      <td className="py-1 text-right text-green-600">
+                        -{parseFloat(product.discount).toFixed(2)}%
+                      </td>
+                    </tr>
+                  )}
+                  {product.remaining && (
+                    <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
+                      <td className="py-1 pr-2 font-medium">
+                        {t("products.form.remaining")} (AFN) -{" "}
+                        {t("products.form.debt")}:
+                      </td>
+                      <td className="py-1 text-right text-orange-600">
+                        {parseFloat(product.remaining).toFixed(2)}
+                      </td>
+                    </tr>
+                  )}
                   <tr>
                     <td className="py-1 pr-2 font-medium">
                       {t("products.table.total")} (AFN):
                     </td>
                     <td className="py-1 text-right font-bold">
                       {(
-                        parseFloat(product.price) * parseInt(product.quantity)
+                        parseFloat(product.price) * parseInt(product.quantity) -
+                        (parseFloat(product.price) *
+                          parseInt(product.quantity) *
+                          (parseFloat(product.discount) || 0)) /
+                          100
                       ).toFixed(2)}
                     </td>
                   </tr>
@@ -282,6 +325,67 @@ const ProductPrint = ({ product, onClose }) => {
               )}
             </div>
           </div>
+          {/* Sender Information */}
+          {(product.sender ||
+            product.sender_phone ||
+            product.sender_email ||
+            product.sender_address) && (
+            <div
+              className={`p-3 print:p-4 rounded-lg mb-4 print:mb-6 print:bg-gray-50 print:border print:border-gray-200 ${
+                isDark ? "bg-gray-700/50" : "bg-gray-50"
+              }`}
+            >
+              <h4
+                className={`text-xs font-semibold uppercase tracking-wider mb-2 print:text-gray-500 ${
+                  isDark ? "text-gray-400" : "text-gray-500"
+                }`}
+              >
+                {t("products.form.sender")} Information
+              </h4>
+              <table className="w-full text-xs print:text-sm">
+                <tbody>
+                  {product.sender && (
+                    <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
+                      <td className="py-1 pr-2 font-medium">
+                        {t("products.form.sender")}:
+                      </td>
+                      <td className="py-1 text-right">{product.sender}</td>
+                    </tr>
+                  )}
+                  {product.sender_phone && (
+                    <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
+                      <td className="py-1 pr-2 font-medium">
+                        {t("products.form.senderPhone")}:
+                      </td>
+                      <td className="py-1 text-right">
+                        {product.sender_phone}
+                      </td>
+                    </tr>
+                  )}
+                  {product.sender_email && (
+                    <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
+                      <td className="py-1 pr-2 font-medium">
+                        {t("products.form.senderEmail")}:
+                      </td>
+                      <td className="py-1 text-right">
+                        {product.sender_email}
+                      </td>
+                    </tr>
+                  )}
+                  {product.sender_address && (
+                    <tr>
+                      <td className="py-1 pr-2 font-medium">
+                        {t("products.form.senderAddress")}:
+                      </td>
+                      <td className="py-1 text-right">
+                        {product.sender_address}
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
           {/* Receiver Information */}
           {(product.receiver_name ||
             product.receiver_phone ||
