@@ -179,6 +179,7 @@
     "receiverInfo": "Receiver Info",
     "items": "items",
     "addProduct": "Add Product",
+    "contactInfo": "Contact Info",
     "editProduct": "Edit Product",
     "noProducts": "No products found",
     "getStarted": "Get started by adding a new product.",
@@ -199,7 +200,10 @@
       "receiver": "Receiver",
       "receiverInfo": "Receiver Info",
       "senderInfo": "Sender Info",
-      "viewSenderInfo": "View Sender Info"
+      "viewSenderInfo": "View Sender Info",
+      "contactInfo": "Contact Info",
+      "viewContactInfo": "View Contact Information",
+      "outstandingBalance": "Outstanding Balance"
     },
     "form": {
       "name": "Product Name",
@@ -308,6 +312,7 @@
     "close": "Close",
     "optional": "Optional",
     "notAvailable": "Not available",
+    "info": "Info",
     "errors": {
       "generic": "An error occurred. Please try again.",
       "required": "This field is required"
