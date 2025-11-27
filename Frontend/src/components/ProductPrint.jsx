@@ -9,7 +9,7 @@ const ProductPrint = ({ product, onClose }) => {
   const componentRef = useRef();
 
   const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
+    contentRef: componentRef,
     documentTitle: `${t("products.title")} - ${product.name}`,
   });
 
@@ -45,49 +45,53 @@ const ProductPrint = ({ product, onClose }) => {
             ? "bg-gray-800 border border-gray-700"
             : "bg-white border border-gray-200"
         }`}
+        style={{ fontSize: "12px" }}
       >
-        <div
-          className={`flex items-center justify-between p-4 border-b ${
-            isDark ? "border-gray-700" : "border-gray-200"
-          }`}
-        >
-          <h3
-            className={`text-lg font-semibold ${
-              isDark ? "text-white" : "text-gray-800"
+        {/* Hide close button during printing */}
+        <div className="print:hidden">
+          <div
+            className={`flex items-center justify-between p-4 border-b ${
+              isDark ? "border-gray-700" : "border-gray-200"
             }`}
           >
-            {t("products.printProductInfo")}
-          </h3>
-          <button
-            onClick={onClose}
-            className={`p-1 rounded-full ${
-              isDark
-                ? "text-gray-400 hover:text-white hover:bg-gray-700"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-            }`}
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <h3
+              className={`text-lg font-semibold ${
+                isDark ? "text-white" : "text-gray-800"
+              }`}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+              {t("products.printProductInfo")}
+            </h3>
+            <button
+              onClick={onClose}
+              className={`p-1 rounded-full ${
+                isDark
+                  ? "text-gray-400 hover:text-white hover:bg-gray-700"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+              }`}
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
 
-        <div className="p-6">
+        <div className="p-4 print:p-3">
           {/* Product Header */}
-          <div className="flex items-start justify-between mb-6">
+          <div className="flex items-start justify-between mb-4 print:mb-3">
             <div>
               <h2
-                className={`text-2xl font-bold ${
+                className={`text-xl print:text-lg font-bold ${
                   isDark ? "text-white" : "text-gray-900"
                 }`}
               >
@@ -95,7 +99,7 @@ const ProductPrint = ({ product, onClose }) => {
               </h2>
               {product.description && (
                 <p
-                  className={`mt-1 ${
+                  className={`mt-1 text-sm print:text-xs ${
                     isDark ? "text-gray-300" : "text-gray-600"
                   }`}
                 >
@@ -104,14 +108,14 @@ const ProductPrint = ({ product, onClose }) => {
               )}
             </div>
             <div
-              className={`px-3 py-1 rounded-full text-sm font-medium ${
+              className={`px-2 py-1 print:px-1 print:py-0.5 rounded-full text-xs print:text-xs font-medium ${
                 isDark
                   ? "bg-blue-900/30 text-blue-400"
                   : "bg-blue-100 text-blue-800"
               }`}
             >
               <svg
-                className="w-5 h-5 inline mr-1"
+                className="w-4 h-4 print:w-3 print:h-3 inline mr-1"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -128,173 +132,117 @@ const ProductPrint = ({ product, onClose }) => {
           </div>
 
           {/* Product Details Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-4 print:gap-3 mb-4 print:mb-3">
             <div
-              className={`p-4 rounded-lg ${
+              className={`p-3 print:p-2 rounded-lg ${
                 isDark ? "bg-gray-700/50" : "bg-gray-50"
               }`}
             >
               <h4
-                className={`text-sm font-semibold uppercase tracking-wider mb-3 ${
+                className={`text-xs font-semibold uppercase tracking-wider mb-2 print:mb-1 ${
                   isDark ? "text-gray-400" : "text-gray-500"
                 }`}
               >
                 {t("products.productDetails")}
               </h4>
-              <div className="space-y-3">
-                <div>
-                  <p
-                    className={`text-sm ${
-                      isDark ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    {t("products.table.quantity")}
-                  </p>
-                  <p
-                    className={`text-lg font-medium ${
-                      isDark ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    {product.quantity}
-                  </p>
-                </div>
-                <div>
-                  <p
-                    className={`text-sm ${
-                      isDark ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    {t("products.table.weight")} (kg)
-                  </p>
-                  <p
-                    className={`text-lg font-medium ${
-                      isDark ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    {parseFloat(product.weight).toFixed(2)}
-                  </p>
-                </div>
-                <div>
-                  <p
-                    className={`text-sm ${
-                      isDark ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    {t("products.table.price")} (AFN)
-                  </p>
-                  <p
-                    className={`text-lg font-medium ${
-                      isDark ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    {parseFloat(product.price).toFixed(2)}
-                  </p>
-                </div>
-                <div>
-                  <p
-                    className={`text-sm ${
-                      isDark ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  >
-                    {t("products.table.total")} (AFN)
-                  </p>
-                  <p
-                    className={`text-lg font-medium ${
-                      isDark ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    {(
-                      parseFloat(product.price) * parseInt(product.quantity)
-                    ).toFixed(2)}
-                  </p>
-                </div>
-              </div>
+              <table className="w-full text-xs print:text-xs">
+                <tbody>
+                  <tr className="border-b border-gray-200 dark:border-gray-600">
+                    <td className="py-1 pr-2 font-medium">
+                      {t("products.table.quantity")}:
+                    </td>
+                    <td className="py-1 text-right">{product.quantity}</td>
+                  </tr>
+                  <tr className="border-b border-gray-200 dark:border-gray-600">
+                    <td className="py-1 pr-2 font-medium">
+                      {t("products.table.weight")} (kg):
+                    </td>
+                    <td className="py-1 text-right">
+                      {parseFloat(product.weight).toFixed(2)}
+                    </td>
+                  </tr>
+                  <tr className="border-b border-gray-200 dark:border-gray-600">
+                    <td className="py-1 pr-2 font-medium">
+                      {t("products.table.price")} (AFN):
+                    </td>
+                    <td className="py-1 text-right">
+                      {parseFloat(product.price).toFixed(2)}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="py-1 pr-2 font-medium">
+                      {t("products.table.total")} (AFN):
+                    </td>
+                    <td className="py-1 text-right font-bold">
+                      {(
+                        parseFloat(product.price) * parseInt(product.quantity)
+                      ).toFixed(2)}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
 
             {/* Shipment Information */}
             <div
-              className={`p-4 rounded-lg ${
+              className={`p-3 print:p-2 rounded-lg ${
                 isDark ? "bg-gray-700/50" : "bg-gray-50"
               }`}
             >
               <h4
-                className={`text-sm font-semibold uppercase tracking-wider mb-3 ${
+                className={`text-xs font-semibold uppercase tracking-wider mb-2 print:mb-1 ${
                   isDark ? "text-gray-400" : "text-gray-500"
                 }`}
               >
                 {t("shipments.title")}
               </h4>
               {product.shipment ? (
-                <div className="space-y-3">
-                  <div>
-                    <p
-                      className={`text-sm ${
-                        isDark ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      {t("shipments.trackingNumber")}
-                    </p>
-                    <p
-                      className={`text-lg font-medium ${
-                        isDark ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      {product.shipment_tracking_number}
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className={`text-sm ${
-                        isDark ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      {t("shipments.fromProvince")}
-                    </p>
-                    <p
-                      className={`text-lg font-medium ${
-                        isDark ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      {product.shipment.from_province}
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className={`text-sm ${
-                        isDark ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      {t("shipments.toProvince")}
-                    </p>
-                    <p
-                      className={`text-lg font-medium ${
-                        isDark ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      {product.shipment.to_province}
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className={`text-sm ${
-                        isDark ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      {t("shipments.status")}
-                    </p>
-                    <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
-                        product.shipment.status
-                      )}`}
-                    >
-                      {t(`shipmentStatus.${product.shipment.status}`) ||
-                        product.shipment.status.replace("_", " ")}
-                    </span>
-                  </div>
-                </div>
+                <table className="w-full text-xs print:text-xs">
+                  <tbody>
+                    <tr className="border-b border-gray-200 dark:border-gray-600">
+                      <td className="py-1 pr-2 font-medium">
+                        {t("shipments.trackingNumber")}:
+                      </td>
+                      <td className="py-1 text-right">
+                        {product.shipment_tracking_number}
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-200 dark:border-gray-600">
+                      <td className="py-1 pr-2 font-medium">
+                        {t("shipments.fromProvince")}:
+                      </td>
+                      <td className="py-1 text-right">
+                        {product.shipment.from_province}
+                      </td>
+                    </tr>
+                    <tr className="border-b border-gray-200 dark:border-gray-600">
+                      <td className="py-1 pr-2 font-medium">
+                        {t("shipments.toProvince")}:
+                      </td>
+                      <td className="py-1 text-right">
+                        {product.shipment.to_province}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-1 pr-2 font-medium">
+                        {t("shipments.status")}:
+                      </td>
+                      <td className="py-1 text-right">
+                        <span
+                          className={`px-1 py-0.5 inline-flex text-xs leading-4 font-semibold rounded-full ${getStatusColor(
+                            product.shipment.status
+                          )}`}
+                        >
+                          {t(`shipmentStatus.${product.shipment.status}`) ||
+                            product.shipment.status.replace("_", " ")}
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               ) : (
                 <p
-                  className={`text-sm ${
+                  className={`text-xs ${
                     isDark ? "text-gray-400" : "text-gray-500"
                   }`}
                 >
@@ -310,96 +258,58 @@ const ProductPrint = ({ product, onClose }) => {
             product.receiver_email ||
             product.receiver_address) && (
             <div
-              className={`p-4 rounded-lg mb-6 ${
+              className={`p-3 print:p-2 rounded-lg mb-4 print:mb-3 ${
                 isDark ? "bg-gray-700/50" : "bg-gray-50"
               }`}
             >
               <h4
-                className={`text-sm font-semibold uppercase tracking-wider mb-3 ${
+                className={`text-xs font-semibold uppercase tracking-wider mb-2 print:mb-1 ${
                   isDark ? "text-gray-400" : "text-gray-500"
                 }`}
               >
                 {t("products.receiverInfo")}
               </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {product.receiver_name && (
-                  <div>
-                    <p
-                      className={`text-sm ${
-                        isDark ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      {t("products.receiverName")}
-                    </p>
-                    <p
-                      className={`font-medium ${
-                        isDark ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      {product.receiver_name}
-                    </p>
-                  </div>
-                )}
-                {product.receiver_phone && (
-                  <div>
-                    <p
-                      className={`text-sm ${
-                        isDark ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      {t("products.receiverPhone")}
-                    </p>
-                    <p
-                      className={`font-medium ${
-                        isDark ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      {product.receiver_phone}
-                    </p>
-                  </div>
-                )}
-                {product.receiver_email && (
-                  <div>
-                    <p
-                      className={`text-sm ${
-                        isDark ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      {t("products.receiverEmail")}
-                    </p>
-                    <p
-                      className={`font-medium ${
-                        isDark ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      {product.receiver_email}
-                    </p>
-                  </div>
-                )}
-                {product.receiver_address && (
-                  <div>
-                    <p
-                      className={`text-sm ${
-                        isDark ? "text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      {t("products.receiverAddress")}
-                    </p>
-                    <p
-                      className={`font-medium ${
-                        isDark ? "text-white" : "text-gray-900"
-                      }`}
-                    >
-                      {product.receiver_address}
-                    </p>
-                  </div>
-                )}
-              </div>
+              <table className="w-full text-xs print:text-xs">
+                <tbody>
+                  {product.receiver_name && (
+                    <tr className="border-b border-gray-200 dark:border-gray-600">
+                      <td className="py-1 pr-2 font-medium">
+                        {t("products.receiverName")}:
+                      </td>
+                      <td className="py-1">{product.receiver_name}</td>
+                    </tr>
+                  )}
+                  {product.receiver_phone && (
+                    <tr className="border-b border-gray-200 dark:border-gray-600">
+                      <td className="py-1 pr-2 font-medium">
+                        {t("products.receiverPhone")}:
+                      </td>
+                      <td className="py-1">{product.receiver_phone}</td>
+                    </tr>
+                  )}
+                  {product.receiver_email && (
+                    <tr className="border-b border-gray-200 dark:border-gray-600">
+                      <td className="py-1 pr-2 font-medium">
+                        {t("products.receiverEmail")}:
+                      </td>
+                      <td className="py-1">{product.receiver_email}</td>
+                    </tr>
+                  )}
+                  {product.receiver_address && (
+                    <tr>
+                      <td className="py-1 pr-2 font-medium align-top">
+                        {t("products.receiverAddress")}:
+                      </td>
+                      <td className="py-1">{product.receiver_address}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           )}
 
-          {/* Print Button */}
-          <div className="flex justify-end space-x-3">
+          {/* Print Button - Hidden during printing */}
+          <div className="flex justify-end space-x-3 print:hidden">
             <button
               onClick={onClose}
               className={`px-4 py-2 rounded-lg font-medium ${
