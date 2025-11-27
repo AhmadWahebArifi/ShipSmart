@@ -38,12 +38,17 @@ router.post("/", [authenticateToken, ...validateProduct], async (req, res) => {
       price,
       shipment_tracking_number,
       sender,
+      sender_phone,
+      sender_email,
+      sender_address,
       receiver,
       // Add new receiver fields
       receiver_name,
       receiver_phone,
       receiver_email,
       receiver_address,
+      discount,
+      remaining,
     } = req.body;
 
     // Check if shipment exists
@@ -81,6 +86,11 @@ router.post("/", [authenticateToken, ...validateProduct], async (req, res) => {
       shipment_tracking_number,
       created_by: req.user.userId,
       sender: sender || null,
+      sender_phone: sender_phone || null,
+      sender_email: sender_email || null,
+      sender_address: sender_address || null,
+      discount: discount || null,
+      remaining: remaining || null,
       // Remove old receiver field
       // receiver: receiver || null,
       // Add new receiver fields
@@ -213,11 +223,19 @@ router.get("/", authenticateToken, async (req, res) => {
         shipment_tracking_number: p.shipment_tracking_number,
         shipment: p.shipment,
         created_by: p.creator,
+        // Add sender fields
+        sender: p.sender,
+        sender_phone: p.sender_phone,
+        sender_email: p.sender_email,
+        sender_address: p.sender_address,
         // Add receiver fields
         receiver_name: p.receiver_name,
         receiver_phone: p.receiver_phone,
         receiver_email: p.receiver_email,
         receiver_address: p.receiver_address,
+        // Add discount and remaining fields
+        discount: p.discount,
+        remaining: p.remaining,
         created_at: p.created_at,
         updated_at: p.updated_at,
       })),
@@ -323,6 +341,19 @@ router.get("/:id", authenticateToken, async (req, res) => {
         shipment_tracking_number: product.shipment_tracking_number,
         shipment: product.shipment,
         created_by: product.creator,
+        // Add sender fields
+        sender: product.sender,
+        sender_phone: product.sender_phone,
+        sender_email: product.sender_email,
+        sender_address: product.sender_address,
+        // Add receiver fields
+        receiver_name: product.receiver_name,
+        receiver_phone: product.receiver_phone,
+        receiver_email: product.receiver_email,
+        receiver_address: product.receiver_address,
+        // Add discount and remaining fields
+        discount: product.discount,
+        remaining: product.remaining,
         created_at: product.created_at,
         updated_at: product.updated_at,
       },
@@ -358,12 +389,17 @@ router.put(
         price,
         shipment_tracking_number,
         sender,
+        sender_phone,
+        sender_email,
+        sender_address,
         receiver,
         // Add new receiver fields
         receiver_name,
         receiver_phone,
         receiver_email,
         receiver_address,
+        discount,
+        remaining,
       } = req.body;
 
       const product = await Product.findByPk(req.params.id);
@@ -415,6 +451,11 @@ router.put(
         product.shipment_tracking_number = shipment_tracking_number;
       }
       if (sender !== undefined) product.sender = sender;
+      if (sender_phone !== undefined) product.sender_phone = sender_phone;
+      if (sender_email !== undefined) product.sender_email = sender_email;
+      if (sender_address !== undefined) product.sender_address = sender_address;
+      if (discount !== undefined) product.discount = discount;
+      if (remaining !== undefined) product.remaining = remaining;
       // Remove old receiver field
       // if (receiver !== undefined) product.receiver = receiver;
       // Add new receiver fields
