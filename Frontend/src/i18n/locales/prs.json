@@ -177,6 +177,7 @@
   "products": {
     "title": "محصولات",
     "items": "مورد",
+    "contactInfo": "اطلاعات تماس",
     "addProduct": "افزودن محصول",
     "editProduct": "ویرایش محصول",
     "receiverInfo": "اطلاعات گیرنده",
@@ -199,7 +200,10 @@
       "receiver": "گیرنده",
       "receiverInfo": "اطلاعات گیرنده",
       "senderInfo": "اطلاعات فرستنده",
-      "viewSenderInfo": "مشاهده اطلاعات فرستنده"
+      "viewSenderInfo": "مشاهده اطلاعات فرستنده",
+      "contactInfo": "اطلاعات تماس",
+      "viewContactInfo": "مشاهده اطلاعات تماس",
+      "outstandingBalance": "باقیمانده حساب"
     },
     "form": {
       "name": "نام محصول",
@@ -292,6 +296,7 @@
     "loading": "در حال بارگذاری",
     "saving": "در حال ذخیره‌سازی...",
     "edit": "ویرایش",
+    "info": "معلومات",
     "delete": "حذف",
     "cancel": "انصراف",
     "save": "ذخیره",

@@ -17,7 +17,7 @@ import {
   FiTrash2,
   FiFilter,
   FiSearch,
-  FiUser,
+  FiUsers,
   FiX,
   FiPrinter,
 } from "react-icons/fi";
@@ -579,11 +579,19 @@ const Products = () => {
                       </th>
                       <th
                         scope="col"
+                        className={`hidden lg:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          isDark ? "text-gray-300" : "text-gray-500"
+                        }`}
+                      >
+                        {t("products.table.contactInfo")}
+                      </th>
+                      <th
+                        scope="col"
                         className={`hidden xl:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                           isDark ? "text-gray-300" : "text-gray-500"
                         }`}
                       >
-                        {t("products.table.receiver")}
+                        {t("products.table.outstandingBalance")}
                       </th>
                       <th scope="col" className="relative px-3 sm:px-6 py-3">
                         <span className="sr-only">{t("common.actions")}</span>
@@ -705,11 +713,19 @@ const Products = () => {
                         >
                           {(
                             parseFloat(product.price) *
-                            parseInt(product.quantity)
+                              parseInt(product.quantity) -
+                            (parseFloat(product.price) *
+                              parseInt(product.quantity) *
+                              (parseFloat(product.discount) || 0)) /
+                              100
                           ).toFixed(2)}
                         </td>
-                        <td className="hidden xl:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
-                          {product.receiver_name ||
+                        <td className="hidden lg:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
+                          {product.sender ||
+                          product.sender_phone ||
+                          product.sender_email ||
+                          product.sender_address ||
+                          product.receiver_name ||
                           product.receiver_phone ||
                           product.receiver_email ||
                           product.receiver_address ? (
@@ -720,13 +736,30 @@ const Products = () => {
                                   ? "text-blue-400 hover:bg-gray-600"
                                   : "text-blue-600 hover:bg-gray-200"
                               }`}
-                              title={t("products.viewReceiverInfo")}
+                              title={t("products.viewContactInfo")}
                             >
-                              <FiUser className="w-4 h-4" />
+                              <FiUsers className="w-4 h-4" />
                               <span className="text-xs">
-                                {t("products.receiverInfo")}
+                                {t("products.contactInfo")}
                               </span>
                             </button>
+                          ) : (
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              {t("common.notAvailable")}
+                            </span>
+                          )}
+                        </td>
+                        <td className="hidden xl:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
+                          {product.remaining ? (
+                            <span
+                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                isDark
+                                  ? "bg-red-900 text-red-200"
+                                  : "bg-red-100 text-red-800"
+                              }`}
+                            >
+                              {parseFloat(product.remaining).toFixed(2)} AFN
+                            </span>
                           ) : (
                             <span className="text-xs text-gray-500 dark:text-gray-400">
                               {t("common.notAvailable")}
@@ -799,6 +832,7 @@ const Products = () => {
                       </td>
                       <td className="hidden xl:table-cell px-3 sm:px-6 py-3"></td>
                       <td className="px-3 sm:px-6 py-3"></td>
+                      <td className="hidden xl:table-cell px-3 sm:px-6 py-3"></td>
                     </tr>
                   </tfoot>
                 </table>
@@ -806,7 +840,7 @@ const Products = () => {
             )}
           </div>
 
-          {/* Receiver Info Popup */}
+          {/* Product Info Popup */}
           {selectedProduct && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
               <div
@@ -830,7 +864,7 @@ const Products = () => {
                       isDark ? "text-white" : "text-gray-800"
                     }`}
                   >
-                    {t("products.receiverInfo")}
+                    {t("products.productDetails")}
                   </h3>
                   <button
                     onClick={() => setSelectedProduct(null)}
@@ -844,77 +878,169 @@ const Products = () => {
                   </button>
                 </div>
                 <div className="p-4">
-                  <div className="space-y-3">
+                  <div className="space-y-4">
+                    {/* Sender Information */}
                     <div>
-                      <p
-                        className={`text-sm font-medium ${
-                          isDark ? "text-gray-400" : "text-gray-500"
+                      <h4
+                        className={`text-sm font-semibold mb-3 ${
+                          isDark ? "text-gray-300" : "text-gray-700"
                         }`}
                       >
-                        {t("products.receiverName")}
-                      </p>
-                      <p
-                        className={`mt-1 ${
-                          isDark ? "text-white" : "text-gray-900"
-                        }`}
-                      >
-                        {selectedProduct.receiver_name ||
-                          t("common.notAvailable")}
-                      </p>
+                        {t("products.form.sender")} {t("common.info")}
+                      </h4>
+                      <div className="space-y-2">
+                        <div>
+                          <p
+                            className={`text-sm font-medium ${
+                              isDark ? "text-gray-400" : "text-gray-500"
+                            }`}
+                          >
+                            {t("products.form.sender")}
+                          </p>
+                          <p
+                            className={`mt-1 ${
+                              isDark ? "text-white" : "text-gray-900"
+                            }`}
+                          >
+                            {selectedProduct.sender || t("common.notAvailable")}
+                          </p>
+                        </div>
+                        <div>
+                          <p
+                            className={`text-sm font-medium ${
+                              isDark ? "text-gray-400" : "text-gray-500"
+                            }`}
+                          >
+                            {t("products.form.senderPhone")}
+                          </p>
+                          <p
+                            className={`mt-1 ${
+                              isDark ? "text-white" : "text-gray-900"
+                            }`}
+                          >
+                            {selectedProduct.sender_phone ||
+                              t("common.notAvailable")}
+                          </p>
+                        </div>
+                        <div>
+                          <p
+                            className={`text-sm font-medium ${
+                              isDark ? "text-gray-400" : "text-gray-500"
+                            }`}
+                          >
+                            {t("products.form.senderEmail")}
+                          </p>
+                          <p
+                            className={`mt-1 ${
+                              isDark ? "text-white" : "text-gray-900"
+                            }`}
+                          >
+                            {selectedProduct.sender_email ||
+                              t("common.notAvailable")}
+                          </p>
+                        </div>
+                        <div>
+                          <p
+                            className={`text-sm font-medium ${
+                              isDark ? "text-gray-400" : "text-gray-500"
+                            }`}
+                          >
+                            {t("products.form.senderAddress")}
+                          </p>
+                          <p
+                            className={`mt-1 ${
+                              isDark ? "text-white" : "text-gray-900"
+                            }`}
+                          >
+                            {selectedProduct.sender_address ||
+                              t("common.notAvailable")}
+                          </p>
+                        </div>
+                      </div>
                     </div>
 
+                    {/* Receiver Information */}
                     <div>
-                      <p
-                        className={`text-sm font-medium ${
-                          isDark ? "text-gray-400" : "text-gray-500"
+                      <h4
+                        className={`text-sm font-semibold mb-3 ${
+                          isDark ? "text-gray-300" : "text-gray-700"
                         }`}
                       >
-                        {t("products.receiverPhone")}
-                      </p>
-                      <p
-                        className={`mt-1 ${
-                          isDark ? "text-white" : "text-gray-900"
-                        }`}
-                      >
-                        {selectedProduct.receiver_phone ||
-                          t("common.notAvailable")}
-                      </p>
-                    </div>
+                        {t("products.receiverInfo")}
+                      </h4>
+                      <div className="space-y-2">
+                        <div>
+                          <p
+                            className={`text-sm font-medium ${
+                              isDark ? "text-gray-400" : "text-gray-500"
+                            }`}
+                          >
+                            {t("products.receiverName")}
+                          </p>
+                          <p
+                            className={`mt-1 ${
+                              isDark ? "text-white" : "text-gray-900"
+                            }`}
+                          >
+                            {selectedProduct.receiver_name ||
+                              t("common.notAvailable")}
+                          </p>
+                        </div>
 
-                    <div>
-                      <p
-                        className={`text-sm font-medium ${
-                          isDark ? "text-gray-400" : "text-gray-500"
-                        }`}
-                      >
-                        {t("products.receiverEmail")}
-                      </p>
-                      <p
-                        className={`mt-1 ${
-                          isDark ? "text-white" : "text-gray-900"
-                        }`}
-                      >
-                        {selectedProduct.receiver_email ||
-                          t("common.notAvailable")}
-                      </p>
-                    </div>
+                        <div>
+                          <p
+                            className={`text-sm font-medium ${
+                              isDark ? "text-gray-400" : "text-gray-500"
+                            }`}
+                          >
+                            {t("products.receiverPhone")}
+                          </p>
+                          <p
+                            className={`mt-1 ${
+                              isDark ? "text-white" : "text-gray-900"
+                            }`}
+                          >
+                            {selectedProduct.receiver_phone ||
+                              t("common.notAvailable")}
+                          </p>
+                        </div>
 
-                    <div>
-                      <p
-                        className={`text-sm font-medium ${
-                          isDark ? "text-gray-400" : "text-gray-500"
-                        }`}
-                      >
-                        {t("products.receiverAddress")}
-                      </p>
-                      <p
-                        className={`mt-1 ${
-                          isDark ? "text-white" : "text-gray-900"
-                        }`}
-                      >
-                        {selectedProduct.receiver_address ||
-                          t("common.notAvailable")}
-                      </p>
+                        <div>
+                          <p
+                            className={`text-sm font-medium ${
+                              isDark ? "text-gray-400" : "text-gray-500"
+                            }`}
+                          >
+                            {t("products.receiverEmail")}
+                          </p>
+                          <p
+                            className={`mt-1 ${
+                              isDark ? "text-white" : "text-gray-900"
+                            }`}
+                          >
+                            {selectedProduct.receiver_email ||
+                              t("common.notAvailable")}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p
+                            className={`text-sm font-medium ${
+                              isDark ? "text-gray-400" : "text-gray-500"
+                            }`}
+                          >
+                            {t("products.receiverAddress")}
+                          </p>
+                          <p
+                            className={`mt-1 ${
+                              isDark ? "text-white" : "text-gray-900"
+                            }`}
+                          >
+                            {selectedProduct.receiver_address ||
+                              t("common.notAvailable")}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div className="mt-4 flex justify-end">
