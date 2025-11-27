@@ -141,7 +141,6 @@
       "delivered": "ورکړل شوی",
       "canceled": "لغوه شوی"
     },
-    "statusLabel": "حالت",
     "confirmDelete": "ایا تاسو ډاړه یاست چې غواړئ دا بریښناک حذف کړئ؟ دا عمل بیرته راګرځیدونکی نه دی.",
     "confirmDeleteTitle": "بریښناک ړنګول",
     "confirmStatusChange": "ایا تاسو ډاډه یاست چې غواړئ حالت {{status}} ته بدل کړئ؟",
@@ -205,7 +204,9 @@
       "actions": "کړنې",
       "sender": "لیږونکی",
       "receiver": "ترلاسه کونکی",
-      "receiverInfo": "د ترلاسه کونکي معلومات"
+      "receiverInfo": "د ترلاسه کونکي معلومات",
+      "senderInfo": "د لیږونکي معلومات",
+      "viewSenderInfo": "د لیږونکي معلومات وګورئ"
     },
     "provinces": [
       "کابل",
@@ -253,8 +254,17 @@
       "price": "قیمت (افغانۍ)",
       "shipmentTrackNumber": "د بریښناک د تعقیب شمیره",
       "selectShipment": "یو بریښناک وټاکئ",
-      "sender": "لیږونکی",
-      "senderPlaceholder": "د لیږونکي نوم ولیکئ",
+      "sender": "د فرستنده",
+      "senderPlaceholder": "د فرستنده نوم ورکړئ",
+      "senderPhone": "د فرستنده تلیفون",
+      "senderPhonePlaceholder": "د فرستنده تلیفون شمیره ورکړئ",
+      "senderEmail": "د فرستنده ایمیل",
+      "senderEmailPlaceholder": "د فرستنده ایمیل پته ورکړئ",
+      "senderAddress": "د فرستنده پته",
+      "senderAddressPlaceholder": "د فرستنده پته ورکړئ",
+      "discount": "تخفیف",
+      "remaining": "پاتې شوی پیسې",
+      "debt": "قرض",
       "receiver": "ترلاسه کونکی",
       "receiverPlaceholder": "د ترلاسه کونکي نوم ولیکئ"
     },
@@ -408,6 +418,7 @@
     "ok": "هو",
     "warning": "خبرتیا",
     "close": "بند",
+    "optional": "اختیاري",
     "notAvailable": "نه موجود",
     "errors": {
       "generic": "یوه تېروتنه راغله. مهرباني وکړئ بیا هڅه وکړئ.",
