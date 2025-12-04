@@ -60,10 +60,19 @@ function Dashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        console.log("Fetching dashboard stats...");
         const response = await axiosInstance.get("/shipments/stats");
+        console.log("Stats response:", response.data);
+
         if (response.data && response.data.success) {
           const { totalShipments, statusStats, deliveredToday } =
             response.data.stats;
+
+          console.log("Parsed stats:", {
+            totalShipments,
+            statusStats,
+            deliveredToday,
+          });
 
           setStats([
             {
@@ -97,17 +106,23 @@ function Dashboard() {
               color: "bg-green-500",
             },
           ]);
+        } else {
+          console.log("Stats API returned success=false");
         }
       } catch (error) {
         console.error("Error fetching dashboard stats:", error);
+        console.log("Error details:", error.response?.data || error.message);
       }
     };
 
     // Fetch chart data
     const fetchChartData = async () => {
       try {
+        console.log("Fetching chart data...");
+
         // Fetch daily shipments data
         const dailyResponse = await axiosInstance.get("/shipments/daily-stats");
+        console.log("Daily stats response:", dailyResponse.data);
         if (dailyResponse.data && dailyResponse.data.success) {
           setDailyShipments(dailyResponse.data.data);
         }
@@ -116,6 +131,7 @@ function Dashboard() {
         const statusResponse = await axiosInstance.get(
           "/shipments/status-distribution"
         );
+        console.log("Status distribution response:", statusResponse.data);
         if (statusResponse.data && statusResponse.data.success) {
           setStatusDistribution(statusResponse.data.data);
         }
@@ -124,11 +140,16 @@ function Dashboard() {
         const activityResponse = await axiosInstance.get(
           "/shipments/recent-activity"
         );
+        console.log("Recent activity response:", activityResponse.data);
         if (activityResponse.data && activityResponse.data.success) {
           setRecentActivities(activityResponse.data.data);
         }
       } catch (error) {
         console.error("Error fetching chart data:", error);
+        console.log(
+          "Chart data error details:",
+          error.response?.data || error.message
+        );
         // Set mock data for demo purposes
         setDailyShipments([
           { date: "Mon", count: 12 },
