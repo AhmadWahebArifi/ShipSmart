@@ -18,9 +18,8 @@ import {
   HiCube,
   HiPencil,
   HiTrash,
-  HiRefresh,
   HiCheck,
-  HiX,
+  HiXMark,
   HiTruck,
   HiEye,
   HiMap,
@@ -890,7 +889,7 @@ const Shipments = () => {
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`}
               >
-                <HiX className="w-5 h-5" />
+                <HiXMark className="w-5 h-5" />
               </button>
             </div>
             <div className="p-4">
