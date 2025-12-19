@@ -117,39 +117,19 @@ const Products = () => {
     });
   };
 
-  const handleUpdateProduct = async (updatedProduct) => {
-    try {
-      const response = await axiosInstance.put(
-        `/products/${updatedProduct.id}`,
-        updatedProduct
-      );
-      if (response.data && response.data.success) {
-        setProducts(
-          products.map((p) =>
-            p.id === updatedProduct.id ? response.data.product : p
-          )
-        );
-        setEditingProduct(null);
-        Swal.fire({
-          toast: true,
-          position: "top-end",
-          icon: "success",
-          title: t("products.success.updated"),
-          showConfirmButton: false,
-          timer: 3000,
-        });
-      }
-    } catch (err) {
-      console.error("Error updating product:", err);
-      Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "error",
-        title: err.response?.data?.message || t("common.errors.generic"),
-        showConfirmButton: false,
-        timer: 3000,
-      });
-    }
+  const handleUpdateProduct = (updatedProduct) => {
+    setProducts(
+      products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+    );
+    setEditingProduct(null);
+    Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon: "success",
+      title: t("products.success.updated"),
+      showConfirmButton: false,
+      timer: 3000,
+    });
   };
 
   const handleDeleteProduct = async (productId) => {
@@ -753,7 +733,9 @@ const Products = () => {
                           )}
                         </td>
                         <td className="hidden xl:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
-                          {product.remaining ? (
+                          {product.remaining !== null &&
+                          product.remaining !== undefined &&
+                          product.remaining !== "" ? (
                             <span
                               className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                                 isDark
