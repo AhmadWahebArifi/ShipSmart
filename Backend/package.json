@@ -11,6 +11,8 @@
     "update-user-branches": "node scripts/updateUserBranches.js",
     "create-sample-shipments": "node scripts/createSampleShipments.js",
     "add-profile-columns": "node scripts/addProfileColumns.js",
+    "add-product-columns": "node scripts/addProductColumns.js",
+    "debug-fetch-products": "node scripts/debugFetchProducts.js",
     "add-shipment-route-columns": "node scripts/addShipmentRouteColumns.js",
     "fix-vehicle-constraint": "node scripts/fixVehicleUniqueConstraint.js",
     "migrate-latest": "node scripts/migrateLatestChanges.js",
