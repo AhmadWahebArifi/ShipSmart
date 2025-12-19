@@ -11,18 +11,21 @@ import Header from "../components/Header";
 import ShipmentForm from "../components/ShipmentForm";
 import EditShipmentModal from "../components/EditShipmentModal";
 import ShipmentDetailPopup from "../components/ShipmentDetailPopup";
+import ShipmentPrint from "../components/ShipmentPrint";
 import axiosInstance from "../config/axios";
+import { exportShipmentsToExcel } from "../utils/exportToExcel";
 import {
   HiCube,
   HiPencil,
   HiTrash,
-  HiRefresh,
   HiCheck,
-  HiX,
+  HiXMark,
   HiTruck,
   HiEye,
   HiMap,
-} from "react-icons/hi";
+  HiPrinter,
+  HiDocumentArrowDown,
+} from "react-icons/hi2";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
@@ -90,6 +93,8 @@ const Shipments = () => {
   const [detailPopupOpen, setDetailPopupOpen] = useState(false);
   const [selectedShipment, setSelectedShipment] = useState(null);
   const [routePopupShipment, setRoutePopupShipment] = useState(null); // New state for route popup
+  const [printModalOpen, setPrintModalOpen] = useState(false);
+  const [selectedShipmentForPrint, setSelectedShipmentForPrint] = useState(null);
 
   const showAlert = (title, message, type = "success") => {
     MySwal.fire({
@@ -116,6 +121,29 @@ const Shipments = () => {
   const handleViewShipment = (shipment) => {
     setSelectedShipment(shipment);
     setDetailPopupOpen(true);
+  };
+
+  // Handle opening print modal
+  const handlePrintShipment = (shipment) => {
+    setSelectedShipmentForPrint(shipment);
+    setPrintModalOpen(true);
+  };
+
+  // Handle closing print modal
+  const handleClosePrintModal = () => {
+    setPrintModalOpen(false);
+    setSelectedShipmentForPrint(null);
+  };
+
+  // Handle Excel export
+  const handleExportToExcel = () => {
+    try {
+      exportShipmentsToExcel(shipments, t);
+      showAlert(t("common.success"), t("shipments.excelExportSuccess"), "success");
+    } catch (error) {
+      console.error("Error exporting to Excel:", error);
+      showAlert(t("common.errors.generic"), t("shipments.excelExportError"), "error");
+    }
   };
 
   // Handle updating a shipment
@@ -493,13 +521,30 @@ const Shipments = () => {
                       isDark ? "border-gray-700" : "border-gray-200"
                     }`}
                   >
-                    <h2
-                      className={`text-lg font-semibold ${
-                        isDark ? "text-white" : "text-gray-800"
-                      }`}
-                    >
-                      {t("shipments.title")} ({shipments.length})
-                    </h2>
+                    <div className="flex items-center justify-between">
+                      <h2
+                        className={`text-lg font-semibold ${
+                          isDark ? "text-white" : "text-gray-800"
+                        }`}
+                      >
+                        {t("shipments.title")} ({shipments.length})
+                      </h2>
+                      <div className="flex items-center space-x-3">
+                        {/* Excel Export Button */}
+                        <button
+                          onClick={handleExportToExcel}
+                          className={`inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm ${
+                            isDark
+                              ? "bg-green-600 hover:bg-green-700 text-white"
+                              : "bg-green-600 hover:bg-green-700 text-white"
+                          }`}
+                          title={t("shipments.exportToExcel")}
+                        >
+                          <HiDocumentArrowDown className="w-4 h-4 mr-2" />
+                          {t("common.export")}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                   {shipments.length === 0 ? (
                     <div className="p-8 text-center">
@@ -728,6 +773,19 @@ const Shipments = () => {
                                     <HiEye className="w-4 h-4" />
                                   </button>
 
+                                  {/* Print Button */}
+                                  <button
+                                    onClick={() => handlePrintShipment(shipment)}
+                                    className={`p-1 rounded ${
+                                      isDark
+                                        ? "text-purple-400 hover:bg-gray-600"
+                                        : "text-purple-600 hover:bg-gray-200"
+                                    }`}
+                                    title={t("common.print")}
+                                  >
+                                    <HiPrinter className="w-4 h-4" />
+                                  </button>
+
                                   {/* Edit Button */}
                                   {shipment.status !== "delivered" &&
                                     shipment.status !== "on_route" &&
@@ -788,6 +846,15 @@ const Shipments = () => {
         onClose={() => setDetailPopupOpen(false)}
       />
 
+      {/* Shipment Print Modal */}
+      {selectedShipmentForPrint && (
+        <ShipmentPrint
+          shipment={selectedShipmentForPrint}
+          isOpen={printModalOpen}
+          onClose={handleClosePrintModal}
+        />
+      )}
+
       {/* Route Popup */}
       {routePopupShipment && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -822,7 +889,7 @@ const Shipments = () => {
                     : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                 }`}
               >
-                <HiX className="w-5 h-5" />
+                <HiXMark className="w-5 h-5" />
               </button>
             </div>
             <div className="p-4">

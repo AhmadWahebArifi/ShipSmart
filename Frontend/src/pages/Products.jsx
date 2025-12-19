@@ -53,33 +53,35 @@ const Products = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      // Build query params - only fetch products that have shipment_id
-      const params = new URLSearchParams();
+      // Build query params - only include non-empty parameters
+      const params = {};
 
-      // Only fetch products that are associated with shipments
-      params.append("has_shipment", "true");
-
+      // Only include shipment_tracking_number if it has a value
       if (filters.shipmentTrackNumber) {
-        params.append("shipment_tracking_number", filters.shipmentTrackNumber);
+        params.shipment_tracking_number = filters.shipmentTrackNumber;
       }
       if (searchTerm) {
-        params.append("search", searchTerm);
+        params.search = searchTerm;
       }
 
       let response;
       try {
-        response = await axiosInstance.get(`/products?${params.toString()}`);
+        // First try with the standard parameters
+        response = await axiosInstance.get("/products", { params });
       } catch (error) {
         // Fallback: try without has_shipment parameter and filter client-side
-        console.log(
-          "Backend doesn't support has_shipment filter, using fallback..."
-        );
-        response = await axiosInstance.get(
-          `/products?${new URLSearchParams({
-            shipment_tracking_number: filters.shipmentTrackNumber || "",
-            search: searchTerm || "",
-          })}`
-        );
+        console.log("Backend doesn't support has_shipment filter, using fallback...");
+        
+        // Create a clean params object without empty values
+        const fallbackParams = {};
+        if (filters.shipmentTrackNumber) {
+          fallbackParams.shipment_tracking_number = filters.shipmentTrackNumber;
+        }
+        if (searchTerm) {
+          fallbackParams.search = searchTerm;
+        }
+        
+        response = await axiosInstance.get("/products", { params: fallbackParams });
 
         // Filter client-side to only show products with shipment_id
         if (response.data && response.data.success) {
@@ -88,6 +90,7 @@ const Products = () => {
           );
         }
       }
+      console.log(response.data.products);
 
       if (response.data && response.data.success) {
         console.log("Products with shipments:", response.data.products);
@@ -114,39 +117,19 @@ const Products = () => {
     });
   };
 
-  const handleUpdateProduct = async (updatedProduct) => {
-    try {
-      const response = await axiosInstance.put(
-        `/products/${updatedProduct.id}`,
-        updatedProduct
-      );
-      if (response.data && response.data.success) {
-        setProducts(
-          products.map((p) =>
-            p.id === updatedProduct.id ? response.data.product : p
-          )
-        );
-        setEditingProduct(null);
-        Swal.fire({
-          toast: true,
-          position: "top-end",
-          icon: "success",
-          title: t("products.success.updated"),
-          showConfirmButton: false,
-          timer: 3000,
-        });
-      }
-    } catch (err) {
-      console.error("Error updating product:", err);
-      Swal.fire({
-        toast: true,
-        position: "top-end",
-        icon: "error",
-        title: err.response?.data?.message || t("common.errors.generic"),
-        showConfirmButton: false,
-        timer: 3000,
-      });
-    }
+  const handleUpdateProduct = (updatedProduct) => {
+    setProducts(
+      products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+    );
+    setEditingProduct(null);
+    Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon: "success",
+      title: t("products.success.updated"),
+      showConfirmButton: false,
+      timer: 3000,
+    });
   };
 
   const handleDeleteProduct = async (productId) => {
@@ -290,7 +273,7 @@ const Products = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
             <div
               className={`p-4 rounded-lg ${
                 isDark ? "bg-gray-800" : "bg-white shadow"
@@ -411,8 +394,8 @@ const Products = () => {
               isDark ? "bg-gray-800" : "bg-white shadow"
             }`}
           >
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div className="relative flex-1">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div className="relative flex-1 min-w-0">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <FiSearch className="h-5 w-5 text-gray-400" />
                 </div>
@@ -429,8 +412,8 @@ const Products = () => {
                 />
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="relative">
+              <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2">
+                <div className="relative w-full sm:w-auto">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <FiFilter className="h-5 w-5 text-gray-400" />
                   </div>
@@ -438,7 +421,7 @@ const Products = () => {
                     name="shipmentTrackNumber"
                     value={filters.shipmentTrackNumber}
                     onChange={handleFilterChange}
-                    className={`appearance-none pl-10 pr-10 py-2 border ${
+                    className={`w-full sm:w-auto appearance-none pl-10 pr-10 py-2 border ${
                       isDark
                         ? "bg-gray-700 border-gray-600 text-white focus:ring-blue-500 focus:border-blue-500"
                         : "border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500"
@@ -465,7 +448,7 @@ const Products = () => {
 
                 <button
                   onClick={resetFilters}
-                  className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="w-full sm:w-auto px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   {t("common.reset")}
                 </button>
@@ -750,7 +733,9 @@ const Products = () => {
                           )}
                         </td>
                         <td className="hidden xl:table-cell px-3 sm:px-6 py-4 whitespace-nowrap">
-                          {product.remaining ? (
+                          {product.remaining !== null &&
+                          product.remaining !== undefined &&
+                          product.remaining !== "" ? (
                             <span
                               className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                                 isDark
@@ -771,7 +756,7 @@ const Products = () => {
                             isDark ? "text-gray-200" : "text-gray-900"
                           }`}
                         >
-                          <div className="flex justify-end space-x-2">
+                          <div className="flex justify-end flex-wrap gap-2">
                             <button
                               onClick={() => setEditingProduct(product)}
                               className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
@@ -781,21 +766,21 @@ const Products = () => {
                             </button>
                             <button
                               onClick={() => handleDeleteProduct(product.id)}
-                              className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 ml-2"
+                              className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
                               title={t("common.delete")}
                             >
                               <FiTrash2 className="h-4 w-4" />
                             </button>
                             <button
                               onClick={() => setPrintProduct(product)}
-                              className="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300 ml-2"
+                              className="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300"
                               title={t("products.print")}
                             >
                               <FiPrinter className="h-4 w-4" />
                             </button>
                             <Link
                               to={`/shipments?trackingNumber=${product.shipment_tracking_number}`}
-                              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 ml-2"
+                              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                               title={t("products.viewShipment")}
                             >
                               <FiTruck className="h-4 w-4" />

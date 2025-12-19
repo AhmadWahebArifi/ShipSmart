@@ -43,8 +43,8 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
       setValue("sender_phone", product.sender_phone || "");
       setValue("sender_email", product.sender_email || "");
       setValue("sender_address", product.sender_address || "");
-      setValue("discount", product.discount || "");
-      setValue("remaining", product.remaining || "");
+      setValue("discount", product.discount ?? "");
+      setValue("remaining", product.remaining ?? "");
       // Remove old receiver field
       // Add new receiver fields
       setValue("receiver_name", product.receiver_name || "");
@@ -151,6 +151,8 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
         quantity: Number(data.quantity),
         weight: Number(data.weight),
         price: Number(data.price),
+        discount: data.discount === "" ? null : Number(data.discount),
+        remaining: data.remaining === "" ? null : Number(data.remaining),
       };
 
       console.log("Submitting product data:", productData);

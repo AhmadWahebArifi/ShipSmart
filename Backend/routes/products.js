@@ -131,10 +131,21 @@ router.post("/", [authenticateToken, ...validateProduct], async (req, res) => {
         weight: product.weight,
         price: product.price,
         shipment_tracking_number: product.shipment_tracking_number,
-        sender: product.sender,
-        receiver: product.receiver,
         shipment: product.shipment,
         created_by: product.creator,
+        // Add sender fields
+        sender: product.sender,
+        sender_phone: product.sender_phone,
+        sender_email: product.sender_email,
+        sender_address: product.sender_address,
+        // Add receiver fields
+        receiver_name: product.receiver_name,
+        receiver_phone: product.receiver_phone,
+        receiver_email: product.receiver_email,
+        receiver_address: product.receiver_address,
+        // Add discount and remaining fields
+        discount: product.discount,
+        remaining: product.remaining,
         created_at: product.created_at,
         updated_at: product.updated_at,
       },
@@ -207,7 +218,7 @@ router.get("/", authenticateToken, async (req, res) => {
     const products = await Product.findAll({
       where: whereClause,
       include: includeOptions,
-      order: [["created_at", "DESC"]],
+      order: [["createdAt", "DESC"]],
     });
 
     res.json({
@@ -245,7 +256,8 @@ router.get("/", authenticateToken, async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error fetching products",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+      error: error.message,
+      sqlMessage: error.original?.sqlMessage,
     });
   }
 });
@@ -498,10 +510,21 @@ router.put(
           weight: product.weight,
           price: product.price,
           shipment_tracking_number: product.shipment_tracking_number,
-          sender: product.sender,
-          receiver: product.receiver,
           shipment: product.shipment,
           created_by: product.creator,
+          // Add sender fields
+          sender: product.sender,
+          sender_phone: product.sender_phone,
+          sender_email: product.sender_email,
+          sender_address: product.sender_address,
+          // Add receiver fields
+          receiver_name: product.receiver_name,
+          receiver_phone: product.receiver_phone,
+          receiver_email: product.receiver_email,
+          receiver_address: product.receiver_address,
+          // Add discount and remaining fields
+          discount: product.discount,
+          remaining: product.remaining,
           created_at: product.created_at,
           updated_at: product.updated_at,
         },

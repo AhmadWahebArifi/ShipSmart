@@ -21,7 +21,8 @@
     "react-router-dom": "^6.20.1",
     "react-to-print": "^3.2.0",
     "sweetalert2": "^11.26.3",
-    "sweetalert2-react-content": "^5.0.11"
+    "sweetalert2-react-content": "^5.0.11",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
