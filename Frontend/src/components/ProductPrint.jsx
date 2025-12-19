@@ -67,9 +67,13 @@ const ProductPrint = ({ product, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${
+      isDark ? "bg-gray-900/80" : "bg-black/50"
+    }`}>
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className={`absolute inset-0 backdrop-blur-sm ${
+          isDark ? "bg-gray-900/60" : "bg-black/50"
+        }`}
         onClick={onClose}
       ></div>
 
@@ -197,24 +201,36 @@ const ProductPrint = ({ product, onClose }) => {
               <table className="w-full text-xs print:text-sm">
                 <tbody>
                   <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
-                    <td className="py-1 pr-2 font-medium">
+                    <td className={`py-1 pr-2 font-medium ${
+                      isDark ? "text-gray-300" : "text-gray-700"
+                    }`}>
                       {t("products.table.quantity")}:
                     </td>
-                    <td className="py-1 text-right">{product.quantity}</td>
+                    <td className={`py-1 text-right ${
+                      isDark ? "text-gray-200" : "text-gray-900"
+                    }`}>{product.quantity}</td>
                   </tr>
                   <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
-                    <td className="py-1 pr-2 font-medium">
+                    <td className={`py-1 pr-2 font-medium ${
+                      isDark ? "text-gray-300" : "text-gray-700"
+                    }`}>
                       {t("products.table.weight")} (kg):
                     </td>
-                    <td className="py-1 text-right">
+                    <td className={`py-1 text-right ${
+                      isDark ? "text-gray-200" : "text-gray-900"
+                    }`}>
                       {parseFloat(product.weight).toFixed(2)}
                     </td>
                   </tr>
                   <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
-                    <td className="py-1 pr-2 font-medium">
+                    <td className={`py-1 pr-2 font-medium ${
+                      isDark ? "text-gray-300" : "text-gray-700"
+                    }`}>
                       {t("products.table.price")} (AFN):
                     </td>
-                    <td className="py-1 text-right">
+                    <td className={`py-1 text-right ${
+                      isDark ? "text-gray-200" : "text-gray-900"
+                    }`}>
                       {parseFloat(product.price).toFixed(2)}
                     </td>
                   </tr>
@@ -222,10 +238,14 @@ const ProductPrint = ({ product, onClose }) => {
                     product.discount !== undefined &&
                     product.discount !== "" && (
                     <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
-                      <td className="py-1 pr-2 font-medium">
+                      <td className={`py-1 pr-2 font-medium ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}>
                         {t("products.form.discount")} (%):
                       </td>
-                      <td className="py-1 text-right text-green-600">
+                      <td className={`py-1 text-right ${
+                        isDark ? "text-green-400" : "text-green-600"
+                      }`}>
                         -{parseFloat(product.discount).toFixed(2)}%
                       </td>
                     </tr>
@@ -234,20 +254,28 @@ const ProductPrint = ({ product, onClose }) => {
                     product.remaining !== undefined &&
                     product.remaining !== "" && (
                     <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
-                      <td className="py-1 pr-2 font-medium">
+                      <td className={`py-1 pr-2 font-medium ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}>
                         {t("products.form.remaining")} (AFN) -{" "}
                         {t("products.form.debt")}:
                       </td>
-                      <td className="py-1 text-right text-orange-600">
+                      <td className={`py-1 text-right ${
+                        isDark ? "text-orange-400" : "text-orange-600"
+                      }`}>
                         {parseFloat(product.remaining).toFixed(2)}
                       </td>
                     </tr>
                   )}
                   <tr>
-                    <td className="py-1 pr-2 font-medium">
+                    <td className={`py-1 pr-2 font-medium ${
+                      isDark ? "text-gray-300" : "text-gray-700"
+                    }`}>
                       {t("products.table.total")} (AFN):
                     </td>
-                    <td className="py-1 text-right font-bold">
+                    <td className={`py-1 text-right font-bold ${
+                      isDark ? "text-gray-100" : "text-gray-900"
+                    }`}>
                       {(
                         parseFloat(product.price) * parseInt(product.quantity) -
                         (parseFloat(product.price) *
@@ -278,31 +306,45 @@ const ProductPrint = ({ product, onClose }) => {
                 <table className="w-full text-xs print:text-sm">
                   <tbody>
                     <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
-                      <td className="py-1 pr-2 font-medium">
+                      <td className={`py-1 pr-2 font-medium ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}>
                         {t("shipments.trackingNumber")}:
                       </td>
-                      <td className="py-1 text-right">
+                      <td className={`py-1 text-right ${
+                        isDark ? "text-gray-200" : "text-gray-900"
+                      }`}>
                         {product.shipment_tracking_number}
                       </td>
                     </tr>
                     <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
-                      <td className="py-1 pr-2 font-medium">
+                      <td className={`py-1 pr-2 font-medium ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}>
                         {t("shipments.fromProvince")}:
                       </td>
-                      <td className="py-1 text-right">
+                      <td className={`py-1 text-right ${
+                        isDark ? "text-gray-200" : "text-gray-900"
+                      }`}>
                         {product.shipment.from_province}
                       </td>
                     </tr>
                     <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
-                      <td className="py-1 pr-2 font-medium">
+                      <td className={`py-1 pr-2 font-medium ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}>
                         {t("shipments.toProvince")}:
                       </td>
-                      <td className="py-1 text-right">
+                      <td className={`py-1 text-right ${
+                        isDark ? "text-gray-200" : "text-gray-900"
+                      }`}>
                         {product.shipment.to_province}
                       </td>
                     </tr>
                     <tr>
-                      <td className="py-1 pr-2 font-medium">
+                      <td className={`py-1 pr-2 font-medium ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}>
                         {t("shipments.table.status")}:
                       </td>
                       <td className="py-1 text-right">
@@ -350,38 +392,54 @@ const ProductPrint = ({ product, onClose }) => {
                 <tbody>
                   {product.sender && (
                     <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
-                      <td className="py-1 pr-2 font-medium">
+                      <td className={`py-1 pr-2 font-medium ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}>
                         {t("products.form.sender")}:
                       </td>
-                      <td className="py-1 text-right">{product.sender}</td>
+                      <td className={`py-1 text-right ${
+                        isDark ? "text-gray-200" : "text-gray-900"
+                      }`}>{product.sender}</td>
                     </tr>
                   )}
                   {product.sender_phone && (
                     <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
-                      <td className="py-1 pr-2 font-medium">
+                      <td className={`py-1 pr-2 font-medium ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}>
                         {t("products.form.senderPhone")}:
                       </td>
-                      <td className="py-1 text-right">
+                      <td className={`py-1 text-right ${
+                        isDark ? "text-gray-200" : "text-gray-900"
+                      }`}>
                         {product.sender_phone}
                       </td>
                     </tr>
                   )}
                   {product.sender_email && (
                     <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
-                      <td className="py-1 pr-2 font-medium">
+                      <td className={`py-1 pr-2 font-medium ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}>
                         {t("products.form.senderEmail")}:
                       </td>
-                      <td className="py-1 text-right">
+                      <td className={`py-1 text-right ${
+                        isDark ? "text-gray-200" : "text-gray-900"
+                      }`}>
                         {product.sender_email}
                       </td>
                     </tr>
                   )}
                   {product.sender_address && (
                     <tr>
-                      <td className="py-1 pr-2 font-medium">
+                      <td className={`py-1 pr-2 font-medium ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}>
                         {t("products.form.senderAddress")}:
                       </td>
-                      <td className="py-1 text-right">
+                      <td className={`py-1 text-right ${
+                        isDark ? "text-gray-200" : "text-gray-900"
+                      }`}>
                         {product.sender_address}
                       </td>
                     </tr>
@@ -411,34 +469,50 @@ const ProductPrint = ({ product, onClose }) => {
                 <tbody>
                   {product.receiver_name && (
                     <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
-                      <td className="py-1 pr-2 font-medium">
+                      <td className={`py-1 pr-2 font-medium ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}>
                         {t("products.receiverName")}:
                       </td>
-                      <td className="py-1">{product.receiver_name}</td>
+                      <td className={`py-1 text-right ${
+                        isDark ? "text-gray-200" : "text-gray-900"
+                      }`}>{product.receiver_name}</td>
                     </tr>
                   )}
                   {product.receiver_phone && (
                     <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
-                      <td className="py-1 pr-2 font-medium">
+                      <td className={`py-1 pr-2 font-medium ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}>
                         {t("products.receiverPhone")}:
                       </td>
-                      <td className="py-1">{product.receiver_phone}</td>
+                      <td className={`py-1 text-right ${
+                        isDark ? "text-gray-200" : "text-gray-900"
+                      }`}>{product.receiver_phone}</td>
                     </tr>
                   )}
                   {product.receiver_email && (
                     <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
-                      <td className="py-1 pr-2 font-medium">
+                      <td className={`py-1 pr-2 font-medium ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}>
                         {t("products.receiverEmail")}:
                       </td>
-                      <td className="py-1">{product.receiver_email}</td>
+                      <td className={`py-1 text-right ${
+                        isDark ? "text-gray-200" : "text-gray-900"
+                      }`}>{product.receiver_email}</td>
                     </tr>
                   )}
                   {product.receiver_address && (
                     <tr>
-                      <td className="py-1 pr-2 font-medium align-top">
+                      <td className={`py-1 pr-2 font-medium align-top ${
+                        isDark ? "text-gray-300" : "text-gray-700"
+                      }`}>
                         {t("products.receiverAddress")}:
                       </td>
-                      <td className="py-1">{product.receiver_address}</td>
+                      <td className={`py-1 text-right align-top ${
+                        isDark ? "text-gray-200" : "text-gray-900"
+                      }`}>{product.receiver_address}</td>
                     </tr>
                   )}
                 </tbody>
