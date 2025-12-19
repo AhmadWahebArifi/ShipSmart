@@ -218,7 +218,9 @@ const ProductPrint = ({ product, onClose }) => {
                       {parseFloat(product.price).toFixed(2)}
                     </td>
                   </tr>
-                  {product.discount && (
+                  {product.discount !== null &&
+                    product.discount !== undefined &&
+                    product.discount !== "" && (
                     <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
                       <td className="py-1 pr-2 font-medium">
                         {t("products.form.discount")} (%):
@@ -228,7 +230,9 @@ const ProductPrint = ({ product, onClose }) => {
                       </td>
                     </tr>
                   )}
-                  {product.remaining && (
+                  {product.remaining !== null &&
+                    product.remaining !== undefined &&
+                    product.remaining !== "" && (
                     <tr className="border-b border-gray-200 dark:border-gray-600 print:border-gray-200">
                       <td className="py-1 pr-2 font-medium">
                         {t("products.form.remaining")} (AFN) -{" "}
