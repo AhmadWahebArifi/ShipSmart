@@ -1,13 +1,70 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useReactToPrint } from "react-to-print";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../context/ThemeContext";
-import { HiTruck, HiMap, HiInbox } from "react-icons/hi2";
+import { HiTruck, HiMap, HiInbox, HiCube } from "react-icons/hi2";
+import axiosInstance from "../config/axios";
 
 const ShipmentPrint = ({ shipment, onClose }) => {
   const { t } = useTranslation();
   const { isDark } = useTheme();
   const componentRef = useRef();
+  const [products, setProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
+
+  // Fetch products when component mounts
+  useEffect(() => {
+    if (shipment?.id) {
+      fetchShipmentProducts();
+    }
+  }, [shipment?.id]);
+
+  const fetchShipmentProducts = async () => {
+    try {
+      setLoadingProducts(true);
+      // Try to fetch products from database where shipment_id matches current shipment ID
+      let response;
+      try {
+        response = await axiosInstance.get(
+          `/products?shipment_id=${shipment.id}`
+        );
+      } catch (error) {
+        // Fallback to alternative endpoint if the first one fails
+        console.log("Trying alternative endpoint...");
+        response = await axiosInstance.get(
+          `/shipments/${shipment.id}/products`
+        );
+      }
+
+      if (response.data && response.data.success) {
+        const allProducts = response.data.products || [];
+        
+        // Filter client-side with multiple possible field names
+        const filteredProducts = allProducts.filter((product) => {
+          const hasShipmentId = product.shipment_id === shipment.id;
+          const hasNestedShipment =
+            product.shipment && product.shipment.id === shipment.id;
+          const hasShipmentIdCamel = product.shipmentId === shipment.id;
+          const hasTrackingNumber =
+            product.shipment_tracking_number === shipment.tracking_number;
+
+          return (
+            hasShipmentId ||
+            hasNestedShipment ||
+            hasShipmentIdCamel ||
+            hasTrackingNumber
+          );
+        });
+
+        setProducts(filteredProducts);
+      }
+    } catch (error) {
+      console.error("Error fetching shipment products:", error);
+      setProducts([]);
+    } finally {
+      setLoadingProducts(false);
+    }
+  };
 
   // Custom CSS for the print window
   const pageStyle = `
@@ -79,8 +136,10 @@ const ShipmentPrint = ({ shipment, onClose }) => {
 
       <div
         ref={componentRef}
-        className={`relative rounded-xl shadow-2xl max-w-2xl w-full 
+        className={`relative rounded-xl shadow-2xl w-full max-w-2xl 
+          max-h-[90vh] overflow-hidden
           print:mx-auto print:w-full print:max-w-2xl print:shadow-none print:border-none
+          print:max-h-none print:overflow-visible
           print:bg-white print:text-black
           ${
             isDark
@@ -127,7 +186,8 @@ const ShipmentPrint = ({ shipment, onClose }) => {
           </div>
         </div>
 
-        <div className="p-4 print:p-0">
+        <div className="overflow-y-auto max-h-[calc(90vh-72px)] print:max-h-none print:overflow-visible">
+          <div className="p-4 print:p-0">
           {/* Shipment Header */}
           <div className="flex items-start justify-between mb-4 print:mb-6">
             <div>
@@ -369,6 +429,347 @@ const ShipmentPrint = ({ shipment, onClose }) => {
             </div>
           )}
 
+          {/* Products in Shipment (same info as Eye popup) */}
+          <div className="mb-4 print:mb-6">
+            <h3
+              className={`text-lg font-semibold mb-4 flex items-center gap-2 ${
+                isDark ? "text-white" : "text-gray-800"
+              }`}
+            >
+              <span className="text-xl">📦</span>
+              {t("shipments.productsInShipment")} ({products.length})
+            </h3>
+
+            {loadingProducts ? (
+              <div className="flex justify-center items-center h-24">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            ) : products.length === 0 ? (
+              <div
+                className={`p-6 rounded-xl border text-center backdrop-blur-sm ${
+                  isDark
+                    ? "bg-gray-900/80 border-gray-700/50"
+                    : "bg-gray-50/80 border-gray-200/50"
+                }`}
+              >
+                <HiInbox
+                  className={`mx-auto h-10 w-10 ${
+                    isDark ? "text-gray-600" : "text-gray-400"
+                  }`}
+                />
+                <p
+                  className={`mt-2 text-sm ${
+                    isDark ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
+                  {t("shipments.noProductsFound")}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {products.map((product, index) => (
+                  <div
+                    key={product.id || index}
+                    className={`p-4 rounded-xl border transition-all duration-200 backdrop-blur-sm ${
+                      isDark
+                        ? "bg-gray-900/80 border-gray-700/50"
+                        : "bg-gray-50/80 border-gray-200/50"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <HiCube
+                            className={`w-5 h-5 ${
+                              isDark ? "text-blue-400" : "text-blue-600"
+                            }`}
+                          />
+                          <h4
+                            className={`font-semibold text-lg ${
+                              isDark ? "text-white" : "text-gray-800"
+                            }`}
+                          >
+                            {product.name}
+                          </h4>
+                        </div>
+
+                        {product.description && (
+                          <p
+                            className={`text-sm mb-3 ${
+                              isDark ? "text-gray-400" : "text-gray-600"
+                            }`}
+                          >
+                            {product.description}
+                          </p>
+                        )}
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          <div>
+                            <p className="text-xs font-medium text-gray-500">
+                              {t("products.quantity")}
+                            </p>
+                            <p
+                              className={`text-sm font-semibold ${
+                                isDark ? "text-white" : "text-gray-800"
+                              }`}
+                            >
+                              {product.quantity || 1}
+                            </p>
+                          </div>
+
+                          {product.weight && (
+                            <div>
+                              <p className="text-xs font-medium text-gray-500">
+                                {t("products.weight")}
+                              </p>
+                              <p
+                                className={`text-sm font-semibold ${
+                                  isDark ? "text-white" : "text-gray-800"
+                                }`}
+                              >
+                                {product.weight}
+                              </p>
+                            </div>
+                          )}
+
+                          {product.price && (
+                            <div>
+                              <p className="text-xs font-medium text-gray-500">
+                                {t("products.price")}
+                              </p>
+                              <p
+                                className={`text-sm font-semibold ${
+                                  isDark ? "text-green-400" : "text-green-600"
+                                }`}
+                              >
+                                {parseFloat(product.price).toFixed(2)} AFN
+                              </p>
+                            </div>
+                          )}
+
+                          {product.discount !== null &&
+                            product.discount !== undefined &&
+                            product.discount !== "" && (
+                              <div>
+                                <p className="text-xs font-medium text-gray-500">
+                                  {t("products.form.discount")}
+                                </p>
+                                <span
+                                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                    isDark
+                                      ? "bg-orange-900/30 text-orange-300"
+                                      : "bg-orange-100 text-orange-800"
+                                  }`}
+                                >
+                                  {parseFloat(product.discount).toFixed(1)}%
+                                </span>
+                              </div>
+                            )}
+
+                          {product.remaining !== null &&
+                            product.remaining !== undefined &&
+                            product.remaining !== "" && (
+                              <div>
+                                <p className="text-xs font-medium text-gray-500">
+                                  {t("products.table.outstandingBalance")}
+                                </p>
+                                <span
+                                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                    isDark
+                                      ? "bg-red-900/30 text-red-300"
+                                      : "bg-red-100 text-red-800"
+                                  }`}
+                                >
+                                  {parseFloat(product.remaining).toFixed(2)} AFN
+                                </span>
+                              </div>
+                            )}
+
+                          {(product.sender ||
+                            product.sender_phone ||
+                            product.sender_email ||
+                            product.sender_address) && (
+                            <div className="col-span-2 md:col-span-4 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                              <p className="text-xs font-medium mb-2 text-gray-500">
+                                {t("products.form.sender")} {t("common.info")}
+                              </p>
+                              <div className="space-y-1">
+                                {product.sender && (
+                                  <p
+                                    className={`text-sm ${
+                                      isDark ? "text-white" : "text-gray-800"
+                                    }`}
+                                  >
+                                    {product.sender}
+                                  </p>
+                                )}
+                                {product.sender_phone && (
+                                  <p
+                                    className={`text-sm ${
+                                      isDark
+                                        ? "text-gray-400"
+                                        : "text-gray-600"
+                                    }`}
+                                  >
+                                    {t("products.form.senderPhone")}: {product.sender_phone}
+                                  </p>
+                                )}
+                                {product.sender_email && (
+                                  <p
+                                    className={`text-sm ${
+                                      isDark
+                                        ? "text-gray-400"
+                                        : "text-gray-600"
+                                    }`}
+                                  >
+                                    {t("products.form.senderEmail")}: {product.sender_email}
+                                  </p>
+                                )}
+                                {product.sender_address && (
+                                  <p
+                                    className={`text-sm ${
+                                      isDark
+                                        ? "text-gray-400"
+                                        : "text-gray-600"
+                                    }`}
+                                  >
+                                    {t("products.form.senderAddress")}: {product.sender_address}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {(product.receiver_name ||
+                            product.receiver_phone ||
+                            product.receiver_email ||
+                            product.receiver_address) && (
+                            <div className="col-span-2 md:col-span-4 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                              <p className="text-xs font-medium mb-2 text-gray-500">
+                                {t("products.receiverName")}
+                              </p>
+                              <div className="space-y-1">
+                                {product.receiver_name && (
+                                  <p
+                                    className={`text-sm ${
+                                      isDark ? "text-white" : "text-gray-800"
+                                    }`}
+                                  >
+                                    {product.receiver_name}
+                                  </p>
+                                )}
+                                {product.receiver_phone && (
+                                  <p
+                                    className={`text-sm ${
+                                      isDark
+                                        ? "text-gray-400"
+                                        : "text-gray-600"
+                                    }`}
+                                  >
+                                    {t("products.receiverPhone")}: {product.receiver_phone}
+                                  </p>
+                                )}
+                                {product.receiver_email && (
+                                  <p
+                                    className={`text-sm ${
+                                      isDark
+                                        ? "text-gray-400"
+                                        : "text-gray-600"
+                                    }`}
+                                  >
+                                    {t("products.receiverEmail")}: {product.receiver_email}
+                                  </p>
+                                )}
+                                {product.receiver_address && (
+                                  <p
+                                    className={`text-sm ${
+                                      isDark
+                                        ? "text-gray-400"
+                                        : "text-gray-600"
+                                    }`}
+                                  >
+                                    {t("products.receiverAddress")}: {product.receiver_address}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Products Summary */}
+                <div
+                  className={`p-5 rounded-xl border backdrop-blur-sm ${
+                    isDark
+                      ? "bg-gray-800/80 border-gray-700/50"
+                      : "bg-blue-50/80 border-blue-200/50"
+                  }`}
+                >
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
+                    <div>
+                      <p
+                        className={`text-2xl font-bold ${
+                          isDark ? "text-blue-400" : "text-blue-600"
+                        }`}
+                      >
+                        {products.reduce((sum, p) => sum + (p.quantity || 1), 0)}
+                      </p>
+                      <p
+                        className={`text-sm ${
+                          isDark ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
+                        {t("shipments.totalItems")}
+                      </p>
+                    </div>
+                    <div>
+                      <p
+                        className={`text-2xl font-bold ${
+                          isDark ? "text-blue-400" : "text-blue-600"
+                        }`}
+                      >
+                        {products.length}
+                      </p>
+                      <p
+                        className={`text-sm ${
+                          isDark ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
+                        {t("shipments.productTypes")}
+                      </p>
+                    </div>
+                    <div>
+                      <p
+                        className={`text-2xl font-bold ${
+                          isDark ? "text-purple-400" : "text-purple-600"
+                        }`}
+                      >
+                        {products
+                          .reduce(
+                            (sum, p) =>
+                              sum + parseFloat(p.weight?.replace("kg", "") || 0),
+                            0
+                          )
+                          .toFixed(1)}{" "}
+                        kg
+                      </p>
+                      <p
+                        className={`text-sm ${
+                          isDark ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
+                        {t("shipments.totalWeight")}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className="flex justify-end space-x-3 print:hidden">
             <button
               onClick={onClose}
@@ -399,6 +800,7 @@ const ShipmentPrint = ({ shipment, onClose }) => {
               </svg>
               {t("common.print")}
             </button>
+          </div>
           </div>
         </div>
       </div>
