@@ -88,6 +88,7 @@ const Products = () => {
           );
         }
       }
+      console.log(response.data.products);
 
       if (response.data && response.data.success) {
         console.log("Products with shipments:", response.data.products);
