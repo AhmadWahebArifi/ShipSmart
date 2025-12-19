@@ -12,16 +12,7 @@ User.hasMany(Shipment, { foreignKey: "receiver_id", as: "receivedShipments" });
 User.hasMany(Product, { foreignKey: "created_by", as: "products" });
 User.hasMany(Vehicle, { foreignKey: "created_by", as: "vehicles" });
 
-// Product associations
-Product.belongsTo(Shipment, {
-  foreignKey: "shipment_tracking_number",
-  targetKey: "tracking_number",
-  as: "shipment",
-});
-Product.belongsTo(User, {
-  foreignKey: "created_by",
-  as: "creator",
-});
+// Product associations are now handled in Product.associate() method
 
 // Vehicle associations
 // Association moved to Vehicle model's associate method
@@ -45,6 +36,9 @@ const models = {
 };
 
 // Call associate methods
+if (Product.associate) {
+  Product.associate(models);
+}
 if (Vehicle.associate) {
   Vehicle.associate(models);
 }
