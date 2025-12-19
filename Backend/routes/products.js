@@ -207,7 +207,7 @@ router.get("/", authenticateToken, async (req, res) => {
     const products = await Product.findAll({
       where: whereClause,
       include: includeOptions,
-      order: [["created_at", "DESC"]],
+      order: [["createdAt", "DESC"]],
     });
 
     res.json({
@@ -245,7 +245,8 @@ router.get("/", authenticateToken, async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error fetching products",
-      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+      error: error.message,
+      sqlMessage: error.original?.sqlMessage,
     });
   }
 });
