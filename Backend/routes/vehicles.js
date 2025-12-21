@@ -4,6 +4,7 @@ const { check, validationResult } = require("express-validator");
 const authenticateToken = require("../middleware/auth");
 const { requireRole } = require("../middleware/rolePermission");
 const { Vehicle, User, Shipment } = require("../models");
+const { logAudit } = require("../utils/auditLogger");
 
 // Validation middleware
 const validateVehicle = [
@@ -50,6 +51,18 @@ router.post("/", [authenticateToken, ...validateVehicle], async (req, res) => {
       capacity,
       status: status || "available",
       created_by: req.user.userId,
+    });
+
+    // Log successful vehicle creation
+    await logAudit(req, {
+      actor_user_id: req.user.userId,
+      actor_role: req.user.role,
+      action: "vehicle.create",
+      entity_type: "Vehicle",
+      entity_id: vehicle.id.toString(),
+      success: true,
+      message: `Vehicle "${vehicle_id}" created`,
+      metadata: { vehicle_id, type, capacity, status: status || "available" }
     });
 
     // Reload with associations
@@ -260,6 +273,18 @@ router.put(
 
       await vehicle.save();
 
+      // Log successful vehicle update
+      await logAudit(req, {
+        actor_user_id: req.user.userId,
+        actor_role: req.user.role,
+        action: "vehicle.update",
+        entity_type: "Vehicle",
+        entity_id: vehicle.id.toString(),
+        success: true,
+        message: `Vehicle "${vehicle.vehicle_id}" updated`,
+        metadata: { vehicle_id: vehicle.vehicle_id, type, capacity, status: status || "available" }
+      });
+
       // Reload with associations
       await vehicle.reload({
         include: [
@@ -315,6 +340,18 @@ router.delete(
       }
 
       await vehicle.destroy();
+
+      // Log successful vehicle deletion
+      await logAudit(req, {
+        actor_user_id: req.user.userId,
+        actor_role: req.user.role,
+        action: "vehicle.delete",
+        entity_type: "Vehicle",
+        entity_id: vehicle.id.toString(),
+        success: true,
+        message: `Vehicle "${vehicle.vehicle_id}" deleted`,
+        metadata: { vehicle_id: vehicle.vehicle_id, type: vehicle.type }
+      });
 
       res.json({
         success: true,

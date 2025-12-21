@@ -4,6 +4,7 @@ const { check, validationResult } = require("express-validator");
 const authenticateToken = require("../middleware/auth");
 const { requireRole } = require("../middleware/rolePermission");
 const { Product, Shipment, User } = require("../models");
+const { logAudit } = require("../utils/auditLogger");
 
 // Validation middleware
 const validateProduct = [
@@ -98,6 +99,18 @@ router.post("/", [authenticateToken, ...validateProduct], async (req, res) => {
       receiver_phone: receiver_phone || null,
       receiver_email: receiver_email || null,
       receiver_address: receiver_address || null,
+    });
+
+    // Log successful product creation
+    await logAudit(req, {
+      actor_user_id: req.user.userId,
+      actor_role: req.user.role,
+      action: "product.create",
+      entity_type: "Product",
+      entity_id: product.id.toString(),
+      success: true,
+      message: `Product "${name}" created`,
+      metadata: { name, quantity, weight, price, shipment_tracking_number }
     });
 
     // Reload with associations
@@ -479,6 +492,18 @@ router.put(
 
       await product.save();
 
+      // Log successful product update
+      await logAudit(req, {
+        actor_user_id: req.user.userId,
+        actor_role: req.user.role,
+        action: "product.update",
+        entity_type: "Product",
+        entity_id: product.id.toString(),
+        success: true,
+        message: `Product "${name}" updated`,
+        metadata: { name, quantity, weight, price, shipment_tracking_number }
+      });
+
       // Reload with associations
       await product.reload({
         include: [
@@ -559,6 +584,18 @@ router.delete(
       }
 
       await product.destroy();
+
+      // Log successful product deletion
+      await logAudit(req, {
+        actor_user_id: req.user.userId,
+        actor_role: req.user.role,
+        action: "product.delete",
+        entity_type: "Product",
+        entity_id: product.id.toString(),
+        success: true,
+        message: `Product "${product.name}" deleted`,
+        metadata: { name: product.name, shipment_tracking_number: product.shipment_tracking_number }
+      });
 
       res.json({
         success: true,

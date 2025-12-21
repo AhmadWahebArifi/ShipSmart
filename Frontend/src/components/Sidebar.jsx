@@ -18,6 +18,7 @@ import {
   HiUser,
   HiUserGroup,
   HiShoppingBag,
+  HiDocumentText,
 } from "react-icons/hi2";
 
 const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
@@ -71,6 +72,12 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
       icon: HiUserGroup,
       path: "/users",
     });
+    menuItems.splice(6, 0, {
+      id: "audit-logs",
+      label: t("sidebar.auditLogs"),
+      icon: HiDocumentText,
+      path: "/admin/audit-logs",
+    });
   }
 
   const handleNavigation = (path, e) => {
@@ -80,7 +87,10 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
     }
     setActiveItem(path);
     navigate(path);
-    // Don't close sidebar - only menu button should close it
+    // Close sidebar on mobile after navigation
+    if (window.innerWidth < 1024) {
+      onClose();
+    }
   };
 
   const handleLogout = () => {

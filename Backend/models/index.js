@@ -4,6 +4,7 @@ const Shipment = require("./Shipment");
 const Notification = require("./Notification");
 const Product = require("./Product");
 const Vehicle = require("./Vehicle");
+const AuditLog = require("./AuditLog");
 
 // Define associations
 // User associations
@@ -11,6 +12,7 @@ User.hasMany(Shipment, { foreignKey: "sender_id", as: "sentShipments" });
 User.hasMany(Shipment, { foreignKey: "receiver_id", as: "receivedShipments" });
 User.hasMany(Product, { foreignKey: "created_by", as: "products" });
 User.hasMany(Vehicle, { foreignKey: "created_by", as: "vehicles" });
+User.hasMany(AuditLog, { foreignKey: "actor_user_id", as: "auditLogs" });
 
 // Product associations are now handled in Product.associate() method
 
@@ -32,6 +34,7 @@ const models = {
   Notification,
   Product,
   Vehicle,
+  AuditLog,
   sequelize,
 };
 
@@ -42,6 +45,9 @@ if (Product.associate) {
 if (Vehicle.associate) {
   Vehicle.associate(models);
 }
+
+// AuditLog associations
+AuditLog.belongsTo(User, { foreignKey: "actor_user_id", as: "actor" });
 
 // Shipment associations (must be defined after Vehicle.associate is called)
 Shipment.belongsTo(User, { foreignKey: "sender_id", as: "sender" });
