@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 import Vehicles from "./pages/Vehicles";
 import RoutesPage from "./pages/Routes";
 import Analytics from "./pages/Analytics";
+import AuditLogs from "./pages/AuditLogs";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -129,6 +130,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Analytics />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/audit-logs"
+                  element={
+                    <ProtectedRoute>
+                      <AuditLogs />
                     </ProtectedRoute>
                   }
                 />
