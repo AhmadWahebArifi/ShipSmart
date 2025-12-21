@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { Sequelize } = require('sequelize');
 const { User } = require('../models');
 const authenticateToken = require('../middleware/auth');
+const { logAudit } = require('../utils/auditLogger');
 const { Op } = Sequelize;
 
 const router = express.Router();
@@ -48,6 +49,18 @@ router.post('/register', async (req, res) => {
       email: normalizedEmail,
       password, // Will be hashed by beforeCreate hook
       role
+    });
+
+    // Log successful registration
+    await logAudit(req, {
+      actor_user_id: user.id,
+      actor_role: user.role,
+      action: "auth.register",
+      entity_type: "User",
+      entity_id: user.id.toString(),
+      success: true,
+      message: `User ${username} registered`,
+      metadata: { email: normalizedEmail, role }
     });
 
     // Generate JWT token
@@ -98,6 +111,17 @@ router.post('/login', async (req, res) => {
     });
 
     if (!user) {
+      await logAudit(req, {
+        actor_user_id: null,
+        actor_role: null,
+        action: "auth.login",
+        entity_type: "User",
+        entity_id: null,
+        success: false,
+        message: "Failed login: user not found",
+        metadata: { email: trimmedEmail }
+      });
+
       return res.status(401).json({
         success: false,
         message: 'Invalid email or password'
@@ -108,6 +132,17 @@ router.post('/login', async (req, res) => {
     const isPasswordValid = await user.checkPassword(password);
 
     if (!isPasswordValid) {
+      await logAudit(req, {
+        actor_user_id: null,
+        actor_role: null,
+        action: "auth.login",
+        entity_type: "User",
+        entity_id: null,
+        success: false,
+        message: "Failed login: invalid password",
+        metadata: { email: trimmedEmail }
+      });
+
       return res.status(401).json({
         success: false,
         message: 'Invalid email or password'
@@ -131,6 +166,18 @@ router.post('/login', async (req, res) => {
         error: jwtError.message
       });
     }
+
+    // Log successful login
+    await logAudit(req, {
+      actor_user_id: user.id,
+      actor_role: user.role,
+      action: "auth.login",
+      entity_type: "User",
+      entity_id: user.id.toString(),
+      success: true,
+      message: `User ${user.username} logged in`,
+      metadata: { email: trimmedEmail }
+    });
 
     res.status(200).json({
       success: true,
