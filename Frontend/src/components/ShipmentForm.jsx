@@ -33,6 +33,9 @@ const ShipmentForm = ({ onSubmit, onCancel, shipment }) => {
     if (!shipment && user && !isAdmin) {
       let initialFrom = null;
 
+      // Debug: Log user data to understand structure
+      console.log("User data for province auto-fill:", user);
+
       if (user.province) {
         initialFrom = user.province;
       } else if (user.branch) {
@@ -46,6 +49,8 @@ const ShipmentForm = ({ onSubmit, onCancel, shipment }) => {
           initialFrom = user.branch;
         }
       }
+
+      console.log("Initial from_province set to:", initialFrom);
 
       if (initialFrom) {
         setFormData((prev) => ({
@@ -137,21 +142,24 @@ const ShipmentForm = ({ onSubmit, onCancel, shipment }) => {
     setSuccess("");
 
     try {
-      // Validation
-      if (
-        !formData.from_province ||
-        !formData.to_province ||
-        !formData.tracking_number
-      ) {
-        const missingFields = [];
-        if (!formData.from_province)
-          missingFields.push(t("shipments.fromProvince"));
-        if (!formData.to_province)
-          missingFields.push(t("shipments.toProvince"));
-        if (!formData.tracking_number)
-          missingFields.push(t("shipments.trackingNumber"));
+      // For non-admin users, ensure from_province matches their branch
+      if (!isAdmin && user) {
+        const userProvince = user.province || user.branch;
+        if (userProvince && formData.from_province !== userProvince) {
+          setError(t("shipments.errors.validation.fromProvinceMismatch"));
+          setLoading(false);
+          return;
+        }
+      }
 
-        setError(`${t("common.errors.required")}: ${missingFields.join(", ")}`);
+      // Validate required fields
+      if (!formData.to_province) {
+        setError(`${t("common.errors.required")}: ${t("shipments.toProvince")}`);
+        setLoading(false);
+        return;
+      }
+      if (!formData.tracking_number) {
+        setError(`${t("common.errors.required")}: ${t("shipments.trackingNumber")}`);
         setLoading(false);
         return;
       }
