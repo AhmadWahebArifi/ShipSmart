@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import { useSidebar } from "../context/SidebarContext";
+import Sidebar from "../components/Sidebar";
+import MobileMenuButton from "../components/MobileMenuButton";
+import Header from "../components/Header";
 import { HiMagnifyingGlass, HiFunnel, HiChevronLeft, HiChevronRight, HiXMark, HiCheckCircle, HiXCircle } from "react-icons/hi2";
 import axios from "axios";
 
@@ -9,6 +13,13 @@ const AuditLogs = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { isDark } = useTheme();
+  const {
+    sidebarOpen,
+    sidebarCollapsed,
+    toggleSidebar,
+    closeSidebar,
+    toggleSidebarCollapse,
+  } = useSidebar();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState(null);
@@ -74,7 +85,30 @@ const AuditLogs = () => {
   const formatDate = (dateStr) => new Date(dateStr).toLocaleString();
 
   return (
-    <div className="p-6 space-y-6">
+    <div className={`min-h-screen ${isDark ? "bg-gray-900" : "bg-gray-50"}`}>
+      {/* Sidebar */}
+      <Sidebar
+        isOpen={sidebarOpen}
+        onClose={closeSidebar}
+        isCollapsed={sidebarCollapsed}
+        onToggleCollapse={toggleSidebarCollapse}
+      />
+
+      {/* Main Content */}
+      <div className={`transition-all duration-300 ease-in-out ${
+        sidebarCollapsed ? "lg:ml-20" : "lg:ml-64"
+      }`}>
+        {/* Header */}
+        <Header
+          onToggleSidebar={toggleSidebar}
+          title={t("auditLogs.title", "Audit Logs")}
+        />
+
+        {/* Mobile Menu Button */}
+        <MobileMenuButton onToggleSidebar={toggleSidebar} />
+
+        {/* Page Content */}
+        <div className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
           {t("auditLogs.title", "Audit Logs")}
@@ -239,6 +273,8 @@ const AuditLogs = () => {
           )}
         </div>
       )}
+    </div>
+      </div>
     </div>
   );
 };
