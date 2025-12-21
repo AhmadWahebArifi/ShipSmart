@@ -4,6 +4,7 @@ const authenticateToken = require("../middleware/auth");
 const { requireRole } = require("../middleware/rolePermission");
 const { User } = require("../models");
 const bcrypt = require("bcryptjs");
+const { logAudit } = require("../utils/auditLogger");
 
 // @route   GET /api/users
 // @desc    Get all users (admin only)
@@ -144,6 +145,18 @@ router.post(
         province: province || null,
       });
 
+      // Log successful user creation
+      await logAudit(req, {
+        actor_user_id: req.user.userId,
+        actor_role: req.user.role,
+        action: "user.create",
+        entity_type: "User",
+        entity_id: user.id.toString(),
+        success: true,
+        message: `User "${username}" created with role ${role || "user"}`,
+        metadata: { username, email: email.trim().toLowerCase(), role: role || "user" }
+      });
+
       res.status(201).json({
         success: true,
         message: "User created successfully",
@@ -236,6 +249,18 @@ router.put(
       // Update user
       await user.update(updateData);
 
+      // Log successful user update
+      await logAudit(req, {
+        actor_user_id: req.user.userId,
+        actor_role: req.user.role,
+        action: "user.update",
+        entity_type: "User",
+        entity_id: user.id.toString(),
+        success: true,
+        message: `User "${user.username}" updated`,
+        metadata: { username: user.username, updatedFields: Object.keys(updateData) }
+      });
+
       res.json({
         success: true,
         message: "User updated successfully",
@@ -299,6 +324,18 @@ router.delete(
 
       // Delete user
       await user.destroy();
+
+      // Log successful user deletion
+      await logAudit(req, {
+        actor_user_id: req.user.userId,
+        actor_role: req.user.role,
+        action: "user.delete",
+        entity_type: "User",
+        entity_id: user.id.toString(),
+        success: true,
+        message: `User "${user.username}" deleted`,
+        metadata: { username: user.username, role: user.role }
+      });
 
       res.json({
         success: true,
