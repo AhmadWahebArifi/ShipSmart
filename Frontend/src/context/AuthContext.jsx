@@ -18,6 +18,23 @@ export const AuthProvider = ({ children }) => {
 
   // Fetch user info if token exists
   useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axiosInstance.get('/auth/me');
+        
+        if (response.data && response.data.success) {
+          setUser(response.data.user);
+        } else {
+          throw new Error('Failed to fetch user');
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+        logout();
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (token) {
       fetchUser();
     } else {
