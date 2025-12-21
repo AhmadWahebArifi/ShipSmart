@@ -25,7 +25,6 @@ testConnection();
 // Routes
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/shipments", require("./routes/shipments"));
-
 app.use("/api/vehicles", require("./routes/vehicles"));
 app.use("/api/users", require("./routes/users"));
 app.use("/api/notifications", require("./routes/notifications"));
@@ -34,6 +33,7 @@ app.use(
   "/api/provincial-connections",
   require("./routes/provincialConnections").router
 );
+app.use("/api/admin/audit-logs", require("./routes/auditLogs"));
 
 // Test route
 app.get("/", (req, res) => {
