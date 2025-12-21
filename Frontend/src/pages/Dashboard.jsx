@@ -54,15 +54,25 @@ function Dashboard() {
   // Chart data states
   const [dailyShipments, setDailyShipments] = useState([]);
   const [statusDistribution, setStatusDistribution] = useState([]);
+  const [recentActivities, setRecentActivities] = useState([]);
 
   // Fetch shipment statistics
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        console.log("Fetching dashboard stats...");
         const response = await axiosInstance.get("/shipments/stats");
+        console.log("Stats response:", response.data);
+
         if (response.data && response.data.success) {
           const { totalShipments, statusStats, deliveredToday } =
             response.data.stats;
+
+          console.log("Parsed stats:", {
+            totalShipments,
+            statusStats,
+            deliveredToday,
+          });
 
           setStats([
             {
@@ -96,17 +106,23 @@ function Dashboard() {
               color: "bg-green-500",
             },
           ]);
+        } else {
+          console.log("Stats API returned success=false");
         }
       } catch (error) {
         console.error("Error fetching dashboard stats:", error);
+        console.log("Error details:", error.response?.data || error.message);
       }
     };
 
     // Fetch chart data
     const fetchChartData = async () => {
       try {
+        console.log("Fetching chart data...");
+
         // Fetch daily shipments data
         const dailyResponse = await axiosInstance.get("/shipments/daily-stats");
+        console.log("Daily stats response:", dailyResponse.data);
         if (dailyResponse.data && dailyResponse.data.success) {
           setDailyShipments(dailyResponse.data.data);
         }
@@ -115,11 +131,25 @@ function Dashboard() {
         const statusResponse = await axiosInstance.get(
           "/shipments/status-distribution"
         );
+        console.log("Status distribution response:", statusResponse.data);
         if (statusResponse.data && statusResponse.data.success) {
           setStatusDistribution(statusResponse.data.data);
         }
+
+        // Fetch recent activity data
+        const activityResponse = await axiosInstance.get(
+          "/shipments/recent-activity"
+        );
+        console.log("Recent activity response:", activityResponse.data);
+        if (activityResponse.data && activityResponse.data.success) {
+          setRecentActivities(activityResponse.data.data);
+        }
       } catch (error) {
         console.error("Error fetching chart data:", error);
+        console.log(
+          "Chart data error details:",
+          error.response?.data || error.message
+        );
         // Set mock data for demo purposes
         setDailyShipments([
           { date: "Mon", count: 12 },
@@ -136,6 +166,40 @@ function Dashboard() {
           { status: "In Progress", count: 28 },
           { status: "On Route", count: 12 },
           { status: "Delivered", count: 45 },
+        ]);
+
+        // Mock recent activities
+        setRecentActivities([
+          {
+            id: 1,
+            type: "New shipment from Kabul to Herat",
+            icon: "📦",
+            status: "Created",
+            color: "blue",
+            timeAgo: "2 hours ago",
+            user: "Ahmad Waheb",
+            tracking_number: "SS123456",
+          },
+          {
+            id: 2,
+            type: "Shipment delivered to Kandahar",
+            icon: "✅",
+            status: "Delivered",
+            color: "green",
+            timeAgo: "5 hours ago",
+            user: "Admin User",
+            tracking_number: "SS123457",
+          },
+          {
+            id: 3,
+            type: "Shipment on route from Balkh to Nangarhar",
+            icon: "🚚",
+            status: "On Route",
+            color: "purple",
+            timeAgo: "1 day ago",
+            user: "Branch User",
+            tracking_number: "SS123458",
+          },
         ]);
       }
     };
@@ -154,7 +218,7 @@ function Dashboard() {
     labels: dailyShipments.map((item) => item.date),
     datasets: [
       {
-        label: "Daily Shipments",
+        label: "Shipments Created",
         data: dailyShipments.map((item) => item.count),
         borderColor: isDark ? "#60a5fa" : "#3b82f6",
         backgroundColor: isDark
@@ -176,6 +240,7 @@ function Dashboard() {
           "#a78bfa", // purple for in progress
           "#60a5fa", // blue for on route
           "#34d399", // green for delivered
+          "#ef4444", // red for canceled (if present)
         ],
         borderColor: isDark ? "#1f2937" : "#ffffff",
         borderWidth: 2,
@@ -254,18 +319,18 @@ function Dashboard() {
 
           {/* Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <ChartCard title="Daily Shipments Trend" isDark={isDark}>
+            <ChartCard title="Weekly Shipment Trends" isDark={isDark}>
               <LineChart
                 data={lineChartData}
-                title="Shipments per Day"
+                title="Shipments Created Per Day (Last 7 Days)"
                 isDark={isDark}
               />
             </ChartCard>
 
-            <ChartCard title="Shipment Status Distribution" isDark={isDark}>
+            <ChartCard title="Current Shipment Status Overview" isDark={isDark}>
               <PieChart
                 data={pieChartData}
-                title="Status Overview"
+                title="Distribution by Status"
                 isDark={isDark}
               />
             </ChartCard>
@@ -287,128 +352,106 @@ function Dashboard() {
               {t("dashboard.recentActivity")}
             </h3>
             <div className="space-y-4">
-              <div
-                className={`flex items-center justify-between p-4 rounded-lg transition-all duration-200 hover:scale-[1.02] ${
-                  isDark ? "bg-gray-700/50" : "bg-gray-50"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      isDark ? "bg-blue-600/20" : "bg-blue-100"
-                    }`}
-                  >
-                    📦
-                  </div>
-                  <div>
-                    <p
-                      className={`font-medium transition-colors ${
-                        isDark ? "text-white" : "text-gray-800"
-                      }`}
-                    >
-                      {t("dashboard.newShipment")}
-                    </p>
-                    <p
-                      className={`text-sm transition-colors ${
-                        isDark ? "text-gray-400" : "text-gray-600"
-                      }`}
-                    >
-                      {t("dashboard.hoursAgo", { count: 2 })}
-                    </p>
-                  </div>
-                </div>
-                <span
-                  className={`px-3 py-1 text-xs font-medium rounded-full ${
-                    isDark
-                      ? "bg-blue-600/20 text-blue-400"
-                      : "bg-blue-100 text-blue-700"
-                  }`}
-                >
-                  {t("dashboard.active")}
-                </span>
-              </div>
+              {recentActivities.length > 0 ? (
+                recentActivities.map((activity) => {
+                  // Map color to Tailwind classes
+                  const getColorClasses = (color) => {
+                    switch (color) {
+                      case "blue":
+                        return {
+                          bg: isDark ? "bg-blue-600/20" : "bg-blue-100",
+                          text: isDark ? "text-blue-400" : "text-blue-700",
+                        };
+                      case "green":
+                        return {
+                          bg: isDark ? "bg-green-600/20" : "bg-green-100",
+                          text: isDark ? "text-green-400" : "text-green-700",
+                        };
+                      case "purple":
+                        return {
+                          bg: isDark ? "bg-purple-600/20" : "bg-purple-100",
+                          text: isDark ? "text-purple-400" : "text-purple-700",
+                        };
+                      case "yellow":
+                        return {
+                          bg: isDark ? "bg-yellow-600/20" : "bg-yellow-100",
+                          text: isDark ? "text-yellow-400" : "text-yellow-700",
+                        };
+                      case "gray":
+                        return {
+                          bg: isDark ? "bg-gray-600/20" : "bg-gray-100",
+                          text: isDark ? "text-gray-400" : "text-gray-700",
+                        };
+                      default:
+                        return {
+                          bg: isDark ? "bg-gray-600/20" : "bg-gray-100",
+                          text: isDark ? "text-gray-400" : "text-gray-700",
+                        };
+                    }
+                  };
 
-              <div
-                className={`flex items-center justify-between p-4 rounded-lg transition-all duration-200 hover:scale-[1.02] ${
-                  isDark ? "bg-gray-700/50" : "bg-gray-50"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      isDark ? "bg-green-600/20" : "bg-green-100"
-                    }`}
-                  >
-                    ✅
-                  </div>
-                  <div>
-                    <p
-                      className={`font-medium transition-colors ${
-                        isDark ? "text-white" : "text-gray-800"
-                      }`}
-                    >
-                      {t("dashboard.deliveryCompleted")}
-                    </p>
-                    <p
-                      className={`text-sm transition-colors ${
-                        isDark ? "text-gray-400" : "text-gray-600"
-                      }`}
-                    >
-                      {t("dashboard.hoursAgo", { count: 5 })}
-                    </p>
-                  </div>
-                </div>
-                <span
-                  className={`px-3 py-1 text-xs font-medium rounded-full ${
-                    isDark
-                      ? "bg-green-600/20 text-green-400"
-                      : "bg-green-100 text-green-700"
-                  }`}
-                >
-                  {t("dashboard.delivered")}
-                </span>
-              </div>
+                  const colorClasses = getColorClasses(activity.color);
 
-              <div
-                className={`flex items-center justify-between p-4 rounded-lg transition-all duration-200 hover:scale-[1.02] ${
-                  isDark ? "bg-gray-700/50" : "bg-gray-50"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      isDark ? "bg-purple-600/20" : "bg-purple-100"
-                    }`}
-                  >
-                    🗺️
-                  </div>
-                  <div>
-                    <p
-                      className={`font-medium transition-colors ${
-                        isDark ? "text-white" : "text-gray-800"
+                  return (
+                    <div
+                      key={activity.id}
+                      className={`flex items-center justify-between p-4 rounded-lg transition-all duration-200 hover:scale-[1.02] ${
+                        isDark ? "bg-gray-700/50" : "bg-gray-50"
                       }`}
                     >
-                      {t("dashboard.routeUpdated")}
-                    </p>
-                    <p
-                      className={`text-sm transition-colors ${
-                        isDark ? "text-gray-400" : "text-gray-600"
-                      }`}
-                    >
-                      {t("dashboard.dayAgo", { count: 1 })}
-                    </p>
-                  </div>
-                </div>
-                <span
-                  className={`px-3 py-1 text-xs font-medium rounded-full ${
-                    isDark
-                      ? "bg-purple-600/20 text-purple-400"
-                      : "bg-purple-100 text-purple-700"
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-10 h-10 rounded-lg flex items-center justify-center ${colorClasses.bg}`}
+                        >
+                          {activity.icon}
+                        </div>
+                        <div>
+                          <p
+                            className={`font-medium transition-colors ${
+                              isDark ? "text-white" : "text-gray-800"
+                            }`}
+                          >
+                            {activity.type}
+                          </p>
+                          <p
+                            className={`text-sm transition-colors ${
+                              isDark ? "text-gray-400" : "text-gray-600"
+                            }`}
+                          >
+                            {activity.user} • {activity.timeAgo}
+                          </p>
+                          {activity.tracking_number && (
+                            <p
+                              className={`text-xs transition-colors ${
+                                isDark ? "text-gray-500" : "text-gray-500"
+                              }`}
+                            >
+                              Tracking: {activity.tracking_number}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <span
+                        className={`px-3 py-1 text-xs font-medium rounded-full ${colorClasses.bg} ${colorClasses.text}`}
+                      >
+                        {activity.status}
+                      </span>
+                    </div>
+                  );
+                })
+              ) : (
+                <div
+                  className={`text-center py-8 ${
+                    isDark ? "text-gray-400" : "text-gray-600"
                   }`}
                 >
-                  {t("dashboard.updated")}
-                </span>
-              </div>
+                  <p className="text-lg">No recent activity</p>
+                  <p className="text-sm mt-2">
+                    Activity will appear here when shipments are created or
+                    updated
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </main>

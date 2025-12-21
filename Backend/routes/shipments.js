@@ -870,4 +870,336 @@ router.delete(
   }
 );
 
+// @route   GET /api/shipments/stats
+// @desc    Get dashboard statistics
+// @access  Private
+router.get("/stats", authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    let whereClause = {};
+
+    // Apply visibility rules based on user role
+    if (user.role === "branch") {
+      whereClause = {
+        [Sequelize.Op.or]: [
+          { sender_id: user.id },
+          { "$sender.province$": user.province },
+        ],
+      };
+    }
+
+    // Get total shipments
+    const totalShipments = await Shipment.count({ where: whereClause });
+
+    // Get status statistics
+    const statusStats = await Shipment.findAll({
+      attributes: [
+        "status",
+        [Sequelize.fn("COUNT", Sequelize.col("id")), "count"],
+      ],
+      where: whereClause,
+      group: ["status"],
+      raw: true,
+    });
+
+    const statusCounts = {
+      pending: 0,
+      in_progress: 0,
+      on_route: 0,
+      delivered: 0,
+      canceled: 0,
+    };
+
+    statusStats.forEach((stat) => {
+      statusCounts[stat.status] = parseInt(stat.count);
+    });
+
+    // Get deliveries today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const deliveredToday = await Shipment.count({
+      where: {
+        ...whereClause,
+        status: "delivered",
+        delivered_at: {
+          [Sequelize.Op.gte]: today,
+          [Sequelize.Op.lt]: tomorrow,
+        },
+      },
+    });
+
+    res.json({
+      success: true,
+      stats: {
+        totalShipments,
+        statusStats: statusCounts,
+        deliveredToday,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching dashboard stats:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching dashboard stats",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+});
+
+// @route   GET /api/shipments/daily-stats
+// @desc    Get daily shipments statistics for the last 7 days
+// @access  Private
+router.get("/daily-stats", authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    let whereClause = {};
+
+    // Apply visibility rules based on user role
+    if (user.role === "branch") {
+      whereClause = {
+        [Sequelize.Op.or]: [
+          { sender_id: user.id },
+          { "$sender.province$": user.province },
+        ],
+      };
+    }
+
+    // Get last 7 days
+    const days = [];
+    const dailyData = [];
+
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      date.setHours(0, 0, 0, 0);
+
+      const nextDate = new Date(date);
+      nextDate.setDate(nextDate.getDate() + 1);
+
+      const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+      days.push(dayName);
+
+      const count = await Shipment.count({
+        where: {
+          ...whereClause,
+          created_at: {
+            [Sequelize.Op.gte]: date,
+            [Sequelize.Op.lt]: nextDate,
+          },
+        },
+      });
+
+      dailyData.push({ date: dayName, count });
+    }
+
+    res.json({
+      success: true,
+      data: dailyData,
+    });
+  } catch (error) {
+    console.error("Error fetching daily stats:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching daily stats",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+});
+
+// @route   GET /api/shipments/status-distribution
+// @desc    Get shipment status distribution for pie chart
+// @access  Private
+router.get("/status-distribution", authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    let whereClause = {};
+
+    // Apply visibility rules based on user role
+    if (user.role === "branch") {
+      whereClause = {
+        [Sequelize.Op.or]: [
+          { sender_id: user.id },
+          { "$sender.province$": user.province },
+        ],
+      };
+    }
+
+    const statusStats = await Shipment.findAll({
+      attributes: [
+        "status",
+        [Sequelize.fn("COUNT", Sequelize.col("id")), "count"],
+      ],
+      where: whereClause,
+      group: ["status"],
+      raw: true,
+    });
+
+    const statusDistribution = statusStats.map((stat) => ({
+      status:
+        stat.status.charAt(0).toUpperCase() +
+        stat.status.slice(1).replace("_", " "),
+      count: parseInt(stat.count),
+    }));
+
+    res.json({
+      success: true,
+      data: statusDistribution,
+    });
+  } catch (error) {
+    console.error("Error fetching status distribution:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching status distribution",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+});
+
+// @route   GET /api/shipments/recent-activity
+// @desc    Get recent shipment activities across all users
+// @access  Private
+router.get("/recent-activity", authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    let whereClause = {};
+
+    // Apply visibility rules based on user role
+    if (user.role === "branch") {
+      whereClause = {
+        [Sequelize.Op.or]: [
+          { sender_id: user.id },
+          { "$sender.province$": user.province },
+        ],
+      };
+    }
+
+    // Get recent shipments with activity
+    const recentShipments = await Shipment.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: User,
+          as: "sender",
+          attributes: ["id", "username", "name", "province"],
+        },
+        {
+          model: User,
+          as: "receiver",
+          attributes: ["id", "username", "name", "province"],
+          required: false,
+        },
+      ],
+      order: [
+        ["updated_at", "DESC"],
+        ["created_at", "DESC"],
+      ],
+      limit: 10,
+    });
+
+    const activities = recentShipments.map((shipment) => {
+      const shipmentData = shipment.toJSON();
+      const now = new Date();
+      const updatedAt = new Date(shipmentData.updated_at);
+      const createdAt = new Date(shipmentData.created_at);
+
+      const timeDiff = Math.floor((now - updatedAt) / (1000 * 60 * 60)); // hours ago
+
+      let activityType, activityIcon, activityStatus, activityColor;
+
+      if (createdAt.getTime() === updatedAt.getTime()) {
+        // Recently created
+        activityType = `New shipment from ${shipmentData.from_province} to ${shipmentData.to_province}`;
+        activityIcon = "📦";
+        activityStatus = "Created";
+        activityColor = "blue";
+      } else if (shipmentData.status === "delivered") {
+        // Recently delivered
+        activityType = `Shipment delivered to ${shipmentData.to_province}`;
+        activityIcon = "✅";
+        activityStatus = "Delivered";
+        activityColor = "green";
+      } else if (shipmentData.status === "on_route") {
+        // Recently updated to on_route
+        activityType = `Shipment on route from ${shipmentData.from_province} to ${shipmentData.to_province}`;
+        activityIcon = "🚚";
+        activityStatus = "On Route";
+        activityColor = "purple";
+      } else if (shipmentData.status === "in_progress") {
+        // Recently updated to in_progress
+        activityType = `Shipment in progress from ${shipmentData.from_province}`;
+        activityIcon = "⏳";
+        activityStatus = "In Progress";
+        activityColor = "yellow";
+      } else {
+        // General status update
+        activityType = `Shipment status updated to ${shipmentData.status}`;
+        activityIcon = "🔄";
+        activityStatus = "Updated";
+        activityColor = "gray";
+      }
+
+      return {
+        id: shipmentData.id,
+        tracking_number: shipmentData.tracking_number,
+        type: activityType,
+        icon: activityIcon,
+        status: activityStatus,
+        color: activityColor,
+        timeAgo: timeDiff < 1 ? "Just now" : `${timeDiff} hours ago`,
+        user:
+          shipmentData.sender?.name ||
+          shipmentData.sender?.username ||
+          "Unknown",
+        from_province: shipmentData.from_province,
+        to_province: shipmentData.to_province,
+        created_at: shipmentData.created_at,
+        updated_at: shipmentData.updated_at,
+      };
+    });
+
+    res.json({
+      success: true,
+      data: activities,
+    });
+  } catch (error) {
+    console.error("Error fetching recent activity:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching recent activity",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+});
+
 module.exports = router;
