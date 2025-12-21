@@ -85,8 +85,11 @@ const AuditLogs = () => {
   const formatDate = (dateStr) => new Date(dateStr).toLocaleString();
 
   return (
-    <div className={`min-h-screen ${isDark ? "bg-gray-900" : "bg-gray-50"}`}>
-      {/* Sidebar */}
+    <div
+      className={`min-h-screen flex transition-colors duration-300 ${
+        isDark ? "bg-gray-950" : "bg-gray-50"
+      }`}
+    >
       <Sidebar
         isOpen={sidebarOpen}
         onClose={closeSidebar}
@@ -94,51 +97,96 @@ const AuditLogs = () => {
         onToggleCollapse={toggleSidebarCollapse}
       />
 
-      {/* Main Content */}
-      <div className={`transition-all duration-300 ease-in-out ${
-        sidebarCollapsed ? "lg:ml-20" : "lg:ml-64"
-      }`}>
-        {/* Header */}
-        <Header
-          onToggleSidebar={toggleSidebar}
-          title={t("auditLogs.title", "Audit Logs")}
-        />
+      <MobileMenuButton onClick={toggleSidebar} isDark={isDark} />
 
-        {/* Mobile Menu Button */}
-        <MobileMenuButton onToggleSidebar={toggleSidebar} />
+      <div
+        className={`flex-1 transition-all duration-300 ${
+          sidebarOpen || !sidebarCollapsed ? "lg:ml-64" : "lg:ml-20"
+        }`}
+      >
+        <div className="p-4 sm:p-6 lg:p-8">
+          <Header
+            title={t("auditLogs.title")}
+            subtitle={summary ? `${summary.totalLogs} ${t("auditLogs.totalLogs")}` : ""}
+          />
 
-        {/* Page Content */}
-        <div className="p-6 space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className={`text-2xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
-          {t("auditLogs.title", "Audit Logs")}
-        </h1>
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-            isDark
-              ? "bg-gray-800 hover:bg-gray-700 text-white"
-              : "bg-gray-100 hover:bg-gray-200 text-gray-900"
-          }`}
-        >
-          <HiFunnel className="w-4 h-4" />
-          {showFilters ? t("common.hideFilters", "Hide Filters") : t("common.showFilters", "Show Filters")}
-        </button>
-      </div>
+        {/* Filter Button */}
+          <div className="mb-6">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                isDark
+                  ? "bg-gray-800 hover:bg-gray-700 text-white"
+                  : "bg-gray-100 hover:bg-gray-200 text-gray-900"
+              }`}
+            >
+              <HiFunnel className="w-4 h-4" />
+              {showFilters ? t("common.hideFilters") : t("common.showFilters")}
+            </button>
+          </div>
 
       {summary && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className={`p-4 rounded-lg ${isDark ? "bg-gray-800" : "bg-white"} border ${isDark ? "border-gray-700" : "border-gray-200"}`}>
-            <p className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>{t("auditLogs.totalLogs", "Total Logs")}</p>
-            <p className={`text-2xl font-bold mt-1 ${isDark ? "text-white" : "text-gray-900"}`}>{summary.totalLogs}</p>
+          <div className={`p-4 rounded-lg ${
+            isDark ? "bg-gray-800" : "bg-white shadow"
+          }`}>
+            <div className="flex items-center">
+              <div className="p-3 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                <HiMagnifyingGlass className="w-5 h-5" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  {t("auditLogs.totalLogs")}
+                </p>
+                <p
+                  className={`text-2xl font-semibold ${
+                    isDark ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  {summary.totalLogs}
+                </p>
+              </div>
+            </div>
           </div>
-          <div className={`p-4 rounded-lg ${isDark ? "bg-gray-800" : "bg-white"} border ${isDark ? "border-gray-700" : "border-gray-200"}`}>
-            <p className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>{t("auditLogs.last24h", "Last 24h")}</p>
-            <p className={`text-2xl font-bold mt-1 ${isDark ? "text-white" : "text-gray-900"}`}>{summary.last24h}</p>
+          <div className={`p-4 rounded-lg ${
+            isDark ? "bg-gray-800" : "bg-white shadow"
+          }`}>
+            <div className="flex items-center">
+              <div className="p-3 rounded-full bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400">
+                <HiCheckCircle className="w-5 h-5" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  {t("auditLogs.last24h")}
+                </p>
+                <p
+                  className={`text-2xl font-semibold ${
+                    isDark ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  {summary.last24h}
+                </p>
+              </div>
+            </div>
           </div>
-          <div className={`p-4 rounded-lg ${isDark ? "bg-gray-800" : "bg-white"} border ${isDark ? "border-gray-700" : "border-gray-200"}`}>
-            <p className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>{t("auditLogs.failedLogins", "Failed Logins (24h)")}</p>
-            <p className={`text-2xl font-bold mt-1 text-red-500`}>{summary.failedLogins}</p>
+          <div className={`p-4 rounded-lg ${
+            isDark ? "bg-gray-800" : "bg-white shadow"
+          }`}>
+            <div className="flex items-center">
+              <div className="p-3 rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">
+                <HiXCircle className="w-5 h-5" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  {t("auditLogs.failedLogins")}
+                </p>
+                <p
+                  className={`text-2xl font-semibold text-red-500`}
+                >
+                  {summary.failedLogins}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -148,21 +196,21 @@ const AuditLogs = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <input
               name="action"
-              placeholder={t("auditLogs.filterAction", "Action")}
+              placeholder={t("auditLogs.filterAction")}
               value={filters.action}
               onChange={handleFilterChange}
               className={`px-3 py-2 rounded-lg border ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"}`}
             />
             <input
               name="entity_type"
-              placeholder={t("auditLogs.filterEntity", "Entity Type")}
+              placeholder={t("auditLogs.filterEntity")}
               value={filters.entity_type}
               onChange={handleFilterChange}
               className={`px-3 py-2 rounded-lg border ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"}`}
             />
             <input
               name="actor_user_id"
-              placeholder={t("auditLogs.filterUser", "User ID")}
+              placeholder={t("auditLogs.filterUser")}
               value={filters.actor_user_id}
               onChange={handleFilterChange}
               className={`px-3 py-2 rounded-lg border ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"}`}
@@ -173,9 +221,9 @@ const AuditLogs = () => {
               onChange={handleFilterChange}
               className={`px-3 py-2 rounded-lg border ${isDark ? "bg-gray-700 border-gray-600 text-white" : "bg-white border-gray-300 text-gray-900"}`}
             >
-              <option value="">{t("auditLogs.anyStatus", "Any Status")}</option>
-              <option value="true">{t("auditLogs.success", "Success")}</option>
-              <option value="false">{t("auditLogs.failed", "Failed")}</option>
+              <option value="">{t("auditLogs.anyStatus")}</option>
+              <option value="true">{t("auditLogs.success")}</option>
+              <option value="false">{t("auditLogs.failed")}</option>
             </select>
             <input
               type="datetime-local"
@@ -198,14 +246,14 @@ const AuditLogs = () => {
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               <HiMagnifyingGlass className="w-4 h-4" />
-              {t("common.search", "Search")}
+              {t("common.search")}
             </button>
             <button
               onClick={handleReset}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${isDark ? "bg-gray-700 hover:bg-gray-600 text-white" : "bg-gray-200 hover:bg-gray-300 text-gray-900"}`}
             >
               <HiXMark className="w-4 h-4" />
-              {t("common.reset", "Reset")}
+              {t("common.reset")}
             </button>
           </div>
         </div>
@@ -250,7 +298,7 @@ const AuditLogs = () => {
           {pagination.totalPages > 1 && (
             <div className={`flex items-center justify-between px-4 py-3 border-t ${isDark ? "border-gray-700" : "border-gray-200"}`}>
               <span className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
-                {t("auditLogs.showing", "Showing")} {(pagination.page - 1) * 50 + 1}–{Math.min(pagination.page * 50, pagination.count)} {t("auditLogs.of", "of")} {pagination.count}
+                {t("auditLogs.showing")} {(pagination.page - 1) * 50 + 1}–{Math.min(pagination.page * 50, pagination.count)} {t("auditLogs.of")} {pagination.count}
               </span>
               <div className="flex gap-2">
                 <button
@@ -273,7 +321,7 @@ const AuditLogs = () => {
           )}
         </div>
       )}
-    </div>
+        </div>
       </div>
     </div>
   );
