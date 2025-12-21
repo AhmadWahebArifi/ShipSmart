@@ -18,6 +18,7 @@ import {
   HiUser,
   HiUserGroup,
   HiShoppingBag,
+  HiDocumentText,
 } from "react-icons/hi2";
 
 const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
@@ -70,6 +71,12 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
       label: t("sidebar.users"),
       icon: HiUserGroup,
       path: "/users",
+    });
+    menuItems.splice(6, 0, {
+      id: "audit-logs",
+      label: t("sidebar.auditLogs"),
+      icon: HiDocumentText,
+      path: "/admin/audit-logs",
     });
   }
 
