@@ -7,6 +7,7 @@ const {
   canSendToBranch,
 } = require("../middleware/rolePermission");
 const { Shipment, User, Notification, Vehicle } = require("../models");
+const { logAudit } = require("../utils/auditLogger");
 
 // Import provincial connections data and functions
 const provincialConnections = require("../routes/provincialConnections");
@@ -453,6 +454,18 @@ router.post("/", authenticateToken, canSendToBranch(), async (req, res) => {
       route_hops: routeHops,
     });
 
+    // Log successful shipment creation
+    await logAudit(req, {
+      actor_user_id: req.user.userId,
+      actor_role: req.user.role,
+      action: "shipment.create",
+      entity_type: "Shipment",
+      entity_id: shipment.id.toString(),
+      success: true,
+      message: `Shipment ${tracking_number} created from ${exactFromProvince} to ${exactToProvince}`,
+      metadata: { tracking_number, from_province: exactFromProvince, to_province: exactToProvince, status: "pending" }
+    });
+
     console.log("Shipment created successfully with ID:", shipment.id);
 
     // Create notifications for admins/superadmins about this shipment
@@ -652,6 +665,18 @@ router.put("/:id", authenticateToken, canModifyShipment, async (req, res) => {
       ],
     });
 
+    // Log successful shipment update
+    await logAudit(req, {
+      actor_user_id: req.user.userId,
+      actor_role: req.user.role,
+      action: "shipment.update",
+      entity_type: "Shipment",
+      entity_id: updatedShipment.id.toString(),
+      success: true,
+      message: `Shipment ${updatedShipment.tracking_number} updated`,
+      metadata: { tracking_number: updatedShipment.tracking_number, status: updatedShipment.status }
+    });
+
     res.json({
       success: true,
       message: "Shipment updated successfully",
@@ -761,6 +786,18 @@ router.put(
         ],
       });
 
+      // Log successful shipment status update
+      await logAudit(req, {
+        actor_user_id: req.user.userId,
+        actor_role: req.user.role,
+        action: "shipment.update_status",
+        entity_type: "Shipment",
+        entity_id: shipment.id.toString(),
+        success: true,
+        message: `Shipment ${shipment.tracking_number} status changed to ${status}`,
+        metadata: { tracking_number: shipment.tracking_number, old_status: shipment.status, new_status: status }
+      });
+
       res.json({
         success: true,
         message: "Shipment status updated successfully",
@@ -804,6 +841,18 @@ router.delete(
       }
 
       await shipment.destroy();
+
+      // Log successful shipment deletion
+      await logAudit(req, {
+        actor_user_id: req.user.userId,
+        actor_role: req.user.role,
+        action: "shipment.delete",
+        entity_type: "Shipment",
+        entity_id: shipment.id.toString(),
+        success: true,
+        message: `Shipment ${shipment.tracking_number} deleted`,
+        metadata: { tracking_number: shipment.tracking_number, from_province: shipment.from_province, to_province: shipment.to_province }
+      });
 
       res.json({
         success: true,
