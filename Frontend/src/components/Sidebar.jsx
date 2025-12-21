@@ -87,7 +87,10 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
     }
     setActiveItem(path);
     navigate(path);
-    // Don't close sidebar - only menu button should close it
+    // Close sidebar on mobile after navigation
+    if (window.innerWidth < 1024) {
+      onClose();
+    }
   };
 
   const handleLogout = () => {
