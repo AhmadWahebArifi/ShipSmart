@@ -9,6 +9,8 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { SidebarProvider } from "./context/SidebarContext";
 import { LoaderProvider } from "./context/LoaderContext";
+import { PermissionProvider } from "./context/PermissionContext";
+import PermissionInitializer from "./context/PermissionInitializer";
 import Loader from "./components/Loader";
 import AppLoader from "./components/AppLoader";
 import "./i18n/config"; // Initialize i18n
@@ -19,6 +21,7 @@ import Admin from "./pages/Admin";
 import Shipments from "./pages/Shipments";
 import Products from "./pages/Products";
 import UserManagement from "./pages/UserManagement";
+import RoleManagement from "./pages/RoleManagement";
 import NotFound from "./pages/NotFound";
 import Vehicles from "./pages/Vehicles";
 import RoutesPage from "./pages/Routes";
@@ -47,109 +50,121 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <LoaderProvider>
-          <SidebarProvider>
-            <AppLoader />
-            <Router>
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route
-                  path="/dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/settings"
-                  element={
-                    <ProtectedRoute>
-                      <Settings />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin"
-                  element={
-                    <ProtectedRoute>
-                      <Admin />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/shipments"
-                  element={
-                    <ProtectedRoute>
-                      <Shipments />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/shipments/:id"
-                  element={
-                    <ProtectedRoute>
-                      <Shipments />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/products"
-                  element={
-                    <ProtectedRoute>
-                      <Products />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/vehicles"
-                  element={
-                    <ProtectedRoute>
-                      <Vehicles />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/users"
-                  element={
-                    <ProtectedRoute>
-                      <UserManagement />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/routes"
-                  element={
-                    <ProtectedRoute>
-                      <RoutesPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/analytics"
-                  element={
-                    <ProtectedRoute>
-                      <Analytics />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/audit-logs"
-                  element={
-                    <ProtectedRoute>
-                      <AuditLogs />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/"
-                  element={<Navigate to="/dashboard" replace />}
-                />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Router>
-          </SidebarProvider>
-        </LoaderProvider>
+        <PermissionProvider>
+          <PermissionInitializer>
+            <LoaderProvider>
+              <SidebarProvider>
+                <AppLoader />
+                <Router>
+                  <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route
+                      path="/dashboard"
+                      element={
+                        <ProtectedRoute>
+                          <Dashboard />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/settings"
+                      element={
+                        <ProtectedRoute>
+                          <Settings />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/admin"
+                      element={
+                        <ProtectedRoute>
+                          <Admin />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/role-management"
+                      element={
+                        <ProtectedRoute>
+                          <RoleManagement />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/shipments"
+                      element={
+                        <ProtectedRoute>
+                          <Shipments />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/shipments/:id"
+                      element={
+                        <ProtectedRoute>
+                          <Shipments />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/products"
+                      element={
+                        <ProtectedRoute>
+                          <Products />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/vehicles"
+                      element={
+                        <ProtectedRoute>
+                          <Vehicles />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/users"
+                      element={
+                        <ProtectedRoute>
+                          <UserManagement />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/routes"
+                      element={
+                        <ProtectedRoute>
+                          <RoutesPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/analytics"
+                      element={
+                        <ProtectedRoute>
+                          <Analytics />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/admin/audit-logs"
+                      element={
+                        <ProtectedRoute>
+                          <AuditLogs />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/"
+                      element={<Navigate to="/dashboard" replace />}
+                    />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Router>
+              </SidebarProvider>
+            </LoaderProvider>
+          </PermissionInitializer>
+        </PermissionProvider>
       </AuthProvider>
     </ThemeProvider>
   );
