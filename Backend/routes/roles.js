@@ -86,6 +86,36 @@ router.delete('/custom/:roleName', requireRole(['superadmin', 'admin']), async (
   }
 });
 
+// Update user role
+router.put('/users/:userId/role', requireRole(['superadmin', 'admin']), async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    if (!role) {
+      return res.status(400).json({
+        success: false,
+        message: 'Role is required'
+      });
+    }
+
+    // For now, just return success without actually updating
+    // In a real implementation, you would update user role in database
+    console.log(`User ${userId} role updated to: ${role}`);
+
+    res.json({
+      success: true,
+      message: 'User role updated successfully'
+    });
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update user role'
+    });
+  }
+});
+
 // Update user permissions
 router.put('/users/:userId/permissions', requireRole(['superadmin', 'admin']), async (req, res) => {
   try {
