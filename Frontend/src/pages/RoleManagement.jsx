@@ -50,7 +50,6 @@ function RoleManagement() {
   const [showCreateRoleModal, setShowCreateRoleModal] = useState(false);
   const [newRoleName, setNewRoleName] = useState("");
   const [newRolePermissions, setNewRolePermissions] = useState([]);
-  const [customRoles, setCustomRoles] = useState({});
   const [showRoleAssignmentModal, setShowRoleAssignmentModal] = useState(false);
   const [selectedRole, setSelectedRole] = useState("");
 
@@ -74,7 +73,6 @@ function RoleManagement() {
   useEffect(() => {
     if (canManageRoles) {
       fetchUsers();
-      fetchCustomRoles();
     }
   }, [canManageRoles]);
 
@@ -83,7 +81,12 @@ function RoleManagement() {
       setLoading(true);
       const response = await axiosInstance.get("/users");
       if (response.data && response.data.success) {
-        setUsers(response.data.users);
+        // Add permissions to each user based on their role
+        const usersWithPermissions = response.data.users.map(user => ({
+          ...user,
+          permissions: ROLE_PERMISSIONS[user.role] || []
+        }));
+        setUsers(usersWithPermissions);
       }
     } catch (err) {
       setError("Failed to fetch users");
@@ -143,10 +146,20 @@ function RoleManagement() {
 
       if (response.data && response.data.success) {
         showAlert("Success", "Role assigned successfully", "success");
+        
+        // Update the user's role and permissions in the local state
+        const newPermissions = ROLE_PERMISSIONS[selectedRole] || [];
+        setUsers(prevUsers => 
+          prevUsers.map(user => 
+            user.id === selectedUser.id 
+              ? { ...user, role: selectedRole, permissions: newPermissions }
+              : user
+          )
+        );
+        
         setShowRoleAssignmentModal(false);
         setSelectedUser(null);
         setSelectedRole("");
-        fetchUsers(); // Refresh the users list
       }
     } catch (err) {
       showAlert("Error", "Failed to assign role", "error");
@@ -172,9 +185,18 @@ function RoleManagement() {
 
       if (response.data && response.data.success) {
         showAlert("Success", "Permissions updated successfully", "success");
+        
+        // Update the user's permissions in the local state
+        setUsers(prevUsers => 
+          prevUsers.map(user => 
+            user.id === selectedUser.id 
+              ? { ...user, permissions: customPermissions }
+              : user
+          )
+        );
+        
         setShowPermissionModal(false);
         setSelectedUser(null);
-        fetchUsers(); // Refresh the users list
       }
     } catch (err) {
       showAlert("Error", "Failed to update permissions", "error");
@@ -289,18 +311,13 @@ function RoleManagement() {
           <Header title="Role Management" subtitle="Manage user roles and permissions" />
 
           {/* Action Buttons */}
-          <div className="mb-6 flex flex-wrap gap-3">
-            <button
-              onClick={() => setShowCreateRoleModal(true)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                isDark
-                  ? "bg-purple-600 text-white hover:bg-purple-700"
-                  : "bg-purple-600 text-white hover:bg-purple-700"
-              } shadow-lg`}
-            >
-              <HiPlus className="w-5 h-5" />
-              <span>Create Custom Role</span>
-            </button>
+          <div className="mb-6">
+            <h2 className={`text-2xl font-bold ${isDark ? "text-white" : "text-gray-800"}`}>
+              User Roles & Permissions
+            </h2>
+            <p className={`mt-2 ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+              Manage user roles and assign granular permissions
+            </p>
           </div>
 
           {/* Error Message */}
@@ -391,7 +408,7 @@ function RoleManagement() {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             <div className={`text-xs ${isDark ? "text-gray-400" : "text-gray-600"}`}>
-                              {customPermissions.filter(p => user.permissions?.includes(p)).length} permissions
+                              {user.permissions?.length || 0} permissions
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -427,69 +444,6 @@ function RoleManagement() {
                 </div>
               </>
             )}
-          </div>
-
-          {/* Custom Roles */}
-          {Object.keys(customRoles).length > 0 && (
-            <div className={`mt-8 rounded-xl shadow-lg border overflow-hidden transition-all duration-300 ${
-              isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
-            }`}>
-              <div className={`px-6 py-4 border-b ${isDark ? "border-gray-700" : "border-gray-200"}`}>
-                <h2 className={`text-lg font-semibold ${isDark ? "text-white" : "text-gray-800"}`}>
-                  Custom Roles ({Object.keys(customRoles).length})
-                </h2>
-              </div>
-              <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {Object.entries(customRoles).map(([roleName, permissions]) => (
-                    <div
-                      key={roleName}
-                      className={`p-4 rounded-lg border ${
-                        isDark
-                          ? "bg-gray-700 border-gray-600"
-                          : "bg-gray-50 border-gray-200"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className={`font-medium ${isDark ? "text-white" : "text-gray-800"}`}>
-                          {roleName}
-                        </h3>
-                        <button
-                          onClick={() => handleDeleteCustomRole(roleName)}
-                          className={`p-1 rounded ${
-                            isDark
-                              ? "text-red-400 hover:text-red-300 hover:bg-red-900/20"
-                              : "text-red-600 hover:text-red-900 hover:bg-red-50"
-                          }`}
-                          title="Delete Role"
-                        >
-                          <HiTrash className="w-4 h-4" />
-                        </button>
-                      </div>
-                      <div className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
-                        {permissions.length} permissions
-                      </div>
-                      {permissions.length > 0 && (
-                        <div className={`mt-2 text-xs ${isDark ? "text-gray-500" : "text-gray-500"}`}>
-                          <div className="font-medium mb-1">Key permissions:</div>
-                          <ul className="space-y-1">
-                            {permissions.slice(0, 3).map((perm) => (
-                              <li key={perm} className="truncate">
-                                • {perm.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                              </li>
-                            ))}
-                            {permissions.length > 3 && (
-                              <li className="italic">... and {permissions.length - 3} more</li>
-                            )}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
@@ -771,9 +725,6 @@ function RoleManagement() {
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
                     <option value="superadmin">SuperAdmin</option>
-                    {Object.keys(customRoles).map(roleName => (
-                      <option key={roleName} value={roleName}>{roleName}</option>
-                    ))}
                   </select>
                 </div>
 
@@ -818,6 +769,7 @@ function RoleManagement() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };
