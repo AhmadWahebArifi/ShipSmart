@@ -15,7 +15,7 @@ const PermissionInitializer = ({ children }) => {
       // Clear permissions when user logs out
       setPermissionsForRole(null);
     }
-  }, [user, setPermissionsForRole]);
+  }, [user]);
 
   return children;
 };
