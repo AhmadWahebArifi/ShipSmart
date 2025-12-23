@@ -51,10 +51,25 @@ function RoleManagement() {
   const [newRoleName, setNewRoleName] = useState("");
   const [newRolePermissions, setNewRolePermissions] = useState([]);
   const [customRoles, setCustomRoles] = useState({});
-  const [showAllPermissions, setShowAllPermissions] = useState(false);
+  const [showRoleAssignmentModal, setShowRoleAssignmentModal] = useState(false);
+  const [selectedRole, setSelectedRole] = useState("");
 
   // Check if user can manage roles
   const canManageRoles = hasPermission('manage_roles') || authUser?.role === 'superadmin';
+
+  // Don't render anything until auth user is loaded
+  if (!authUser) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${
+        isDark ? "bg-gray-950" : "bg-gray-50"
+      }`}>
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <p className={`mt-4 ${isDark ? "text-gray-400" : "text-gray-600"}`}>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (canManageRoles) {
@@ -104,11 +119,39 @@ function RoleManagement() {
   };
 
   const handleManagePermissions = (user) => {
+    console.log('handleManagePermissions called for user:', user);
     setSelectedUser(user);
     // Get current user permissions (default role permissions + any custom ones)
     const defaultPerms = ROLE_PERMISSIONS[user.role] || [];
+    console.log('Default permissions:', defaultPerms);
     setCustomPermissions([...defaultPerms]);
     setShowPermissionModal(true);
+    console.log('showPermissionModal set to true');
+  };
+
+  const handleAssignRole = (user) => {
+    setSelectedUser(user);
+    setSelectedRole(user.role);
+    setShowRoleAssignmentModal(true);
+  };
+
+  const handleSaveRoleAssignment = async () => {
+    try {
+      const response = await axiosInstance.put(`/roles/users/${selectedUser.id}/role`, {
+        role: selectedRole,
+      });
+
+      if (response.data && response.data.success) {
+        showAlert("Success", "Role assigned successfully", "success");
+        setShowRoleAssignmentModal(false);
+        setSelectedUser(null);
+        setSelectedRole("");
+        fetchUsers(); // Refresh the users list
+      }
+    } catch (err) {
+      showAlert("Error", "Failed to assign role", "error");
+      console.error("Error assigning role:", err);
+    }
   };
 
   const handlePermissionToggle = (permission) => {
@@ -123,7 +166,7 @@ function RoleManagement() {
 
   const handleSavePermissions = async () => {
     try {
-      const response = await axiosInstance.put(`/users/${selectedUser.id}/permissions`, {
+      const response = await axiosInstance.put(`/roles/users/${selectedUser.id}/permissions`, {
         permissions: customPermissions,
       });
 
@@ -131,6 +174,7 @@ function RoleManagement() {
         showAlert("Success", "Permissions updated successfully", "success");
         setShowPermissionModal(false);
         setSelectedUser(null);
+        fetchUsers(); // Refresh the users list
       }
     } catch (err) {
       showAlert("Error", "Failed to update permissions", "error");
@@ -257,17 +301,6 @@ function RoleManagement() {
               <HiPlus className="w-5 h-5" />
               <span>Create Custom Role</span>
             </button>
-            <button
-              onClick={() => setShowAllPermissions(!showAllPermissions)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                isDark
-                  ? "bg-gray-700 text-white hover:bg-gray-600"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              {showAllPermissions ? <HiEyeSlash className="w-5 h-5" /> : <HiEye className="w-5 h-5" />}
-              <span>{showAllPermissions ? "Hide" : "Show"} All Permissions</span>
-            </button>
           </div>
 
           {/* Error Message */}
@@ -312,6 +345,9 @@ function RoleManagement() {
                         <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                           isDark ? "text-gray-300" : "text-gray-500"
                         }`}>Branch</th>
+                        <th className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          isDark ? "text-gray-300" : "text-gray-500"
+                        }`}>Permissions</th>
                         <th className={`px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
                           isDark ? "text-gray-300" : "text-gray-500"
                         }`}>Actions</th>
@@ -353,8 +389,24 @@ function RoleManagement() {
                               {user.branch || "N/A"}
                             </span>
                           </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <div className={`text-xs ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+                              {customPermissions.filter(p => user.permissions?.includes(p)).length} permissions
+                            </div>
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => handleAssignRole(user)}
+                                className={`p-2 rounded-lg ${
+                                  isDark
+                                    ? "text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
+                                    : "text-blue-600 hover:text-blue-900 hover:bg-blue-50"
+                                }`}
+                                title="Assign Role"
+                              >
+                                <HiUserGroup className="w-4 h-4" />
+                              </button>
                               <button
                                 onClick={() => handleManagePermissions(user)}
                                 className={`p-2 rounded-lg ${
@@ -417,6 +469,21 @@ function RoleManagement() {
                       <div className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
                         {permissions.length} permissions
                       </div>
+                      {permissions.length > 0 && (
+                        <div className={`mt-2 text-xs ${isDark ? "text-gray-500" : "text-gray-500"}`}>
+                          <div className="font-medium mb-1">Key permissions:</div>
+                          <ul className="space-y-1">
+                            {permissions.slice(0, 3).map((perm) => (
+                              <li key={perm} className="truncate">
+                                • {perm.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                              </li>
+                            ))}
+                            {permissions.length > 3 && (
+                              <li className="italic">... and {permissions.length - 3} more</li>
+                            )}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -654,8 +721,105 @@ function RoleManagement() {
           </div>
         </div>
       )}
+
+      {/* Role Assignment Modal */}
+      {showRoleAssignmentModal && selectedUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowRoleAssignmentModal(false)}
+          />
+          <div className={`relative w-full max-w-md rounded-xl shadow-2xl ${
+            isDark ? "bg-gray-800" : "bg-white"
+          }`}>
+            <div className={`px-6 py-4 border-b ${isDark ? "border-gray-700" : "border-gray-200"}`}>
+              <div className="flex items-center justify-between">
+                <h2 className={`text-xl font-semibold ${isDark ? "text-white" : "text-gray-800"}`}>
+                  Assign Role - {selectedUser.name || selectedUser.username}
+                </h2>
+                <button
+                  onClick={() => setShowRoleAssignmentModal(false)}
+                  className={`p-2 rounded-lg ${
+                    isDark
+                      ? "text-gray-400 hover:text-white hover:bg-gray-700"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                  }`}
+                >
+                  <HiXMark className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <label className={`block text-sm font-medium mb-2 ${
+                    isDark ? "text-gray-300" : "text-gray-700"
+                  }`}>
+                    Select Role
+                  </label>
+                  <select
+                    value={selectedRole}
+                    onChange={(e) => setSelectedRole(e.target.value)}
+                    className={`w-full px-3 py-2 rounded-lg border ${
+                      isDark
+                        ? "bg-gray-700 border-gray-600 text-white"
+                        : "bg-white border-gray-300 text-gray-900"
+                    } focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                  >
+                    <option value="">Select a role...</option>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                    <option value="superadmin">SuperAdmin</option>
+                    {Object.keys(customRoles).map(roleName => (
+                      <option key={roleName} value={roleName}>{roleName}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+                  <div className="font-medium mb-1">Current Role:</div>
+                  <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
+                    selectedUser.role === 'superadmin' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
+                    selectedUser.role === 'admin' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                    'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                  }`}>
+                    {selectedUser.role}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className={`px-6 py-4 border-t flex justify-end gap-3 ${
+              isDark ? "border-gray-700" : "border-gray-200"
+            }`}>
+              <button
+                onClick={() => setShowRoleAssignmentModal(false)}
+                className={`px-4 py-2 rounded-lg font-medium ${
+                  isDark
+                    ? "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveRoleAssignment}
+                disabled={!selectedRole || selectedRole === selectedUser.role}
+                className={`px-4 py-2 rounded-lg font-medium ${
+                  !selectedRole || selectedRole === selectedUser.role
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-blue-600 text-white hover:bg-blue-700"
+                }`}
+              >
+                Assign Role
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default RoleManagement;
