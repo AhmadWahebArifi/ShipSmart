@@ -2,7 +2,7 @@ import React from "react";
 import { useTheme } from "../context/ThemeContext";
 import { HiTruck } from "react-icons/hi2";
 
-const Loader = ({ showText = true, customText = null, size = "medium" }) => {
+const Loader = ({ showText = true, customText = null, size = "medium", color = "blue" }) => {
   const { isDark } = useTheme();
 
   const sizeClasses = {
@@ -23,7 +23,25 @@ const Loader = ({ showText = true, customText = null, size = "medium" }) => {
     },
   };
 
+  const colorClasses = {
+    blue: {
+      border: isDark ? "border-t-gray-400" : "border-t-blue-600",
+      bg: isDark ? "bg-gray-700/30" : "bg-blue-100",
+      icon: isDark ? "text-gray-300" : "text-blue-600",
+      dot: isDark ? "bg-gray-400" : "bg-blue-600",
+      text: isDark ? "text-gray-200" : "text-gray-800",
+    },
+    red: {
+      border: isDark ? "border-t-red-400" : "border-t-red-600",
+      bg: isDark ? "bg-red-900/30" : "bg-red-100",
+      icon: isDark ? "text-red-300" : "text-red-600",
+      dot: isDark ? "bg-red-400" : "bg-red-600",
+      text: isDark ? "text-red-200" : "text-red-800",
+    },
+  };
+
   const currentSize = sizeClasses[size] || sizeClasses.medium;
+  const currentColor = colorClasses[color] || colorClasses.blue;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -44,25 +62,17 @@ const Loader = ({ showText = true, customText = null, size = "medium" }) => {
         >
           {/* Outer rotating ring */}
           <div
-            className={`absolute inset-0 rounded-full border-4 border-transparent ${
-              isDark ? "border-t-gray-400" : "border-t-blue-600"
-            } animate-spin`}
+            className={`absolute inset-0 rounded-full border-4 border-transparent ${currentColor.border} animate-spin`}
           />
 
           {/* Inner pulsing circle */}
           <div
-            className={`absolute inset-2 rounded-full ${
-              isDark
-                ? "bg-gray-700/30 animate-pulse"
-                : "bg-blue-100 animate-pulse"
-            }`}
+            className={`absolute inset-2 rounded-full ${currentColor.bg} animate-pulse`}
           />
 
           {/* Truck Icon */}
           <div
-            className={`relative ${currentSize.icon} ${
-              isDark ? "text-gray-300" : "text-blue-600"
-            } animate-bounce`}
+            className={`relative ${currentSize.icon} ${currentColor.icon} animate-bounce`}
           >
             <HiTruck className="w-full h-full" />
           </div>
@@ -72,9 +82,7 @@ const Loader = ({ showText = true, customText = null, size = "medium" }) => {
         {showText && (
           <div className="mt-6 text-center">
             <p
-              className={`font-semibold ${currentSize.text} transition-colors ${
-                isDark ? "text-gray-200" : "text-gray-800"
-              }`}
+              className={`font-semibold ${currentSize.text} transition-colors ${currentColor.text}`}
             >
               {customText || "Loading..."}
             </p>
@@ -82,9 +90,7 @@ const Loader = ({ showText = true, customText = null, size = "medium" }) => {
               {[0, 1, 2].map((i) => (
                 <div
                   key={i}
-                  className={`w-2 h-2 rounded-full animate-pulse ${
-                    isDark ? "bg-gray-400" : "bg-blue-600"
-                  }`}
+                  className={`w-2 h-2 rounded-full animate-pulse ${currentColor.dot}`}
                   style={{
                     animationDelay: `${i * 0.2}s`,
                     animationDuration: "1.5s",

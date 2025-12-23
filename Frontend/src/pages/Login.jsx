@@ -23,15 +23,39 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [errorType, setErrorType] = useState(""); // New: to categorize errors
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setErrorType("");
     setLoading(true);
 
-    // Perform login immediately but don't navigate yet
+    // Client-side validation
+    if (!email.trim()) {
+      setError("Email is required");
+      setErrorType("validation");
+      setLoading(false);
+      return;
+    }
+
+    if (!password.trim()) {
+      setError("Password is required");
+      setErrorType("validation");
+      setLoading(false);
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(email.trim())) {
+      setError("Please enter a valid email address");
+      setErrorType("validation");
+      setLoading(false);
+      return;
+    }
+
+    // Perform login
     const result = await login(email, password);
 
     // Show loader for exactly 5 seconds total
@@ -44,8 +68,30 @@ function Login() {
         navigate("/dashboard");
       } else {
         setError(result.message || "Login failed");
+        setErrorType(getErrorType(result.message));
       }
     }, 5000);
+  };
+
+  // Helper function to categorize error types
+  const getErrorType = (errorMessage) => {
+    if (!errorMessage) return "unknown";
+    
+    const lowerMessage = errorMessage.toLowerCase();
+    
+    if (lowerMessage.includes("invalid email") || lowerMessage.includes("user not found")) {
+      return "credentials";
+    } else if (lowerMessage.includes("invalid password") || lowerMessage.includes("password")) {
+      return "credentials";
+    } else if (lowerMessage.includes("network") || lowerMessage.includes("connect") || lowerMessage.includes("server")) {
+      return "network";
+    } else if (lowerMessage.includes("validation") || lowerMessage.includes("required") || lowerMessage.includes("email")) {
+      return "validation";
+    } else if (lowerMessage.includes("database") || lowerMessage.includes("sql")) {
+      return "database";
+    } else {
+      return "general";
+    }
   };
 
   return (
@@ -108,18 +154,88 @@ function Login() {
             </p>
           </div>
 
-          {/* Error Message */}
+          {/* Enhanced Error Message */}
           {error && (
             <div
               className={`mb-6 p-4 rounded-lg border transition-all duration-300 ${
-                isDark
-                  ? "bg-red-900/30 border-red-700 text-red-300"
-                  : "bg-red-50 border-red-200 text-red-700"
+                errorType === 'network' 
+                  ? isDark 
+                    ? "bg-orange-900/30 border-orange-700 text-orange-300"
+                    : "bg-orange-50 border-orange-200 text-orange-700"
+                : errorType === 'validation'
+                  ? isDark
+                    ? "bg-yellow-900/30 border-yellow-700 text-yellow-300"
+                    : "bg-yellow-50 border-yellow-200 text-yellow-700"
+                : errorType === 'database'
+                  ? isDark
+                    ? "bg-purple-900/30 border-purple-700 text-purple-300"
+                    : "bg-purple-50 border-purple-200 text-purple-700"
+                  : isDark
+                    ? "bg-red-900/30 border-red-700 text-red-300"
+                    : "bg-red-50 border-red-200 text-red-700"
               }`}
             >
-              <div className="flex items-center gap-2">
-                <span className="font-semibold">Error:</span>
-                <span>{error}</span>
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 mt-0.5">
+                  {errorType === 'network' && (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                  {errorType === 'validation' && (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                  {errorType === 'database' && (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                  {(errorType === 'credentials' || errorType === 'general' || errorType === 'unknown') && (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold mb-1">
+                    {errorType === 'network' && 'Connection Error'}
+                    {errorType === 'validation' && 'Validation Error'}
+                    {errorType === 'database' && 'Database Error'}
+                    {errorType === 'credentials' && 'Authentication Error'}
+                    {(errorType === 'general' || errorType === 'unknown') && 'Login Error'}
+                  </div>
+                  <div className="text-sm opacity-90">{error}</div>
+                  
+                  {/* Helpful suggestions based on error type */}
+                  {errorType === 'network' && (
+                    <div className="mt-2 text-xs opacity-80">
+                      <p>• Check if the backend server is running on http://localhost:5000</p>
+                      <p>• Verify your internet connection</p>
+                      <p>• Try refreshing the page</p>
+                    </div>
+                  )}
+                  {errorType === 'credentials' && (
+                    <div className="mt-2 text-xs opacity-80">
+                      <p>• Double-check your email and password</p>
+                      <p>• Make sure Caps Lock is off</p>
+                      <p>• Contact your administrator if you forgot your credentials</p>
+                    </div>
+                  )}
+                  {errorType === 'validation' && (
+                    <div className="mt-2 text-xs opacity-80">
+                      <p>• Enter a valid email address</p>
+                      <p>• Make sure all fields are filled</p>
+                    </div>
+                  )}
+                  {errorType === 'database' && (
+                    <div className="mt-2 text-xs opacity-80">
+                      <p>• Database connection issue detected</p>
+                      <p>• Contact your system administrator</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -267,14 +383,26 @@ function Login() {
 
           {/* Default Credentials Hint */}
           <div
-            className={`mt-6 p-3 rounded-lg text-xs text-center transition-colors ${
+            className={`mt-6 p-3 rounded-lg text-center transition-colors ${
               isDark
                 ? "bg-blue-900/20 text-blue-400 border border-blue-800/50"
                 : "bg-blue-50 text-blue-700 border border-blue-200"
             }`}
           >
-            <p className="font-medium">{t("login.testCredentials")}:</p>
-            <p className="mt-1">{t("login.testEmail")}</p>
+            <p className="font-medium mb-2">{t("login.testCredentials")}:</p>
+            <div className="space-y-1 text-xs">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold">Super Admin:</span>
+                <span>superadmin@shipsmart.com</span>
+              </div>
+              <div className="text-xs opacity-75">Password: SuperAdmin123!</div>
+              <div className="mt-2 pt-2 border-t border-current/20">
+                <div className="flex justify-between items-center">
+                  <span className="font-semibold">Admin:</span>
+                  <span>{t("login.testEmail")}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
