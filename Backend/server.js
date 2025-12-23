@@ -27,6 +27,7 @@ app.use("/api/auth", require("./routes/auth"));
 app.use("/api/shipments", require("./routes/shipments"));
 app.use("/api/vehicles", require("./routes/vehicles"));
 app.use("/api/users", require("./routes/users"));
+app.use("/api/roles", require("./routes/roles"));
 app.use("/api/notifications", require("./routes/notifications"));
 app.use("/api/products", require("./routes/products")); // Products management
 app.use(
