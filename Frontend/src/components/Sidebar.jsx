@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import { useLoader } from "../context/LoaderContext";
 import {
   HiBars3,
   HiXMark,
@@ -27,6 +28,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
+  const { showLoaderWithText } = useLoader();
   const [activeItem, setActiveItem] = useState(location.pathname);
 
   const menuItems = [
@@ -94,8 +96,14 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
   };
 
   const handleLogout = () => {
-    logout();
-    navigate("/login");
+    // Show red loader for 3 seconds
+    showLoaderWithText("Goodbye!", 3000, "red");
+    
+    // Perform logout after a short delay
+    setTimeout(() => {
+      logout();
+      navigate("/login");
+    }, 500);
   };
 
   return (
