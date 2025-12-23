@@ -13,14 +13,17 @@ export const useLoader = () => {
 export const LoaderProvider = ({ children }) => {
   const [showLoader, setShowLoader] = useState(false);
   const [loaderText, setLoaderText] = useState("Loading...");
+  const [loaderColor, setLoaderColor] = useState("blue");
 
-  const showLoaderWithText = (text = "Loading...", duration = 2000) => {
+  const showLoaderWithText = (text = "Loading...", duration = 2000, color = "blue") => {
     setLoaderText(text);
+    setLoaderColor(color);
     setShowLoader(true);
 
     if (duration > 0) {
       setTimeout(() => {
         setShowLoader(false);
+        setLoaderColor("blue"); // Reset to default
       }, duration);
     }
   };
@@ -34,6 +37,7 @@ export const LoaderProvider = ({ children }) => {
       value={{
         showLoader,
         loaderText,
+        loaderColor,
         showLoaderWithText,
         hideLoader,
       }}
