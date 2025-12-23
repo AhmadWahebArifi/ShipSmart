@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { requireRole } = require('../middleware/rolePermission');
-const { authenticateToken } = require('../middleware/auth');
+const authenticateToken = require('../middleware/auth');
 
 // Apply authentication middleware to all routes
 router.use(authenticateToken);
@@ -9,7 +9,7 @@ router.use(authenticateToken);
 // Get all custom roles
 router.get('/custom', requireRole(['superadmin', 'admin']), async (req, res) => {
   try {
-    // For now, return empty array since we don't have custom roles table yet
+    // For now, return empty object since we don't have custom roles table yet
     // This can be extended later to store custom roles in database
     res.json({
       success: true,
