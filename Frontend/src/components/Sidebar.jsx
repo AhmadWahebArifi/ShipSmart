@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { useLoader } from "../context/LoaderContext";
+import { usePermission } from "../context/PermissionContext";
 import {
   HiBars3,
   HiXMark,
@@ -20,6 +21,7 @@ import {
   HiUserGroup,
   HiShoppingBag,
   HiDocumentText,
+  HiKey,
 } from "react-icons/hi2";
 
 const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
@@ -29,6 +31,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
   const { user, logout } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const { showLoaderWithText } = useLoader();
+  const { hasPermission } = usePermission();
   const [activeItem, setActiveItem] = useState(location.pathname);
 
   const menuItems = [
@@ -37,50 +40,89 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
       label: t("sidebar.dashboard"),
       icon: HiHome,
       path: "/dashboard",
+      permission: "view_dashboard",
     },
     {
       id: "shipments",
       label: t("sidebar.shipments"),
       icon: HiCube,
       path: "/shipments",
+      permission: "view_shipments",
     },
     {
       id: "products",
       label: t("sidebar.products"),
       icon: HiShoppingBag,
       path: "/products",
+      permission: "view_products",
     },
-    { id: "routes", label: t("sidebar.routes"), icon: HiMap, path: "/routes" },
+    { 
+      id: "routes", 
+      label: t("sidebar.routes"), 
+      icon: HiMap, 
+      path: "/routes",
+      permission: "view_routes",
+    },
     {
       id: "vehicles",
       label: t("sidebar.vehicles"),
       icon: HiTruck,
       path: "/vehicles",
+      permission: "view_vehicles",
     },
     {
       id: "analytics",
       label: t("sidebar.analytics"),
       icon: HiChartBar,
       path: "/analytics",
+      permission: "view_analytics",
     },
-    { id: "admin", label: t("sidebar.profile"), icon: HiUser, path: "/admin" },
+    { 
+      id: "admin", 
+      label: t("sidebar.profile"), 
+      icon: HiUser, 
+      path: "/admin" 
+    },
   ];
 
-  // Add User Management link for admin users
-  if (user && (user.role === "admin" || user.role === "superadmin")) {
-    menuItems.splice(5, 0, {
+  // Add User Management link for admin users with permission
+  if (user && hasPermission('view_users')) {
+    menuItems.splice(menuItems.length - 1, 0, {
       id: "users",
       label: t("sidebar.users"),
       icon: HiUserGroup,
       path: "/users",
+      permission: "view_users",
     });
-    menuItems.splice(6, 0, {
+  }
+
+  // Add Role Management link for users with manage_roles permission
+  if (user && hasPermission('manage_roles')) {
+    menuItems.splice(menuItems.length - 1, 0, {
+      id: "role-management",
+      label: "Role Management",
+      icon: HiKey,
+      path: "/role-management",
+      permission: "manage_roles",
+    });
+  }
+
+  // Add Audit Logs link for admin users with permission
+  if (user && hasPermission('view_audit_logs')) {
+    menuItems.splice(menuItems.length - 1, 0, {
       id: "audit-logs",
       label: t("sidebar.auditLogs"),
       icon: HiDocumentText,
       path: "/admin/audit-logs",
+      permission: "view_audit_logs",
     });
   }
+
+  // Filter menu items based on permissions
+  const filteredMenuItems = menuItems.filter(item => {
+    // If no permission is required or user has the permission, show the item
+    return !item.permission || hasPermission(item.permission);
+  });
 
   const handleNavigation = (path, e) => {
     // Prevent event propagation to avoid closing sidebar on mobile
@@ -96,14 +138,19 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
   };
 
   const handleLogout = () => {
-    // Show red loader for 3 seconds
-    showLoaderWithText("Goodbye!", 3000, "red");
+    // Close sidebar immediately
+    onClose();
     
-    // Perform logout after a short delay
+    // Show red loader after a short delay to ensure sidebar is closed
     setTimeout(() => {
-      logout();
-      navigate("/login");
-    }, 500);
+      showLoaderWithText("Goodbye!", 3000, "red");
+      
+      // Perform logout after loader is visible
+      setTimeout(() => {
+        logout();
+        navigate("/login");
+      }, 500);
+    }, 300);
   };
 
   return (
@@ -201,7 +248,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-4 px-2">
           <ul className="space-y-1">
-            {menuItems.map((item) => {
+            {filteredMenuItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeItem === item.path;
 
