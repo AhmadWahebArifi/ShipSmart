@@ -201,6 +201,7 @@ export const PermissionProvider = ({ children }) => {
       value={{
         userPermissions,
         customPermissions,
+        ROLE_PERMISSIONS,
         setPermissionsForRole,
         hasPermission,
         hasAnyPermission,
