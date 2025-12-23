@@ -202,7 +202,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
             </div>
             {!isCollapsed && (
               <h2
-                className={`text-xl font-bold transition-all duration-300 ${
+                className={`text-lg font-bold transition-all duration-300 ${
                   isCollapsed ? "opacity-0 w-0" : "opacity-100"
                 } ${isDark ? "text-white" : "text-gray-900"}`}
               >
@@ -246,8 +246,14 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto py-4 px-2">
-          <ul className="space-y-1">
+        <nav className="flex-1 overflow-y-auto py-3 px-2">
+          <ul className="space-y-0.5">
+            {/* Horizontal Bar - Main Navigation */}
+            <li className={`px-3 py-1 text-xs font-semibold uppercase tracking-wider ${
+              isDark ? "text-gray-500" : "text-gray-400"
+            }`}>
+              {!isCollapsed && "Main"}
+            </li>
             {filteredMenuItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeItem === item.path;
@@ -257,7 +263,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
                   <button
                     onClick={(e) => handleNavigation(item.path, e)}
                     onMouseDown={(e) => e.stopPropagation()}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 group ${
                       isCollapsed ? "justify-center" : ""
                     } ${
                       isActive
@@ -271,13 +277,13 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
                     title={isCollapsed ? item.label : ""}
                   >
                     <Icon
-                      className={`w-5 h-5 flex-shrink-0 transition-transform ${
+                      className={`w-4 h-4 flex-shrink-0 transition-transform ${
                         isActive ? "scale-110" : "group-hover:scale-110"
                       }`}
                     />
                     {!isCollapsed && (
                       <span
-                        className={`font-medium transition-all duration-300 ${
+                        className={`text-sm font-medium transition-all duration-300 ${
                           isCollapsed
                             ? "opacity-0 w-0 -translate-x-4"
                             : "opacity-100 translate-x-0"
@@ -287,7 +293,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
                       </span>
                     )}
                     {isActive && !isCollapsed && (
-                      <HiArrowRightOnRectangle className="w-4 h-4 ml-auto transform rotate-90 transition-all duration-300" />
+                      <HiArrowRightOnRectangle className="w-3 h-3 ml-auto transform rotate-90 transition-all duration-300" />
                     )}
                   </button>
                 </li>
@@ -298,15 +304,22 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
 
         {/* Settings & User Section */}
         <div
-          className={`border-t p-4 space-y-2 ${
+          className={`border-t p-3 space-y-1 ${
             isDark ? "border-gray-800" : "border-gray-200"
           }`}
         >
+          {/* Horizontal Bar - Settings */}
+          <li className={`px-3 py-1 text-xs font-semibold uppercase tracking-wider list-none ${
+            isDark ? "text-gray-500" : "text-gray-400"
+          }`}>
+            {!isCollapsed && "Settings"}
+          </li>
+          
           {/* Settings */}
           <button
             onClick={(e) => handleNavigation("/settings", e)}
             onMouseDown={(e) => e.stopPropagation()}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
+            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
               isCollapsed ? "justify-center" : ""
             } ${
               isDark
@@ -315,10 +328,10 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
             }`}
             title={isCollapsed ? "Settings" : ""}
           >
-            <HiCog6Tooth className="w-5 h-5 flex-shrink-0" />
+            <HiCog6Tooth className="w-4 h-4 flex-shrink-0" />
             {!isCollapsed && (
               <span
-                className={`font-medium transition-all duration-300 ${
+                className={`text-sm font-medium transition-all duration-300 ${
                   isCollapsed ? "opacity-0 w-0" : "opacity-100"
                 }`}
               >
@@ -330,11 +343,17 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
           {/* User Info */}
           {!isCollapsed && user && (
             <div
-              className={`mt-4 pt-4 border-t ${
+              className={`mt-2 pt-2 border-t ${
                 isDark ? "border-gray-800" : "border-gray-200"
               }`}
             >
-              <div className="flex items-center gap-3 mb-3">
+              {/* Horizontal Bar - User */}
+              <div className={`px-3 py-1 text-xs font-semibold uppercase tracking-wider ${
+                isDark ? "text-gray-500" : "text-gray-400"
+              }`}>
+                User
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2">
                 {user.profile_pic &&
                 user.profile_pic.trim() !== "" &&
                 user.profile_pic !== "null" &&
@@ -349,14 +368,14 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
                     )}`} // Force re-render when profile_pic changes
                     src={user.profile_pic}
                     alt={user.name || user.username || "User"}
-                    className="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
+                    className="w-8 h-8 rounded-full object-cover border-2 border-blue-500"
                     onError={(e) => {
                       // Hide broken image and show fallback
                       e.target.style.display = "none";
                       const parent = e.target.parentElement;
                       if (!parent.querySelector(".profile-fallback")) {
                         const fallback = document.createElement("div");
-                        fallback.className = `profile-fallback w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
+                        fallback.className = `profile-fallback w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs ${
                           isDark
                             ? "bg-blue-600/20 text-blue-400"
                             : "bg-blue-100 text-blue-600"
@@ -371,7 +390,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
                   />
                 ) : (
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs ${
                       isDark
                         ? "bg-blue-600/20 text-blue-400"
                         : "bg-blue-100 text-blue-600"
@@ -383,7 +402,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
                 )}
                 <div className="flex-1 min-w-0">
                   <p
-                    className={`font-medium text-sm truncate capitalize ${
+                    className={`font-medium text-xs truncate capitalize ${
                       isDark ? "text-white" : "text-gray-900"
                     }`}
                   >
@@ -418,14 +437,14 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
                   )}`} // Force re-render when profile_pic changes
                   src={user.profile_pic}
                   alt={user.name || user.username || "User"}
-                  className="w-10 h-10 rounded-full object-cover border-2 border-blue-500"
+                  className="w-8 h-8 rounded-full object-cover border-2 border-blue-500"
                   onError={(e) => {
                     // Hide broken image and show fallback
                     e.target.style.display = "none";
                     const parent = e.target.parentElement;
                     if (!parent.querySelector(".profile-fallback")) {
                       const fallback = document.createElement("div");
-                      fallback.className = `profile-fallback w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
+                      fallback.className = `profile-fallback w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs ${
                         isDark
                           ? "bg-blue-600/20 text-blue-400"
                           : "bg-blue-100 text-blue-600"
@@ -439,7 +458,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
                 />
               ) : (
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
+                  className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold text-xs ${
                     isDark
                       ? "bg-blue-600/20 text-blue-400"
                       : "bg-blue-100 text-blue-600"
@@ -454,7 +473,7 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
           {/* Logout */}
           <button
             onClick={handleLogout}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
+            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
               isCollapsed ? "justify-center" : ""
             } ${
               isDark
@@ -463,10 +482,10 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
             }`}
             title={isCollapsed ? "Logout" : ""}
           >
-            <HiArrowRightOnRectangle className="w-5 h-5 flex-shrink-0" />
+            <HiArrowRightOnRectangle className="w-4 h-4 flex-shrink-0" />
             {!isCollapsed && (
               <span
-                className={`font-medium transition-all duration-300 ${
+                className={`text-sm font-medium transition-all duration-300 ${
                   isCollapsed ? "opacity-0 w-0" : "opacity-100"
                 }`}
               >
