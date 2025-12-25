@@ -301,80 +301,84 @@ function Admin() {
             </div>
 
             {/* Personal Info Display */}
-            <div className="space-y-4">
+            <div className="space-y-6">
               {/* Name */}
-              <div>
-                <label
-                  className={`block text-sm font-medium mb-2 ${
-                    isDark ? "text-gray-300" : "text-gray-700"
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <HiUser className="w-4 h-4" />
-                    {t("profile.fullName")}
+              <div className="group relative">
+                <div className="flex items-start gap-4 p-4 rounded-xl transition-all duration-300 hover:shadow-md">
+                  <div className={`p-3 rounded-lg transition-all duration-300 ${
+                    isDark 
+                      ? "bg-blue-600/20 text-blue-400 group-hover:bg-blue-600/30" 
+                      : "bg-blue-100 text-blue-600 group-hover:bg-blue-200"
+                  }`}>
+                    <HiUser className="w-6 h-6" />
                   </div>
-                </label>
-                <div
-                  className={`w-full px-4 py-3 rounded-lg border ${
-                    isDark
-                      ? "bg-gray-700/50 border-gray-600 text-white"
-                      : "bg-gray-50 border-gray-300 text-gray-900"
-                  }`}
-                >
-                  {authUser?.name || t("common.notSet", "Not set")}
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-medium mb-1 ${
+                      isDark ? "text-gray-400" : "text-gray-600"
+                    }`}>
+                      {t("profile.fullName")}
+                    </p>
+                    <p className={`text-lg font-semibold ${
+                      isDark ? "text-white" : "text-gray-900"
+                    }`}>
+                      {authUser?.name || t("common.notSet", "Not set")}
+                    </p>
+                  </div>
                 </div>
               </div>
 
               {/* Email (Read-only) */}
-              <div>
-                <label
-                  className={`block text-sm font-medium mb-2 ${
-                    isDark ? "text-gray-300" : "text-gray-700"
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <HiEnvelope className="w-4 h-4" />
-                    {t("profile.email")}
+              <div className="group relative">
+                <div className="flex items-start gap-4 p-4 rounded-xl transition-all duration-300 hover:shadow-md">
+                  <div className={`p-3 rounded-lg transition-all duration-300 ${
+                    isDark 
+                      ? "bg-gray-600/20 text-gray-400 group-hover:bg-gray-600/30" 
+                      : "bg-gray-100 text-gray-600 group-hover:bg-gray-200"
+                  }`}>
+                    <HiEnvelope className="w-6 h-6" />
                   </div>
-                </label>
-                <div
-                  className={`w-full px-4 py-3 rounded-lg border ${
-                    isDark
-                      ? "bg-gray-700/50 border-gray-600 text-gray-400"
-                      : "bg-gray-50 border-gray-300 text-gray-500"
-                  }`}
-                >
-                  {authUser?.email || t("common.notSet", "Not set")}
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-medium mb-1 ${
+                      isDark ? "text-gray-400" : "text-gray-600"
+                    }`}>
+                      {t("profile.email")}
+                    </p>
+                    <p className={`text-lg font-medium ${
+                      isDark ? "text-gray-300" : "text-gray-700"
+                    }`}>
+                      {authUser?.email || t("common.notSet", "Not set")}
+                    </p>
+                    <p className={`text-xs mt-1 ${
+                      isDark ? "text-gray-500" : "text-gray-400"
+                    }`}>
+                      {t("profile.emailReadonly")}
+                    </p>
+                  </div>
                 </div>
-                <p
-                  className={`text-xs mt-1 ${
-                    isDark ? "text-gray-500" : "text-gray-400"
-                  }`}
-                >
-                  {t("profile.emailReadonly")}
-                </p>
               </div>
 
               {/* Address */}
-              <div>
-                <label
-                  className={`block text-sm font-medium mb-2 ${
-                    isDark ? "text-gray-300" : "text-gray-700"
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <HiMapPin className="w-4 h-4" />
-                    {t("profile.address")}
+              <div className="group relative">
+                <div className="flex items-start gap-4 p-4 rounded-xl transition-all duration-300 hover:shadow-md">
+                  <div className={`p-3 rounded-lg transition-all duration-300 ${
+                    isDark 
+                      ? "bg-green-600/20 text-green-400 group-hover:bg-green-600/30" 
+                      : "bg-green-100 text-green-600 group-hover:bg-green-200"
+                  }`}>
+                    <HiMapPin className="w-6 h-6" />
                   </div>
-                </label>
-                <div
-                  className={`w-full px-4 py-3 rounded-lg border min-h-[60px] ${
-                    isDark
-                      ? "bg-gray-700/50 border-gray-600 text-white"
-                      : "bg-gray-50 border-gray-300 text-gray-900"
-                  }`}
-                >
-                  {authUser?.address || t("common.notSet", "Not set")}
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-medium mb-1 ${
+                      isDark ? "text-gray-400" : "text-gray-600"
+                    }`}>
+                      {t("profile.address")}
+                    </p>
+                    <p className={`text-lg font-medium whitespace-pre-wrap ${
+                      isDark ? "text-white" : "text-gray-900"
+                    }`}>
+                      {authUser?.address || t("common.notSet", "Not set")}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
