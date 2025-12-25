@@ -81,7 +81,8 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
       id: "admin", 
       label: t("sidebar.profile"), 
       icon: HiUser, 
-      path: "/admin" 
+      path: "/admin",
+      permission: "view_profile",
     },
   ];
 
@@ -309,36 +310,40 @@ const Sidebar = ({ isOpen, onClose, isCollapsed, onToggleCollapse }) => {
           }`}
         >
           {/* Horizontal Bar - Settings */}
-          <li className={`px-3 py-1 text-xs font-semibold uppercase tracking-wider list-none ${
-            isDark ? "text-gray-500" : "text-gray-400"
-          }`}>
-            {!isCollapsed && "Settings"}
-          </li>
+          {hasPermission('manage_settings') && (
+            <li className={`px-3 py-1 text-xs font-semibold uppercase tracking-wider list-none ${
+              isDark ? "text-gray-500" : "text-gray-400"
+            }`}>
+              {!isCollapsed && "Settings"}
+            </li>
+          )}
           
           {/* Settings */}
-          <button
-            onClick={(e) => handleNavigation("/settings", e)}
-            onMouseDown={(e) => e.stopPropagation()}
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
-              isCollapsed ? "justify-center" : ""
-            } ${
-              isDark
-                ? "text-gray-400 hover:text-white hover:bg-gray-800/50"
-                : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-            }`}
-            title={isCollapsed ? "Settings" : ""}
-          >
-            <HiCog6Tooth className="w-4 h-4 flex-shrink-0" />
-            {!isCollapsed && (
-              <span
-                className={`text-sm font-medium transition-all duration-300 ${
-                  isCollapsed ? "opacity-0 w-0" : "opacity-100"
-                }`}
-              >
-                {t("sidebar.settings")}
-              </span>
-            )}
-          </button>
+          {hasPermission('manage_settings') && (
+            <button
+              onClick={(e) => handleNavigation("/settings", e)}
+              onMouseDown={(e) => e.stopPropagation()}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
+                isCollapsed ? "justify-center" : ""
+              } ${
+                isDark
+                  ? "text-gray-400 hover:text-white hover:bg-gray-800/50"
+                  : "text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+              }`}
+              title={isCollapsed ? "Settings" : ""}
+            >
+              <HiCog6Tooth className="w-4 h-4 flex-shrink-0" />
+              {!isCollapsed && (
+                <span
+                  className={`text-sm font-medium transition-all duration-300 ${
+                    isCollapsed ? "opacity-0 w-0" : "opacity-100"
+                  }`}
+                >
+                  {t("sidebar.settings")}
+                </span>
+              )}
+            </button>
+          )}
 
           {/* User Info */}
           {!isCollapsed && user && (
