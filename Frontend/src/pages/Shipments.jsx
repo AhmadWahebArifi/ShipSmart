@@ -558,8 +558,8 @@ const Shipments = () => {
                     </div>
                   ) : (
                     <>
-                      {/* Desktop Table View */}
-                      <div className="hidden lg:block overflow-x-auto">
+                      {/* Desktop & Large Tablet Table View */}
+                      <div className="hidden md:block overflow-x-auto">
                         <table className="min-w-full border-collapse">
                           <thead
                             className={`uppercase text-sm ${
@@ -569,34 +569,34 @@ const Shipments = () => {
                             }`}
                           >
                             <tr>
-                              <th className="p-3 text-left">
+                              <th className="p-3 text-left min-w-[120px]">
                                 {t("shipments.table.trackingNumber")}
                               </th>
-                              <th className="p-3 text-left">
+                              <th className="p-3 text-left min-w-[100px]">
                                 {t("shipments.table.from")}
                               </th>
-                              <th className="p-3 text-left">
+                              <th className="p-3 text-left min-w-[100px]">
                                 {t("shipments.table.to")}
                               </th>
-                              <th className="p-3 text-left">
+                              <th className="p-3 text-left min-w-[80px]">
                                 {t("shipments.table.route")}
                               </th>
-                              <th className="p-3 text-left">
+                              <th className="p-3 text-left min-w-[120px] hidden xl:table-cell">
                                 {t("shipments.table.expectedDeparture")}
                               </th>
-                              <th className="p-3 text-left">
+                              <th className="p-3 text-left min-w-[120px] hidden xl:table-cell">
                                 {t("shipments.table.expectedArrival")}
                               </th>
-                              <th className="p-3 text-left">
+                              <th className="p-3 text-left min-w-[100px]">
                                 {t("shipments.table.status")}
                               </th>
-                              <th className="p-3 text-left">
+                              <th className="p-3 text-left min-w-[100px] hidden lg:table-cell">
                                 {t("shipments.table.created")}
                               </th>
-                              <th className="p-3 text-left">
+                              <th className="p-3 text-left min-w-[100px] hidden lg:table-cell">
                                 {t("shipments.table.vehicle")}
                               </th>
-                              <th className="p-3 text-left">
+                              <th className="p-3 text-left min-w-[120px]">
                                 {t("shipments.table.actions")}
                               </th>
                             </tr>
@@ -617,21 +617,24 @@ const Shipments = () => {
                                     isDark ? "text-blue-400" : "text-blue-600"
                                   }`}
                                 >
-                                  {shipment.tracking_number}
+                                  <div className="flex items-center gap-2">
+                                    <HiCube className="w-4 h-4" />
+                                    <span className="truncate">{shipment.tracking_number}</span>
+                                  </div>
                                 </td>
                                 <td
                                   className={`p-3 ${
                                     isDark ? "text-gray-300" : "text-gray-700"
                                   }`}
                                 >
-                                  {shipment.from_province}
+                                  <span className="truncate block">{shipment.from_province}</span>
                                 </td>
                                 <td
                                   className={`p-3 ${
                                     isDark ? "text-gray-300" : "text-gray-700"
                                   }`}
                                 >
-                                  {shipment.to_province}
+                                  <span className="truncate block">{shipment.to_province}</span>
                                 </td>
                                 <td
                                   className={`p-3 ${
@@ -664,7 +667,7 @@ const Shipments = () => {
                                 <td
                                   className={`p-3 ${
                                     isDark ? "text-gray-300" : "text-gray-700"
-                                  }`}
+                                  } hidden xl:table-cell`}
                                 >
                                   {shipment.expected_departure_date
                                     ? new Date(
@@ -675,7 +678,7 @@ const Shipments = () => {
                                 <td
                                   className={`p-3 ${
                                     isDark ? "text-gray-300" : "text-gray-700"
-                                  }`}
+                                  } hidden xl:table-cell`}
                                 >
                                   {shipment.expected_arrival_date
                                     ? new Date(
@@ -703,12 +706,31 @@ const Shipments = () => {
                                       : "text-blue-600"
                                   }`}
                                 >
-                                  {t(`shipments.status.${shipment.status}`)}
+                                  <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                    shipment.status === "delivered"
+                                      ? isDark
+                                        ? "bg-green-900/30 border border-green-700"
+                                        : "bg-green-100 border border-green-200"
+                                      : shipment.status === "in_progress" ||
+                                        shipment.status === "on_route"
+                                      ? isDark
+                                        ? "bg-yellow-900/30 border border-yellow-700"
+                                        : "bg-yellow-100 border border-yellow-200"
+                                      : shipment.status === "canceled"
+                                      ? isDark
+                                        ? "bg-red-900/30 border border-red-700"
+                                        : "bg-red-100 border border-red-200"
+                                      : isDark
+                                      ? "bg-blue-900/30 border border-blue-700"
+                                      : "bg-blue-100 border border-blue-200"
+                                  }`}>
+                                    {t(`shipments.status.${shipment.status}`)}
+                                  </span>
                                 </td>
                                 <td
                                   className={`p-3 ${
                                     isDark ? "text-gray-300" : "text-gray-700"
-                                  }`}
+                                  } hidden lg:table-cell`}
                                 >
                                   {new Date(
                                     shipment.created_at
@@ -717,19 +739,19 @@ const Shipments = () => {
                                 <td
                                   className={`p-3 ${
                                     isDark ? "text-gray-300" : "text-gray-700"
-                                  }`}
+                                  } hidden lg:table-cell`}
                                 >
                                   {shipment.vehicle ? (
                                     <div className="flex items-center gap-1">
                                       <HiTruck className="w-4 h-4" />
-                                      <span>{shipment.vehicle.vehicle_id}</span>
+                                      <span className="truncate">{shipment.vehicle.vehicle_id}</span>
                                     </div>
                                   ) : (
                                     "-"
                                   )}
                                 </td>
                                 <td className="p-3">
-                                  <div className="flex space-x-2">
+                                  <div className="flex flex-wrap gap-1">
                                     {/* Status Change Dropdown */}
                                     <select
                                       value={shipment.status}
@@ -739,7 +761,7 @@ const Shipments = () => {
                                           e.target.value
                                         )
                                       }
-                                      className={`border rounded px-2 py-1 text-sm ${
+                                      className={`border rounded px-2 py-1 text-xs min-w-[100px] ${
                                         isDark
                                           ? "bg-gray-700 border-gray-600 text-white"
                                           : "bg-white border-gray-300 text-gray-900"
@@ -762,63 +784,66 @@ const Shipments = () => {
                                       </option>
                                     </select>
 
-                                    {/* View Button */}
-                                    <button
-                                      onClick={() => handleViewShipment(shipment)}
-                                      className={`p-1 rounded ${
-                                        isDark
-                                          ? "text-green-400 hover:bg-gray-600"
-                                          : "text-green-600 hover:bg-gray-200"
-                                      }`}
-                                      title="View Details"
-                                    >
-                                      <HiEye className="w-4 h-4" />
-                                    </button>
+                                    {/* Action Buttons */}
+                                    <div className="flex gap-1">
+                                      {/* View Button */}
+                                      <button
+                                        onClick={() => handleViewShipment(shipment)}
+                                        className={`p-1.5 rounded ${
+                                          isDark
+                                            ? "text-green-400 hover:bg-gray-600"
+                                            : "text-green-600 hover:bg-gray-200"
+                                        }`}
+                                        title="View Details"
+                                      >
+                                        <HiEye className="w-4 h-4" />
+                                      </button>
 
-                                    {/* Print Button */}
-                                    <button
-                                      onClick={() => handlePrintShipment(shipment)}
-                                      className={`p-1 rounded ${
-                                        isDark
-                                          ? "text-purple-400 hover:bg-gray-600"
-                                          : "text-purple-600 hover:bg-gray-200"
-                                      }`}
-                                      title={t("common.print")}
-                                    >
-                                      <HiPrinter className="w-4 h-4" />
-                                    </button>
+                                      {/* Print Button */}
+                                      <button
+                                        onClick={() => handlePrintShipment(shipment)}
+                                        className={`p-1.5 rounded ${
+                                          isDark
+                                            ? "text-purple-400 hover:bg-gray-600"
+                                            : "text-purple-600 hover:bg-gray-200"
+                                        }`}
+                                        title={t("common.print")}
+                                      >
+                                        <HiPrinter className="w-4 h-4" />
+                                      </button>
 
-                                    {/* Edit Button */}
-                                    {shipment.status !== "delivered" &&
-                                      shipment.status !== "on_route" &&
-                                      shipment.status !== "canceled" && (
-                                        <button
-                                          onClick={() => openEditModal(shipment)}
-                                          className={`p-1 rounded ${
-                                            isDark
-                                              ? "text-blue-400 hover:bg-gray-600"
-                                              : "text-blue-600 hover:bg-gray-200"
-                                          }`}
-                                          title={t("common.edit")}
-                                        >
-                                          <HiPencil className="w-4 h-4" />
-                                        </button>
-                                      )}
+                                      {/* Edit Button */}
+                                      {shipment.status !== "delivered" &&
+                                        shipment.status !== "on_route" &&
+                                        shipment.status !== "canceled" && (
+                                          <button
+                                            onClick={() => openEditModal(shipment)}
+                                            className={`p-1.5 rounded ${
+                                              isDark
+                                                ? "text-blue-400 hover:bg-gray-600"
+                                                : "text-blue-600 hover:bg-gray-200"
+                                            }`}
+                                            title={t("common.edit")}
+                                          >
+                                            <HiPencil className="w-4 h-4" />
+                                          </button>
+                                        )}
 
-                                    {/* Delete Button */}
-                                    <button
-                                      onClick={() =>
-                                        handleDeleteShipment(shipment.id)
-                                      }
-                                      className={`p-1 rounded ${
-                                        isDark
-                                          ? "text-red-400 hover:bg-gray-600"
-                                          : "text-red-600 hover:bg-gray-200"
-                                      }`}
-                                      title={t("common.delete")}
-                                    >
-                                      <HiTrash className="w-4 h-4" />
-                                    </button>
+                                      {/* Delete Button */}
+                                      <button
+                                        onClick={() =>
+                                          handleDeleteShipment(shipment.id)
+                                        }
+                                        className={`p-1.5 rounded ${
+                                          isDark
+                                            ? "text-red-400 hover:bg-gray-600"
+                                            : "text-red-600 hover:bg-gray-200"
+                                        }`}
+                                        title={t("common.delete")}
+                                      >
+                                        <HiTrash className="w-4 h-4" />
+                                      </button>
+                                    </div>
                                   </div>
                                 </td>
                               </tr>
@@ -827,8 +852,8 @@ const Shipments = () => {
                         </table>
                       </div>
 
-                      {/* Mobile Card View */}
-                      <div className="lg:hidden space-y-4">
+                      {/* Tablet & Mobile Card View */}
+                      <div className="md:hidden space-y-4">
                         {shipments.map((shipment) => (
                           <div
                             key={shipment.id}
@@ -841,13 +866,13 @@ const Shipments = () => {
                           >
                             {/* Header with tracking number and status */}
                             <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center gap-2">
-                                <HiCube className={`w-5 h-5 ${isDark ? "text-blue-400" : "text-blue-600"}`} />
-                                <span className={`font-semibold text-sm ${isDark ? "text-blue-400" : "text-blue-600"}`}>
+                              <div className="flex items-center gap-2 min-w-0 flex-1">
+                                <HiCube className={`w-5 h-5 flex-shrink-0 ${isDark ? "text-blue-400" : "text-blue-600"}`} />
+                                <span className={`font-semibold text-sm truncate ${isDark ? "text-blue-400" : "text-blue-600"}`}>
                                   {shipment.tracking_number}
                                 </span>
                               </div>
-                              <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                              <span className={`px-2 py-1 rounded-full text-xs font-semibold flex-shrink-0 ${
                                 shipment.status === "delivered"
                                   ? isDark
                                     ? "bg-green-900/30 text-green-400 border border-green-700"
@@ -872,24 +897,24 @@ const Shipments = () => {
                             {/* Route Information */}
                             <div className="space-y-2 mb-3">
                               <div className="flex items-center justify-between">
-                                <span className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+                                <span className={`text-xs sm:text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
                                   {t("shipments.table.from")}
                                 </span>
-                                <span className={`text-sm font-medium ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                                <span className={`text-xs sm:text-sm font-medium text-right ${isDark ? "text-gray-300" : "text-gray-700"} max-w-[50%] truncate`}>
                                   {shipment.from_province}
                                 </span>
                               </div>
                               <div className="flex items-center justify-between">
-                                <span className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+                                <span className={`text-xs sm:text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
                                   {t("shipments.table.to")}
                                 </span>
-                                <span className={`text-sm font-medium ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                                <span className={`text-xs sm:text-sm font-medium text-right ${isDark ? "text-gray-300" : "text-gray-700"} max-w-[50%] truncate`}>
                                   {shipment.to_province}
                                 </span>
                               </div>
                               {shipment.route_info && (
                                 <div className="flex items-center justify-between">
-                                  <span className={`text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+                                  <span className={`text-xs sm:text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
                                     {t("shipments.table.route")}
                                   </span>
                                   <button
@@ -907,45 +932,45 @@ const Shipments = () => {
                               )}
                             </div>
 
-                            {/* Dates and Vehicle */}
+                            {/* Dates and Vehicle - Responsive Grid */}
                             <div className="grid grid-cols-2 gap-2 mb-3 text-xs">
-                              <div>
+                              <div className="min-w-0">
                                 <span className={`block ${isDark ? "text-gray-400" : "text-gray-600"}`}>
                                   {t("shipments.table.expectedDeparture")}
                                 </span>
-                                <span className={`block font-medium ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                                <span className={`block font-medium truncate ${isDark ? "text-gray-300" : "text-gray-700"}`}>
                                   {shipment.expected_departure_date
                                     ? new Date(shipment.expected_departure_date).toLocaleDateString()
                                     : "-"}
                                 </span>
                               </div>
-                              <div>
+                              <div className="min-w-0">
                                 <span className={`block ${isDark ? "text-gray-400" : "text-gray-600"}`}>
                                   {t("shipments.table.expectedArrival")}
                                 </span>
-                                <span className={`block font-medium ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                                <span className={`block font-medium truncate ${isDark ? "text-gray-300" : "text-gray-700"}`}>
                                   {shipment.expected_arrival_date
                                     ? new Date(shipment.expected_arrival_date).toLocaleDateString()
                                     : "-"}
                                 </span>
                               </div>
-                              <div>
+                              <div className="min-w-0">
                                 <span className={`block ${isDark ? "text-gray-400" : "text-gray-600"}`}>
                                   {t("shipments.table.created")}
                                 </span>
-                                <span className={`block font-medium ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                                <span className={`block font-medium truncate ${isDark ? "text-gray-300" : "text-gray-700"}`}>
                                   {new Date(shipment.created_at).toLocaleDateString()}
                                 </span>
                               </div>
-                              <div>
+                              <div className="min-w-0">
                                 <span className={`block ${isDark ? "text-gray-400" : "text-gray-600"}`}>
                                   {t("shipments.table.vehicle")}
                                 </span>
-                                <span className={`block font-medium ${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                                <span className={`block font-medium truncate ${isDark ? "text-gray-300" : "text-gray-700"}`}>
                                   {shipment.vehicle ? (
                                     <div className="flex items-center gap-1">
-                                      <HiTruck className="w-3 h-3" />
-                                      <span>{shipment.vehicle.vehicle_id}</span>
+                                      <HiTruck className="w-3 h-3 flex-shrink-0" />
+                                      <span className="truncate">{shipment.vehicle.vehicle_id}</span>
                                     </div>
                                   ) : (
                                     "-"
@@ -962,7 +987,7 @@ const Shipments = () => {
                                 onChange={(e) =>
                                   handleStatusChange(shipment.id, e.target.value)
                                 }
-                                className={`flex-1 min-w-[120px] border rounded px-2 py-1 text-xs ${
+                                className={`flex-1 min-w-[120px] border rounded px-2 py-1.5 text-xs ${
                                   isDark
                                     ? "bg-gray-700 border-gray-600 text-white"
                                     : "bg-white border-gray-300 text-gray-900"
