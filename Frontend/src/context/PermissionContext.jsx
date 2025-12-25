@@ -52,6 +52,7 @@ export const PERMISSIONS = {
   VIEW_AUDIT_LOGS: 'view_audit_logs',
   MANAGE_SETTINGS: 'manage_settings',
   ACCESS_ALL_DATA: 'access_all_data',
+  VIEW_PROFILE: 'view_profile',
 };
 
 // Default role permissions
@@ -82,6 +83,7 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.MANAGE_ROLES,
     PERMISSIONS.VIEW_AUDIT_LOGS,
     PERMISSIONS.MANAGE_SETTINGS,
+    PERMISSIONS.VIEW_PROFILE,
   ],
   user: [
     PERMISSIONS.VIEW_DASHBOARD,
@@ -93,6 +95,7 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.CREATE_PRODUCT,
     PERMISSIONS.VIEW_VEHICLES,
     PERMISSIONS.VIEW_ROUTES,
+    PERMISSIONS.VIEW_PROFILE,
   ],
 };
 
