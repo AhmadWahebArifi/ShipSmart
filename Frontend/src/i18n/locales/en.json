@@ -58,6 +58,7 @@
     "settings": "Settings",
     "profile": "Profile",
     "users": "User Management",
+    "auditLogs": "Audit Logs",
     "toggleTheme": "Toggle Theme",
     "logout": "Logout",
     "products": "Products"
