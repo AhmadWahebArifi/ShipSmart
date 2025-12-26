@@ -130,7 +130,7 @@ function Analytics() {
           sidebarOpen || !sidebarCollapsed ? "lg:ml-64" : "lg:ml-20"
         }`}
       >
-        <main className="p-4 sm:p-6 lg:p-8">
+        <main className="p-3 sm:p-4 lg:p-6 xl:p-8">
           <Header
             title={t("analytics.title", "Analytics Overview")}
             subtitle={t(
@@ -140,7 +140,7 @@ function Analytics() {
           />
           {loading && (
             <p
-              className={`mt-2 text-sm ${
+              className={`mt-2 text-xs sm:text-sm ${
                 isDark ? "text-blue-400" : "text-blue-500"
               }`}
             >
@@ -149,7 +149,7 @@ function Analytics() {
           )}
           {error && (
             <p
-              className={`mt-2 text-sm ${
+              className={`mt-2 text-xs sm:text-sm ${
                 isDark ? "text-red-400" : "text-red-500"
               }`}
             >
@@ -157,24 +157,24 @@ function Analytics() {
             </p>
           )}
 
-          <div className="space-y-8">
+          <div className="space-y-4 sm:space-y-6 lg:space-y-8">
             <section>
               <h3
-                className={`text-lg font-semibold mb-4 ${
+                className={`text-base sm:text-lg font-semibold mb-3 sm:mb-4 ${
                   isDark ? "text-white" : "text-gray-800"
                 }`}
               >
                 1. {t("analytics.shipmentFlow", "Shipment Flow Analytics")}
               </h3>
               <div
-                className={`rounded-xl p-4 border ${
+                className={`rounded-xl p-3 sm:p-4 border ${
                   isDark
                     ? "bg-gray-900 border-gray-800"
                     : "bg-white border-gray-200"
                 }`}
               >
                 <p
-                  className={`text-sm font-medium mb-3 ${
+                  className={`text-xs sm:text-sm font-medium mb-2 sm:mb-3 ${
                     isDark ? "text-gray-200" : "text-gray-700"
                   }`}
                 >
@@ -192,7 +192,7 @@ function Analytics() {
                     {t("analytics.noRouteData", "No shipment route data yet.")}
                   </p>
                 )}
-                <div className="space-y-2 mt-2">
+                <div className="space-y-2 sm:space-y-3 mt-2">
                   {topRoutes.map((r) => {
                     const widthPercent =
                       maxRouteCount > 0 ? (r.count / maxRouteCount) * 100 : 0;
@@ -200,16 +200,16 @@ function Analytics() {
                       <div key={r.route}>
                         <div className="flex justify-between text-xs mb-1">
                           <span
-                            className={
+                            className={`truncate flex-1 mr-2 ${
                               isDark ? "text-gray-300" : "text-gray-700"
-                            }
+                            }`}
                           >
                             {r.route}
                           </span>
                           <span
-                            className={
+                            className={`flex-shrink-0 ${
                               isDark ? "text-gray-400" : "text-gray-500"
-                            }
+                            }`}
                           >
                             {r.count}
                           </span>
@@ -235,7 +235,7 @@ function Analytics() {
 
             <section>
               <h3
-                className={`text-lg font-semibold mb-4 ${
+                className={`text-base sm:text-lg font-semibold mb-3 sm:mb-4 ${
                   isDark ? "text-white" : "text-gray-800"
                 }`}
               >
@@ -246,14 +246,14 @@ function Analytics() {
                 )}
               </h3>
               <div
-                className={`rounded-xl p-4 border ${
+                className={`rounded-xl p-3 sm:p-4 border ${
                   isDark
                     ? "bg-gray-900 border-gray-800"
                     : "bg-white border-gray-200"
                 }`}
               >
                 <p
-                  className={`text-sm font-medium mb-3 ${
+                  className={`text-xs sm:text-sm font-medium mb-2 sm:mb-3 ${
                     isDark ? "text-gray-200" : "text-gray-700"
                   }`}
                 >
@@ -263,11 +263,11 @@ function Analytics() {
                   )}
                 </p>
                 <div className="flex justify-between text-xs mb-2">
-                  <span className={isDark ? "text-gray-300" : "text-gray-700"}>
+                  <span className={`truncate flex-1 mr-2 ${isDark ? "text-gray-300" : "text-gray-700"}`}>
                     {t("analytics.totalVehicles", "Total vehicles")}:{" "}
                     {totalVehicles}
                   </span>
-                  <span className={isDark ? "text-gray-400" : "text-gray-500"}>
+                  <span className={`flex-shrink-0 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
                     {utilizationRate.toFixed(1)}%{" "}
                     {t("analytics.active", "active")}
                   </span>
@@ -300,15 +300,15 @@ function Analytics() {
                     title={t("analytics.active", "Active")}
                   />
                 </div>
-                <div className="flex justify-between text-[11px] mt-2">
+                <div className="flex justify-between text-[10px] sm:text-[11px] mt-2">
                   <span
-                    className={isDark ? "text-green-300" : "text-green-700"}
+                    className={`truncate flex-1 mr-2 ${isDark ? "text-green-300" : "text-green-700"}`}
                   >
                     {t("analytics.availableVehicles", "Available: {{count}}", {
                       count: availableVehicles,
                     })}
                   </span>
-                  <span className={isDark ? "text-red-300" : "text-red-700"}>
+                  <span className={`flex-shrink-0 ${isDark ? "text-red-300" : "text-red-700"}`}>
                     {t(
                       "analytics.activeVehicles",
                       "Active vehicles (on route)"
@@ -321,22 +321,22 @@ function Analytics() {
 
             <section>
               <h3
-                className={`text-lg font-semibold mb-4 ${
+                className={`text-base sm:text-lg font-semibold mb-3 sm:mb-4 ${
                   isDark ? "text-white" : "text-gray-800"
                 }`}
               >
                 3. {t("analytics.deliveryTime", "Delivery Time Performance")}
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 <div
-                  className={`rounded-xl p-4 border ${
+                  className={`rounded-xl p-3 sm:p-4 border ${
                     isDark
                       ? "bg-gray-900 border-gray-800"
                       : "bg-white border-gray-200"
                   }`}
                 >
                   <p
-                    className={`text-sm font-medium mb-1 ${
+                    className={`text-xs sm:text-sm font-medium mb-1 ${
                       isDark ? "text-gray-200" : "text-gray-700"
                     }`}
                   >
@@ -346,7 +346,7 @@ function Analytics() {
                     )}
                   </p>
                   <p
-                    className={`text-2xl font-bold ${
+                    className={`text-xl sm:text-2xl font-bold ${
                       isDark ? "text-white" : "text-gray-800"
                     }`}
                   >
@@ -356,14 +356,14 @@ function Analytics() {
                   </p>
                 </div>
                 <div
-                  className={`rounded-xl p-4 border ${
+                  className={`rounded-xl p-3 sm:p-4 border ${
                     isDark
                       ? "bg-gray-900 border-gray-800"
                       : "bg-white border-gray-200"
                   }`}
                 >
                   <p
-                    className={`text-sm font-medium mb-1 ${
+                    className={`text-xs sm:text-sm font-medium mb-1 ${
                       isDark ? "text-gray-200" : "text-gray-700"
                     }`}
                   >
@@ -373,7 +373,7 @@ function Analytics() {
                     )}
                   </p>
                   <p
-                    className={`text-2xl font-bold ${
+                    className={`text-xl sm:text-2xl font-bold ${
                       isDark ? "text-white" : "text-gray-800"
                     }`}
                   >
@@ -381,14 +381,14 @@ function Analytics() {
                   </p>
                 </div>
                 <div
-                  className={`rounded-xl p-4 border ${
+                  className={`rounded-xl p-3 sm:p-4 border ${
                     isDark
                       ? "bg-gray-900 border-gray-800"
                       : "bg-white border-gray-200"
                   }`}
                 >
                   <p
-                    className={`text-sm font-medium mb-1 ${
+                    className={`text-xs sm:text-sm font-medium mb-1 ${
                       isDark ? "text-gray-200" : "text-gray-700"
                     }`}
                   >
@@ -398,7 +398,7 @@ function Analytics() {
                     )}
                   </p>
                   <p
-                    className={`text-2xl font-bold ${
+                    className={`text-xl sm:text-2xl font-bold ${
                       isDark ? "text-white" : "text-gray-800"
                     }`}
                   >

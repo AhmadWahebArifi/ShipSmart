@@ -197,34 +197,77 @@ const Vehicles = () => {
             subtitle={`${totalVehicles} ${t("vehicles.items")}`}
           />
 
-          {/* Add Vehicle Button */}
-          <div className="mb-6">
-            <button
-              onClick={() => setShowAddForm(!showAddForm)}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              <FiPlus className="-ml-1 mr-2 h-4 w-4" />
-              {t("vehicles.addVehicle")}
-            </button>
+          {/* Add/Edit Vehicle Form */}
+          {(showAddForm || editingVehicle) && (
+            <div className="mb-4 sm:mb-6">
+              <VehicleForm
+                onSubmit={
+                  editingVehicle ? handleUpdateVehicle : handleAddVehicle
+                }
+                onCancel={() => {
+                  setShowAddForm(false);
+                  setEditingVehicle(null);
+                }}
+                vehicle={editingVehicle}
+              />
+            </div>
+          )}
+
+          {/* Search */}
+          <div
+            className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg ${
+              isDark ? "bg-gray-800" : "bg-white shadow"
+            }`}
+          >
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FiSearch className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={`block w-full pl-9 sm:pl-10 pr-3 py-2 border text-sm ${
+                  isDark
+                    ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                    : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
+                } rounded-md`}
+                placeholder={t("vehicles.searchPlaceholder")}
+              />
+            </div>
           </div>
 
+          {/* Add Vehicle Button Above List */}
+          {!showAddForm && !editingVehicle && (
+            <div className="mb-4 sm:mb-6">
+              <button
+                onClick={() => setShowAddForm(!showAddForm)}
+                className="inline-flex items-center px-3 sm:px-4 py-2 border border-transparent text-xs sm:text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <FiPlus className="-ml-1 mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline">{t("vehicles.addVehicle")}</span>
+                <span className="xs:hidden">Add</span>
+              </button>
+            </div>
+          )}
+
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div
-              className={`p-4 rounded-lg ${
+              className={`p-3 sm:p-4 rounded-lg ${
                 isDark ? "bg-gray-800" : "bg-white shadow"
               }`}
             >
               <div className="flex items-center">
-                <div className="p-3 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
-                  <FiTruck className="w-5 h-5" />
+                <div className="p-2 sm:p-3 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                  <FiTruck className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <div className="ml-3 sm:ml-4">
+                  <p className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
                     {t("vehicles.stats.totalVehicles")}
                   </p>
                   <p
-                    className={`text-2xl font-semibold ${
+                    className={`text-lg sm:text-2xl font-semibold ${
                       isDark ? "text-white" : "text-gray-900"
                     }`}
                   >
@@ -235,20 +278,20 @@ const Vehicles = () => {
             </div>
 
             <div
-              className={`p-4 rounded-lg ${
+              className={`p-3 sm:p-4 rounded-lg ${
                 isDark ? "bg-gray-800" : "bg-white shadow"
               }`}
             >
               <div className="flex items-center">
-                <div className="p-3 rounded-full bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400">
-                  <FiTruck className="w-5 h-5" />
+                <div className="p-2 sm:p-3 rounded-full bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400">
+                  <FiTruck className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <div className="ml-3 sm:ml-4">
+                  <p className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
                     {t("vehicles.stats.availableVehicles")}
                   </p>
                   <p
-                    className={`text-2xl font-semibold ${
+                    className={`text-lg sm:text-2xl font-semibold ${
                       isDark ? "text-white" : "text-gray-900"
                     }`}
                   >
@@ -259,20 +302,20 @@ const Vehicles = () => {
             </div>
 
             <div
-              className={`p-4 rounded-lg ${
+              className={`p-3 sm:p-4 rounded-lg ${
                 isDark ? "bg-gray-800" : "bg-white shadow"
               }`}
             >
               <div className="flex items-center">
-                <div className="p-3 rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
-                  <FiTruck className="w-5 h-5" />
+                <div className="p-2 sm:p-3 rounded-full bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400">
+                  <FiTruck className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                <div className="ml-3 sm:ml-4">
+                  <p className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400">
                     {t("vehicles.stats.totalCapacity")}
                   </p>
                   <p
-                    className={`text-2xl font-semibold ${
+                    className={`text-lg sm:text-2xl font-semibold ${
                       isDark ? "text-white" : "text-gray-900"
                     }`}
                   >
@@ -301,19 +344,19 @@ const Vehicles = () => {
 
           {/* Search */}
           <div
-            className={`mb-6 p-4 rounded-lg ${
+            className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg ${
               isDark ? "bg-gray-800" : "bg-white shadow"
             }`}
           >
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FiSearch className="h-5 w-5 text-gray-400" />
+                <FiSearch className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
               </div>
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={`block w-full pl-10 pr-3 py-2 border ${
+                className={`block w-full pl-9 sm:pl-10 pr-3 py-2 border text-sm ${
                   isDark
                     ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                     : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
@@ -361,155 +404,275 @@ const Vehicles = () => {
                 </div>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                  <thead
-                    className={`${
-                      isDark
-                        ? "bg-gray-800 text-gray-200"
-                        : "bg-gray-50 text-gray-700"
-                    }`}
-                  >
-                    <tr>
-                      <th
-                        scope="col"
-                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("vehicles.table.vehicleId")}
-                      </th>
-                      <th
-                        scope="col"
-                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("vehicles.table.type")}
-                      </th>
-                      <th
-                        scope="col"
-                        className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("vehicles.table.driverName")}
-                      </th>
-                      <th
-                        scope="col"
-                        className={`px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("vehicles.table.capacity")} (kg)
-                      </th>
-                      <th
-                        scope="col"
-                        className={`px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("vehicles.table.status")}
-                      </th>
-                      <th scope="col" className="relative px-6 py-3">
-                        <span className="sr-only">{t("common.actions")}</span>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody
-                    className={`divide-y ${
-                      isDark
-                        ? "divide-gray-700 bg-gray-900"
-                        : "divide-gray-200 bg-white"
-                    }`}
-                  >
-                    {filteredVehicles.map((vehicle) => (
-                      <tr
-                        key={vehicle.id}
-                        className={
-                          isDark ? "hover:bg-gray-800" : "hover:bg-gray-50"
-                        }
-                      >
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div
-                              className={`flex-shrink-0 h-10 w-10 rounded-md flex items-center justify-center ${
-                                isDark
-                                  ? "bg-blue-900/30 text-blue-400"
-                                  : "bg-blue-100 text-blue-600"
-                              }`}
-                            >
-                              <FiTruck className="h-5 w-5" />
-                            </div>
-                            <div className="ml-4">
+              <>
+                {/* Desktop & Large Tablet Table View */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead
+                      className={`${
+                        isDark
+                          ? "bg-gray-800 text-gray-200"
+                          : "bg-gray-50 text-gray-700"
+                      }`}
+                    >
+                      <tr>
+                        <th
+                          scope="col"
+                          className={`px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                            isDark ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          {t("vehicles.table.vehicleId")}
+                        </th>
+                        <th
+                          scope="col"
+                          className={`px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                            isDark ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          {t("vehicles.table.type")}
+                        </th>
+                        <th
+                          scope="col"
+                          className={`hidden sm:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                            isDark ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          {t("vehicles.table.driverName")}
+                        </th>
+                        <th
+                          scope="col"
+                          className={`px-3 sm:px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
+                            isDark ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          {t("vehicles.table.capacity")} (kg)
+                        </th>
+                        <th
+                          scope="col"
+                          className={`px-3 sm:px-6 py-3 text-center text-xs font-medium uppercase tracking-wider ${
+                            isDark ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          {t("vehicles.table.status")}
+                        </th>
+                        <th scope="col" className="relative px-3 sm:px-6 py-3">
+                          <span className="sr-only">{t("common.actions")}</span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      className={`divide-y ${
+                        isDark
+                          ? "divide-gray-700 bg-gray-900"
+                          : "divide-gray-200 bg-white"
+                      }`}
+                    >
+                      {filteredVehicles.map((vehicle) => (
+                        <tr
+                          key={vehicle.id}
+                          className={
+                            isDark ? "hover:bg-gray-800" : "hover:bg-gray-50"
+                          }
+                        >
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                            <div className="flex items-center">
                               <div
-                                className={`text-sm font-medium ${
-                                  isDark ? "text-gray-200" : "text-gray-900"
+                                className={`flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 rounded-md flex items-center justify-center ${
+                                  isDark
+                                    ? "bg-blue-900/30 text-blue-400"
+                                    : "bg-blue-100 text-blue-600"
                                 }`}
                               >
-                                {vehicle.vehicle_id}
+                                <FiTruck className="h-4 w-4 sm:h-5 sm:w-5" />
+                              </div>
+                              <div className="ml-2 sm:ml-4">
+                                <div
+                                  className={`text-xs sm:text-sm font-medium ${
+                                    isDark ? "text-gray-200" : "text-gray-900"
+                                  }`}
+                                >
+                                  {vehicle.vehicle_id}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </td>
-                        <td
-                          className={`px-6 py-4 whitespace-nowrap text-sm ${
-                            isDark ? "text-gray-200" : "text-gray-900"
-                          }`}
-                        >
-                          {vehicle.type}
-                        </td>
-                        <td
-                          className={`px-6 py-4 whitespace-nowrap text-sm ${
-                            isDark ? "text-gray-200" : "text-gray-900"
-                          }`}
-                        >
-                          {vehicle.driver_name || "-"}
-                        </td>
-                        <td
-                          className={`px-6 py-4 whitespace-nowrap text-right text-sm ${
-                            isDark ? "text-gray-200" : "text-gray-900"
-                          }`}
-                        >
-                          {parseFloat(vehicle.capacity).toFixed(2)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                          <span
-                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
-                              vehicle.status
-                            )}`}
+                          </td>
+                          <td
+                            className={`px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm ${
+                              isDark ? "text-gray-200" : "text-gray-900"
+                            }`}
                           >
-                            {t(`vehicles.status.${vehicle.status}`) ||
-                              vehicle.status.replace("_", " ")}
-                          </span>
-                        </td>
-                        <td
-                          className={`px-6 py-4 whitespace-nowrap text-right text-sm font-medium ${
-                            isDark ? "text-gray-200" : "text-gray-900"
-                          }`}
-                        >
-                          <div className="flex justify-end space-x-2">
-                            <button
-                              onClick={() => setEditingVehicle(vehicle)}
-                              className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
-                              title={t("common.edit")}
+                            {vehicle.type}
+                          </td>
+                          <td
+                            className={`hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm ${
+                              isDark ? "text-gray-200" : "text-gray-900"
+                            }`}
+                          >
+                            {vehicle.driver_name || "-"}
+                          </td>
+                          <td
+                            className={`px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-right text-xs sm:text-sm ${
+                              isDark ? "text-gray-200" : "text-gray-900"
+                            }`}
+                          >
+                            {parseFloat(vehicle.capacity).toFixed(2)}
+                          </td>
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-center">
+                            <span
+                              className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+                                vehicle.status
+                              )}`}
                             >
-                              <FiEdit2 className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteVehicle(vehicle.id)}
-                              className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 ml-2"
-                              title={t("common.delete")}
-                            >
-                              <FiTrash2 className="h-4 w-4" />
-                            </button>
+                              {t(`vehicles.status.${vehicle.status}`) ||
+                                vehicle.status.replace("_", " ")}
+                            </span>
+                          </td>
+                          <td
+                            className={`px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-right text-xs sm:text-sm font-medium ${
+                              isDark ? "text-gray-200" : "text-gray-900"
+                            }`}
+                          >
+                            <div className="flex justify-end space-x-1 sm:space-x-2">
+                              <button
+                                onClick={() => setEditingVehicle(vehicle)}
+                                className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                                title={t("common.edit")}
+                              >
+                                <FiEdit2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteVehicle(vehicle.id)}
+                                className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                title={t("common.delete")}
+                              >
+                                <FiTrash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Tablet & Mobile Card View */}
+                <div className="md:hidden space-y-4">
+                  {filteredVehicles.map((vehicle) => (
+                    <div
+                      key={vehicle.id}
+                      className={`rounded-lg border p-4 transition-all hover:shadow-md ${
+                        isDark
+                          ? "bg-gray-800 border-gray-700 hover:bg-gray-750"
+                          : "bg-white border-gray-200 hover:bg-gray-50"
+                      }`}
+                    >
+                      {/* Header with vehicle ID and status */}
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <div
+                            className={`flex-shrink-0 h-8 w-8 rounded-md flex items-center justify-center ${
+                              isDark
+                                ? "bg-blue-900/30 text-blue-400"
+                                : "bg-blue-100 text-blue-600"
+                            }`}
+                          >
+                            <FiTruck className="h-4 w-4" />
                           </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                          <span className={`font-semibold text-sm truncate ${
+                            isDark ? "text-gray-200" : "text-gray-900"
+                          }`}>
+                            {vehicle.vehicle_id}
+                          </span>
+                        </div>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-semibold flex-shrink-0 ${getStatusColor(
+                            vehicle.status
+                          )}`}
+                        >
+                          {t(`vehicles.status.${vehicle.status}`) ||
+                            vehicle.status.replace("_", " ")}
+                        </span>
+                      </div>
+
+                      {/* Vehicle Details - Responsive Grid */}
+                      <div className="grid grid-cols-2 gap-3 mb-3 text-xs">
+                        <div className="min-w-0">
+                          <span className={`block ${
+                            isDark ? "text-gray-400" : "text-gray-600"
+                          }`}>
+                            {t("vehicles.table.type")}
+                          </span>
+                          <span className={`block font-medium truncate ${
+                            isDark ? "text-gray-300" : "text-gray-700"
+                          }`}>
+                            {vehicle.type}
+                          </span>
+                        </div>
+                        <div className="min-w-0">
+                          <span className={`block ${
+                            isDark ? "text-gray-400" : "text-gray-600"
+                          }`}>
+                            {t("vehicles.table.capacity")} (kg)
+                          </span>
+                          <span className={`block font-medium truncate ${
+                            isDark ? "text-gray-300" : "text-gray-700"
+                          }`}>
+                            {parseFloat(vehicle.capacity).toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Driver Name */}
+                      {vehicle.driver_name && (
+                        <div className="mb-3">
+                          <span className={`block text-xs ${
+                            isDark ? "text-gray-400" : "text-gray-600"
+                          }`}>
+                            {t("vehicles.table.driverName")}
+                          </span>
+                          <span className={`block text-xs sm:text-sm font-medium ${
+                            isDark ? "text-gray-300" : "text-gray-700"
+                          }`}>
+                            {vehicle.driver_name}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Actions */}
+                      <div className="flex gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
+                        {/* Edit Button */}
+                        <button
+                          onClick={() => setEditingVehicle(vehicle)}
+                          className={`flex-1 flex items-center justify-center gap-1 p-2 rounded text-xs ${
+                            isDark
+                              ? "text-blue-400 hover:bg-gray-600"
+                              : "text-blue-600 hover:bg-gray-200"
+                          }`}
+                          title={t("common.edit")}
+                        >
+                          <FiEdit2 className="w-4 h-4" />
+                          <span>{t("common.edit")}</span>
+                        </button>
+
+                        {/* Delete Button */}
+                        <button
+                          onClick={() => handleDeleteVehicle(vehicle.id)}
+                          className={`flex-1 flex items-center justify-center gap-1 p-2 rounded text-xs ${
+                            isDark
+                              ? "text-red-400 hover:bg-gray-600"
+                              : "text-red-600 hover:bg-gray-200"
+                          }`}
+                          title={t("common.delete")}
+                        >
+                          <FiTrash2 className="w-4 h-4" />
+                          <span>{t("common.delete")}</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </div>

@@ -72,11 +72,11 @@ const VehicleForm = ({ onSubmit, onCancel, vehicle }) => {
 
   return (
     <div
-      className={`rounded-lg p-6 ${isDark ? "bg-gray-800" : "bg-white shadow"}`}
+      className={`rounded-lg p-4 sm:p-6 ${isDark ? "bg-gray-800" : "bg-white shadow"}`}
     >
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-medium flex items-center gap-2">
-          <FiTruck className="w-5 h-5" />
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <h3 className="text-base sm:text-lg font-medium flex items-center gap-2">
+          <FiTruck className="w-4 h-4 sm:w-5 sm:h-5" />
           {vehicle ? t("vehicles.editVehicle") : t("vehicles.addVehicle")}
         </h3>
         {onCancel && (
@@ -86,30 +86,30 @@ const VehicleForm = ({ onSubmit, onCancel, vehicle }) => {
               isDark ? "hover:bg-gray-700" : "hover:bg-gray-100"
             }`}
           >
-            <FiX className="w-5 h-5" />
+            <FiX className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         )}
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-md bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-100">
+        <div className="mb-3 sm:mb-4 p-2 sm:p-3 rounded-md bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-100 text-xs sm:text-sm">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-4 p-3 rounded-md bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100 flex items-center gap-2">
-          <FiCheck className="w-5 h-5" />
+        <div className="mb-3 sm:mb-4 p-2 sm:p-3 rounded-md bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100 flex items-center gap-2 text-xs sm:text-sm">
+          <FiCheck className="w-4 h-4 sm:w-5 sm:h-5" />
           {success}
         </div>
       )}
 
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-3 sm:space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label
               htmlFor="vehicle_id"
-              className={`block text-sm font-medium mb-1 ${
+              className={`block text-xs sm:text-sm font-medium mb-1 ${
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
@@ -121,7 +121,7 @@ const VehicleForm = ({ onSubmit, onCancel, vehicle }) => {
               {...register("vehicle_id", {
                 required: t("validation.required"),
               })}
-              className={`w-full px-3 py-2 rounded-md border ${
+              className={`w-full px-3 py-2 rounded-md border text-sm ${
                 errors.vehicle_id
                   ? "border-red-500"
                   : isDark
@@ -131,7 +131,7 @@ const VehicleForm = ({ onSubmit, onCancel, vehicle }) => {
               placeholder={t("vehicles.form.vehicleIdPlaceholder")}
             />
             {errors.vehicle_id && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+              <p className="mt-1 text-xs sm:text-sm text-red-600 dark:text-red-400">
                 {errors.vehicle_id.message}
               </p>
             )}
@@ -140,7 +140,7 @@ const VehicleForm = ({ onSubmit, onCancel, vehicle }) => {
           <div>
             <label
               htmlFor="type"
-              className={`block text-sm font-medium mb-1 ${
+              className={`block text-xs sm:text-sm font-medium mb-1 ${
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
@@ -150,7 +150,7 @@ const VehicleForm = ({ onSubmit, onCancel, vehicle }) => {
               id="type"
               type="text"
               {...register("type", { required: t("validation.required") })}
-              className={`w-full px-3 py-2 rounded-md border ${
+              className={`w-full px-3 py-2 rounded-md border text-sm ${
                 errors.type
                   ? "border-red-500"
                   : isDark
@@ -160,18 +160,18 @@ const VehicleForm = ({ onSubmit, onCancel, vehicle }) => {
               placeholder={t("vehicles.form.typePlaceholder")}
             />
             {errors.type && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+              <p className="mt-1 text-xs sm:text-sm text-red-600 dark:text-red-400">
                 {errors.type.message}
               </p>
             )}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label
               htmlFor="driver_name"
-              className={`block text-sm font-medium mb-1 ${
+              className={`block text-xs sm:text-sm font-medium mb-1 ${
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
@@ -181,7 +181,7 @@ const VehicleForm = ({ onSubmit, onCancel, vehicle }) => {
               id="driver_name"
               type="text"
               {...register("driver_name")}
-              className={`w-full px-3 py-2 rounded-md border ${
+              className={`w-full px-3 py-2 rounded-md border text-sm ${
                 isDark
                   ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                   : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
@@ -193,7 +193,7 @@ const VehicleForm = ({ onSubmit, onCancel, vehicle }) => {
           <div>
             <label
               htmlFor="capacity"
-              className={`block text-sm font-medium mb-1 ${
+              className={`block text-xs sm:text-sm font-medium mb-1 ${
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
@@ -211,7 +211,7 @@ const VehicleForm = ({ onSubmit, onCancel, vehicle }) => {
                   message: t("validation.min", { min: 0.01 }),
                 },
               })}
-              className={`w-full px-3 py-2 rounded-md border ${
+              className={`w-full px-3 py-2 rounded-md border text-sm ${
                 errors.capacity
                   ? "border-red-500"
                   : isDark
@@ -221,7 +221,7 @@ const VehicleForm = ({ onSubmit, onCancel, vehicle }) => {
               placeholder="0.00"
             />
             {errors.capacity && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+              <p className="mt-1 text-xs sm:text-sm text-red-600 dark:text-red-400">
                 {errors.capacity.message}
               </p>
             )}
@@ -231,7 +231,7 @@ const VehicleForm = ({ onSubmit, onCancel, vehicle }) => {
         <div>
           <label
             htmlFor="status"
-            className={`block text-sm font-medium mb-1 ${
+            className={`block text-xs sm:text-sm font-medium mb-1 ${
               isDark ? "text-gray-300" : "text-gray-700"
             }`}
           >
@@ -240,7 +240,7 @@ const VehicleForm = ({ onSubmit, onCancel, vehicle }) => {
           <select
             id="status"
             {...register("status", { required: t("validation.required") })}
-            className={`w-full px-3 py-2 rounded-md border ${
+            className={`w-full px-3 py-2 rounded-md border text-sm ${
               errors.status
                 ? "border-red-500"
                 : isDark
@@ -254,18 +254,18 @@ const VehicleForm = ({ onSubmit, onCancel, vehicle }) => {
             </option>
           </select>
           {errors.status && (
-            <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+            <p className="mt-1 text-xs sm:text-sm text-red-600 dark:text-red-400">
               {errors.status.message}
             </p>
           )}
         </div>
 
-        <div className="flex justify-end space-x-3 pt-4">
+        <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-3 sm:pt-4">
           {onCancel && (
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full sm:w-auto px-4 py-2 text-xs sm:text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               disabled={loading}
             >
               {t("common.cancel")}
@@ -273,7 +273,7 @@ const VehicleForm = ({ onSubmit, onCancel, vehicle }) => {
           )}
           <button
             type="submit"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-xs sm:text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             disabled={loading}
           >
             {loading ? (

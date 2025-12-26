@@ -186,12 +186,14 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
 
   return (
     <div
-      className={`rounded-lg p-6 ${isDark ? "bg-gray-800" : "bg-white shadow"}`}
+      className={`rounded-lg p-4 sm:p-6 ${isDark ? "bg-gray-800" : "bg-white shadow"}`}
     >
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-medium flex items-center gap-2">
-          <FiPackage className="w-5 h-5" />
-          {product ? t("products.editProduct") : t("products.addProduct")}
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <h3 className="text-base sm:text-lg font-medium flex items-center gap-2">
+          <FiPackage className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span className="truncate">
+            {product ? t("products.editProduct") : t("products.addProduct")}
+          </span>
         </h3>
         {onCancel && (
           <button
@@ -200,30 +202,30 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               isDark ? "hover:bg-gray-700" : "hover:bg-gray-100"
             }`}
           >
-            <FiX className="w-5 h-5" />
+            <FiX className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         )}
       </div>
 
       {error && (
-        <div className="mb-4 p-3 rounded-md bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-100">
+        <div className="mb-3 sm:mb-4 p-3 rounded-md bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-100 text-sm">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="mb-4 p-3 rounded-md bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100 flex items-center gap-2">
-          <FiCheck className="w-5 h-5" />
+        <div className="mb-3 sm:mb-4 p-3 rounded-md bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100 flex items-center gap-2 text-sm">
+          <FiCheck className="w-4 h-4" />
           {success}
         </div>
       )}
 
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-3 sm:space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label
               htmlFor="name"
-              className={`block text-sm font-medium mb-1 ${
+              className={`block text-xs sm:text-sm font-medium mb-1 ${
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
@@ -233,7 +235,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               id="name"
               type="text"
               {...register("name", { required: t("validation.required") })}
-              className={`w-full px-3 py-2 rounded-md border ${
+              className={`w-full px-3 py-2 text-sm rounded-md border ${
                 errors.name
                   ? "border-red-500"
                   : isDark
@@ -243,7 +245,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               placeholder={t("products.form.namePlaceholder")}
             />
             {errors.name && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+              <p className="mt-1 text-xs sm:text-sm text-red-600 dark:text-red-400">
                 {errors.name.message}
               </p>
             )}
@@ -252,7 +254,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           <div>
             <label
               htmlFor="shipment_tracking_number"
-              className={`block text-sm font-medium mb-1 ${
+              className={`block text-xs sm:text-sm font-medium mb-1 ${
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
@@ -261,7 +263,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
             <div className="relative">
               <select
                 id="shipment_tracking_number"
-                className={`w-full p-2 border rounded ${
+                className={`w-full p-2 text-sm border rounded ${
                   isDark
                     ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                     : "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
@@ -285,10 +287,10 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                   </option>
                 ))}
               </select>
-              <FiTruck className="absolute right-3 top-2.5 text-gray-400" />
+              <FiTruck className="absolute right-3 top-2.5 text-gray-400 w-4 h-4" />
             </div>
             {errors.shipment_tracking_number && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+              <p className="mt-1 text-xs sm:text-sm text-red-600 dark:text-red-400">
                 {errors.shipment_tracking_number.message}
               </p>
             )}
@@ -298,7 +300,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
         <div>
           <label
             htmlFor="description"
-            className={`block text-sm font-medium mb-1 ${
+            className={`block text-xs sm:text-sm font-medium mb-1 ${
               isDark ? "text-gray-300" : "text-gray-700"
             }`}
           >
@@ -308,7 +310,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
             id="description"
             {...register("description")}
             rows={3}
-            className={`w-full px-3 py-2 rounded-md border ${
+            className={`w-full px-3 py-2 text-sm rounded-md border ${
               isDark
                 ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                 : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
@@ -317,11 +319,11 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label
               htmlFor="sender"
-              className={`block text-sm font-medium mb-1 ${
+              className={`block text-xs sm:text-sm font-medium mb-1 ${
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
@@ -331,7 +333,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               id="sender"
               type="text"
               {...register("sender")}
-              className={`w-full px-3 py-2 rounded-md border ${
+              className={`w-full px-3 py-2 text-sm rounded-md border ${
                 isDark
                   ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                   : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
@@ -343,7 +345,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           <div>
             <label
               htmlFor="sender_phone"
-              className={`block text-sm font-medium mb-1 ${
+              className={`block text-xs sm:text-sm font-medium mb-1 ${
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
@@ -353,7 +355,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               id="sender_phone"
               type="tel"
               {...register("sender_phone")}
-              className={`w-full px-3 py-2 rounded-md border ${
+              className={`w-full px-3 py-2 text-sm rounded-md border ${
                 isDark
                   ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                   : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
@@ -363,11 +365,11 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label
               htmlFor="sender_email"
-              className={`block text-sm font-medium mb-1 ${
+              className={`block text-xs sm:text-sm font-medium mb-1 ${
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
@@ -377,7 +379,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               id="sender_email"
               type="email"
               {...register("sender_email")}
-              className={`w-full px-3 py-2 rounded-md border ${
+              className={`w-full px-3 py-2 text-sm rounded-md border ${
                 isDark
                   ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                   : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
@@ -389,7 +391,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           <div>
             <label
               htmlFor="sender_address"
-              className={`block text-sm font-medium mb-1 ${
+              className={`block text-xs sm:text-sm font-medium mb-1 ${
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
@@ -399,7 +401,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               id="sender_address"
               type="text"
               {...register("sender_address")}
-              className={`w-full px-3 py-2 rounded-md border ${
+              className={`w-full px-3 py-2 text-sm rounded-md border ${
                 isDark
                   ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                   : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
@@ -412,17 +414,17 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
         {/* Detailed Receiver Information */}
         <div className="border-t pt-4 mt-4 border-gray-200 dark:border-gray-700">
           <h3
-            className={`text-lg font-medium mb-4 ${
+            className={`text-base sm:text-lg font-medium mb-3 sm:mb-4 ${
               isDark ? "text-gray-200" : "text-gray-800"
             }`}
           >
             {t("products.receiverName")} Information
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label
                 htmlFor="receiver_name"
-                className={`block text-sm font-medium mb-1 ${
+                className={`block text-xs sm:text-sm font-medium mb-1 ${
                   isDark ? "text-gray-300" : "text-gray-700"
                 }`}
               >
@@ -432,7 +434,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                 id="receiver_name"
                 type="text"
                 {...register("receiver_name", { required: true })}
-                className={`w-full px-3 py-2 rounded-md border ${
+                className={`w-full px-3 py-2 text-sm rounded-md border ${
                   isDark
                     ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                     : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
@@ -444,7 +446,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
             <div>
               <label
                 htmlFor="receiver_phone"
-                className={`block text-sm font-medium mb-1 ${
+                className={`block text-xs sm:text-sm font-medium mb-1 ${
                   isDark ? "text-gray-300" : "text-gray-700"
                 }`}
               >
@@ -454,7 +456,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                 id="receiver_phone"
                 type="tel"
                 {...register("receiver_phone", { required: true })}
-                className={`w-full px-3 py-2 rounded-md border ${
+                className={`w-full px-3 py-2 text-sm rounded-md border ${
                   isDark
                     ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                     : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
@@ -466,7 +468,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
             <div>
               <label
                 htmlFor="receiver_email"
-                className={`block text-sm font-medium mb-1 ${
+                className={`block text-xs sm:text-sm font-medium mb-1 ${
                   isDark ? "text-gray-300" : "text-gray-700"
                 }`}
               >
@@ -476,7 +478,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                 id="receiver_email"
                 type="email"
                 {...register("receiver_email")}
-                className={`w-full px-3 py-2 rounded-md border ${
+                className={`w-full px-3 py-2 text-sm rounded-md border ${
                   isDark
                     ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                     : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
@@ -485,10 +487,10 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               />
             </div>
 
-            <div className="md:col-span-2">
+            <div className="sm:col-span-2">
               <label
                 htmlFor="receiver_address"
-                className={`block text-sm font-medium mb-1 ${
+                className={`block text-xs sm:text-sm font-medium mb-1 ${
                   isDark ? "text-gray-300" : "text-gray-700"
                 }`}
               >
@@ -498,7 +500,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                 id="receiver_address"
                 {...register("receiver_address")}
                 rows={3}
-                className={`w-full px-3 py-2 rounded-md border ${
+                className={`w-full px-3 py-2 text-sm rounded-md border ${
                   isDark
                     ? "border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
                     : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
@@ -509,11 +511,11 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           <div>
             <label
               htmlFor="quantity"
-              className={`block text-sm font-medium mb-1 ${
+              className={`block text-xs sm:text-sm font-medium mb-1 ${
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
@@ -527,7 +529,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                 required: t("validation.required"),
                 min: { value: 1, message: t("validation.min", { min: 1 }) },
               })}
-              className={`w-full px-3 py-2 rounded-md border ${
+              className={`w-full px-3 py-2 text-sm rounded-md border ${
                 errors.quantity
                   ? "border-red-500"
                   : isDark
@@ -536,7 +538,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               }`}
             />
             {errors.quantity && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+              <p className="mt-1 text-xs sm:text-sm text-red-600 dark:text-red-400">
                 {errors.quantity.message}
               </p>
             )}
@@ -545,7 +547,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           <div>
             <label
               htmlFor="weight"
-              className={`block text-sm font-medium mb-1 ${
+              className={`block text-xs sm:text-sm font-medium mb-1 ${
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
@@ -563,7 +565,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                   message: t("validation.min", { min: 0.01 }),
                 },
               })}
-              className={`w-full px-3 py-2 rounded-md border ${
+              className={`w-full px-3 py-2 text-sm rounded-md border ${
                 errors.weight
                   ? "border-red-500"
                   : isDark
@@ -573,7 +575,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               placeholder="0.00"
             />
             {errors.weight && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+              <p className="mt-1 text-xs sm:text-sm text-red-600 dark:text-red-400">
                 {errors.weight.message}
               </p>
             )}
@@ -582,7 +584,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           <div>
             <label
               htmlFor="price"
-              className={`block text-sm font-medium mb-1 ${
+              className={`block text-xs sm:text-sm font-medium mb-1 ${
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
@@ -597,7 +599,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                 required: t("validation.required"),
                 min: { value: 0, message: t("validation.min", { min: 0 }) },
               })}
-              className={`w-full px-3 py-2 rounded-md border ${
+              className={`w-full px-3 py-2 text-sm rounded-md border ${
                 errors.price
                   ? "border-red-500"
                   : isDark
@@ -607,7 +609,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               placeholder="0.00"
             />
             {errors.price && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+              <p className="mt-1 text-xs sm:text-sm text-red-600 dark:text-red-400">
                 {errors.price.message}
               </p>
             )}
@@ -615,11 +617,11 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
         </div>
 
         {/* Discount and Remaining Amount */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label
               htmlFor="discount"
-              className={`block text-sm font-medium mb-1 ${
+              className={`block text-xs sm:text-sm font-medium mb-1 ${
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
@@ -635,7 +637,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
                 min: { value: 0, message: t("validation.min", { min: 0 }) },
                 max: { value: 100, message: "Discount cannot exceed 100%" },
               })}
-              className={`w-full px-3 py-2 rounded-md border ${
+              className={`w-full px-3 py-2 text-sm rounded-md border ${
                 errors.discount
                   ? "border-red-500"
                   : isDark
@@ -645,7 +647,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               placeholder="0.00"
             />
             {errors.discount && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+              <p className="mt-1 text-xs sm:text-sm text-red-600 dark:text-red-400">
                 {errors.discount.message}
               </p>
             )}
@@ -654,7 +656,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           <div>
             <label
               htmlFor="remaining"
-              className={`block text-sm font-medium mb-1 ${
+              className={`block text-xs sm:text-sm font-medium mb-1 ${
                 isDark ? "text-gray-300" : "text-gray-700"
               }`}
             >
@@ -669,7 +671,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               {...register("remaining", {
                 min: { value: 0, message: t("validation.min", { min: 0 }) },
               })}
-              className={`w-full px-3 py-2 rounded-md border ${
+              className={`w-full px-3 py-2 text-sm rounded-md border ${
                 errors.remaining
                   ? "border-red-500"
                   : isDark
@@ -679,19 +681,19 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
               placeholder="0.00"
             />
             {errors.remaining && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+              <p className="mt-1 text-xs sm:text-sm text-red-600 dark:text-red-400">
                 {errors.remaining.message}
               </p>
             )}
           </div>
         </div>
 
-        <div className="flex justify-end space-x-3 pt-4">
+        <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-4">
           {onCancel && (
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full sm:w-auto px-4 py-2 text-sm font-medium rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               disabled={loading}
             >
               {t("common.cancel")}
@@ -699,7 +701,7 @@ const ProductForm = ({ onSubmit, onCancel, product, shipmentTrackNumber }) => {
           )}
           <button
             type="submit"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             disabled={loading}
           >
             {loading ? (
