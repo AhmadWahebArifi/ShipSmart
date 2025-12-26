@@ -495,100 +495,102 @@ const Products = () => {
                 </div>
               </div>
             ) : (
-              <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                  <thead
-                    className={`${
-                      isDark
-                        ? "bg-gray-800 text-gray-200"
-                        : "bg-gray-50 text-gray-700"
-                    }`}
-                  >
-                    <tr>
-                      <th
-                        scope="col"
-                        className={`px-2 sm:px-3 lg:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("products.table.name")}
-                      </th>
-                      <th
-                        scope="col"
-                        className={`hidden xs:table-cell px-2 sm:px-3 lg:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("products.table.shipment")}
-                      </th>
-                      <th
-                        scope="col"
-                        className={`hidden sm:table-cell px-2 sm:px-3 lg:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("products.table.status")}
-                      </th>
-                      <th
-                        scope="col"
-                        className={`px-2 sm:px-3 lg:px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("products.table.quantity")}
-                      </th>
-                      <th
-                        scope="col"
-                        className={`hidden xs:table-cell px-2 sm:px-3 lg:px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("products.table.weight")} (kg)
-                      </th>
-                      <th
-                        scope="col"
-                        className={`hidden md:table-cell px-2 sm:px-3 lg:px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("products.table.price")} (AFN)
-                      </th>
-                      <th
-                        scope="col"
-                        className={`hidden lg:table-cell px-2 sm:px-3 lg:px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("products.table.total")} (AFN)
-                      </th>
-                      <th
-                        scope="col"
-                        className={`hidden lg:table-cell px-2 sm:px-3 lg:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("products.table.contactInfo")}
-                      </th>
-                      <th
-                        scope="col"
-                        className={`hidden xl:table-cell px-2 sm:px-3 lg:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
-                          isDark ? "text-gray-300" : "text-gray-500"
-                        }`}
-                      >
-                        {t("products.table.outstandingBalance")}
-                      </th>
-                      <th scope="col" className="relative px-2 sm:px-3 lg:px-6 py-3">
-                        <span className="sr-only">{t("common.actions")}</span>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody
-                    className={`divide-y ${
-                      isDark
-                        ? "divide-gray-700 bg-gray-900"
-                        : "divide-gray-200 bg-white"
-                    }`}
-                  >
+              <>
+                {/* Desktop & Large Tablet Table View */}
+                <div className="hidden md:block overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+                  <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead
+                      className={`${
+                        isDark
+                          ? "bg-gray-800 text-gray-200"
+                          : "bg-gray-50 text-gray-700"
+                      }`}
+                    >
+                      <tr>
+                        <th
+                          scope="col"
+                          className={`px-2 sm:px-3 lg:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                            isDark ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          {t("products.table.name")}
+                        </th>
+                        <th
+                          scope="col"
+                          className={`hidden xs:table-cell px-2 sm:px-3 lg:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                            isDark ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          {t("products.table.shipment")}
+                        </th>
+                        <th
+                          scope="col"
+                          className={`hidden sm:table-cell px-2 sm:px-3 lg:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                            isDark ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          {t("products.table.status")}
+                        </th>
+                        <th
+                          scope="col"
+                          className={`px-2 sm:px-3 lg:px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
+                            isDark ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          {t("products.table.quantity")}
+                        </th>
+                        <th
+                          scope="col"
+                          className={`hidden xs:table-cell px-2 sm:px-3 lg:px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
+                            isDark ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          {t("products.table.weight")} (kg)
+                        </th>
+                        <th
+                          scope="col"
+                          className={`hidden md:table-cell px-2 sm:px-3 lg:px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
+                            isDark ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          {t("products.table.price")} (AFN)
+                        </th>
+                        <th
+                          scope="col"
+                          className={`hidden lg:table-cell px-2 sm:px-3 lg:px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
+                            isDark ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          {t("products.table.total")} (AFN)
+                        </th>
+                        <th
+                          scope="col"
+                          className={`hidden lg:table-cell px-2 sm:px-3 lg:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                            isDark ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          {t("products.table.contactInfo")}
+                        </th>
+                        <th
+                          scope="col"
+                          className={`hidden xl:table-cell px-2 sm:px-3 lg:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                            isDark ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          {t("products.table.outstandingBalance")}
+                        </th>
+                        <th scope="col" className="relative px-2 sm:px-3 lg:px-6 py-3">
+                          <span className="sr-only">{t("common.actions")}</span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      className={`divide-y ${
+                        isDark
+                          ? "divide-gray-700 bg-gray-900"
+                          : "divide-gray-200 bg-white"
+                      }`}
+                    >
                     {filteredProducts.map((product) => (
                       <tr
                         key={product.id}
@@ -825,6 +827,252 @@ const Products = () => {
                   </tfoot>
                 </table>
               </div>
+
+              {/* Tablet & Mobile Card View */}
+              <div className="md:hidden space-y-4">
+                {filteredProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className={`rounded-lg border p-4 transition-all hover:shadow-md ${
+                      isDark
+                        ? "bg-gray-800 border-gray-700 hover:bg-gray-750"
+                        : "bg-white border-gray-200 hover:bg-gray-50"
+                    }`}
+                  >
+                    {/* Header with product name and status */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <div
+                          className={`flex-shrink-0 h-8 w-8 rounded-md flex items-center justify-center ${
+                            isDark
+                              ? "bg-blue-900/30 text-blue-400"
+                              : "bg-blue-100 text-blue-600"
+                          }`}
+                        >
+                          <FiPackage className="h-4 w-4" />
+                        </div>
+                        <span className={`font-semibold text-sm truncate ${
+                          isDark ? "text-gray-200" : "text-gray-900"
+                        }`}>
+                          {product.name}
+                        </span>
+                      </div>
+                      {product.shipment ? (
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-semibold flex-shrink-0 ${getStatusColor(
+                            product.shipment.status
+                          )}`}
+                        >
+                          {t(`shipmentStatus.${product.shipment.status}`) ||
+                            product.shipment.status.replace("_", " ")}
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 rounded-full text-xs font-semibold flex-shrink-0 bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                          N/A
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Shipment Information */}
+                    <div className="space-y-2 mb-3">
+                      <div className="flex items-center justify-between">
+                        <span className={`text-xs sm:text-sm ${
+                          isDark ? "text-gray-400" : "text-gray-600"
+                        }`}>
+                          {t("products.table.shipment")}
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <FiTruck className={`w-3 h-3 ${
+                            isDark ? "text-gray-400" : "text-gray-500"
+                          }`} />
+                          <span className={`text-xs sm:text-sm font-medium text-right ${
+                            isDark ? "text-gray-300" : "text-gray-700"
+                          } max-w-[50%] truncate`}>
+                            {product.shipment_tracking_number}
+                          </span>
+                        </div>
+                      </div>
+                      {product.shipment && (
+                        <div className="flex items-center justify-between">
+                          <span className={`text-xs sm:text-sm ${
+                            isDark ? "text-gray-400" : "text-gray-600"
+                          }`}>
+                            Route
+                          </span>
+                          <span className={`text-xs sm:text-sm font-medium text-right ${
+                            isDark ? "text-gray-300" : "text-gray-700"
+                          } max-w-[50%] truncate`}>
+                            {product.shipment.from_province} → {product.shipment.to_province}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Product Details - Responsive Grid */}
+                    <div className="grid grid-cols-2 gap-2 mb-3 text-xs">
+                      <div className="min-w-0">
+                        <span className={`block ${
+                          isDark ? "text-gray-400" : "text-gray-600"
+                        }`}>
+                          {t("products.table.quantity")}
+                        </span>
+                        <span className={`block font-medium truncate ${
+                          isDark ? "text-gray-300" : "text-gray-700"
+                        }`}>
+                          {product.quantity}
+                        </span>
+                      </div>
+                      <div className="min-w-0">
+                        <span className={`block ${
+                          isDark ? "text-gray-400" : "text-gray-600"
+                        }`}>
+                          {t("products.table.weight")} (kg)
+                        </span>
+                        <span className={`block font-medium truncate ${
+                          isDark ? "text-gray-300" : "text-gray-700"
+                        }`}>
+                          {parseFloat(product.weight).toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="min-w-0">
+                        <span className={`block ${
+                          isDark ? "text-gray-400" : "text-gray-600"
+                        }`}>
+                          {t("products.table.price")} (AFN)
+                        </span>
+                        <span className={`block font-medium truncate ${
+                          isDark ? "text-gray-300" : "text-gray-700"
+                        }`}>
+                          {parseFloat(product.price).toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="min-w-0">
+                        <span className={`block ${
+                          isDark ? "text-gray-400" : "text-gray-600"
+                        }`}>
+                          {t("products.table.total")} (AFN)
+                        </span>
+                        <span className={`block font-medium truncate ${
+                          isDark ? "text-gray-300" : "text-gray-700"
+                        }`}>
+                          {(
+                            parseFloat(product.price) *
+                              parseInt(product.quantity) -
+                            (parseFloat(product.price) *
+                              parseInt(product.quantity) *
+                              (parseFloat(product.discount) || 0)) /
+                              100
+                          ).toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Outstanding Balance */}
+                    {product.remaining !== null &&
+                      product.remaining !== undefined &&
+                      product.remaining !== "" && (
+                        <div className="mb-3">
+                          <span className={`block text-xs ${
+                            isDark ? "text-gray-400" : "text-gray-600"
+                          }`}>
+                            {t("products.table.outstandingBalance")}
+                          </span>
+                          <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            isDark
+                              ? "bg-red-900 text-red-200"
+                              : "bg-red-100 text-red-800"
+                          }`}>
+                            {parseFloat(product.remaining).toFixed(2)} AFN
+                          </span>
+                        </div>
+                      )}
+
+                    {/* Actions */}
+                    <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
+                      {/* Contact Info Button */}
+                      {product.sender ||
+                      product.sender_phone ||
+                      product.sender_email ||
+                      product.sender_address ||
+                      product.receiver_name ||
+                      product.receiver_phone ||
+                      product.receiver_email ||
+                      product.receiver_address ? (
+                        <button
+                          onClick={() => setSelectedProduct(product)}
+                          className={`flex-1 min-w-[100px] flex items-center justify-center gap-1 p-2 rounded text-xs ${
+                            isDark
+                              ? "text-blue-400 hover:bg-gray-600"
+                              : "text-blue-600 hover:bg-gray-200"
+                          }`}
+                          title={t("products.viewContactInfo")}
+                        >
+                          <FiUsers className="w-4 h-4" />
+                          <span>{t("products.contactInfo")}</span>
+                        </button>
+                      ) : (
+                        <div className="flex-1"></div>
+                      )}
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-1">
+                        {/* Edit Button */}
+                        <button
+                          onClick={() => setEditingProduct(product)}
+                          className={`p-2 rounded text-xs ${
+                            isDark
+                              ? "text-blue-400 hover:bg-gray-600"
+                              : "text-blue-600 hover:bg-gray-200"
+                          }`}
+                          title={t("common.edit")}
+                        >
+                          <FiEdit2 className="w-4 h-4" />
+                        </button>
+
+                        {/* Delete Button */}
+                        <button
+                          onClick={() => handleDeleteProduct(product.id)}
+                          className={`p-2 rounded text-xs ${
+                            isDark
+                              ? "text-red-400 hover:bg-gray-600"
+                              : "text-red-600 hover:bg-gray-200"
+                          }`}
+                          title={t("common.delete")}
+                        >
+                          <FiTrash2 className="w-4 h-4" />
+                        </button>
+
+                        {/* Print Button */}
+                        <button
+                          onClick={() => setPrintProduct(product)}
+                          className={`p-2 rounded text-xs ${
+                            isDark
+                              ? "text-purple-400 hover:bg-gray-600"
+                              : "text-purple-600 hover:bg-gray-200"
+                          }`}
+                          title={t("products.print")}
+                        >
+                          <FiPrinter className="w-4 h-4" />
+                        </button>
+
+                        {/* View Shipment Button */}
+                        <Link
+                          to={`/shipments?trackingNumber=${product.shipment_tracking_number}`}
+                          className={`p-2 rounded text-xs ${
+                            isDark
+                              ? "text-gray-400 hover:bg-gray-600"
+                              : "text-gray-500 hover:bg-gray-200"
+                          }`}
+                          title={t("products.viewShipment")}
+                        >
+                          <FiTruck className="w-4 h-4" />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              </>
             )}
           </div>
 
