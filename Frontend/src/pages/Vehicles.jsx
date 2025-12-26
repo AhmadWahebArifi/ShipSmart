@@ -197,17 +197,59 @@ const Vehicles = () => {
             subtitle={`${totalVehicles} ${t("vehicles.items")}`}
           />
 
-          {/* Add Vehicle Button */}
-          <div className="mb-4 sm:mb-6">
-            <button
-              onClick={() => setShowAddForm(!showAddForm)}
-              className="inline-flex items-center px-3 sm:px-4 py-2 border border-transparent text-xs sm:text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              <FiPlus className="-ml-1 mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-              <span className="hidden xs:inline">{t("vehicles.addVehicle")}</span>
-              <span className="xs:hidden">Add</span>
-            </button>
+          {/* Add/Edit Vehicle Form */}
+          {(showAddForm || editingVehicle) && (
+            <div className="mb-4 sm:mb-6">
+              <VehicleForm
+                onSubmit={
+                  editingVehicle ? handleUpdateVehicle : handleAddVehicle
+                }
+                onCancel={() => {
+                  setShowAddForm(false);
+                  setEditingVehicle(null);
+                }}
+                vehicle={editingVehicle}
+              />
+            </div>
+          )}
+
+          {/* Search */}
+          <div
+            className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg ${
+              isDark ? "bg-gray-800" : "bg-white shadow"
+            }`}
+          >
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FiSearch className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={`block w-full pl-9 sm:pl-10 pr-3 py-2 border text-sm ${
+                  isDark
+                    ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+                    : "border-gray-300 text-gray-900 placeholder-gray-500 focus:ring-blue-500 focus:border-blue-500"
+                } rounded-md`}
+                placeholder={t("vehicles.searchPlaceholder")}
+              />
+            </div>
           </div>
+
+          {/* Add Vehicle Button Above List */}
+          {!showAddForm && !editingVehicle && (
+            <div className="mb-4 sm:mb-6">
+              <button
+                onClick={() => setShowAddForm(!showAddForm)}
+                className="inline-flex items-center px-3 sm:px-4 py-2 border border-transparent text-xs sm:text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <FiPlus className="-ml-1 mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline">{t("vehicles.addVehicle")}</span>
+                <span className="xs:hidden">Add</span>
+              </button>
+            </div>
+          )}
 
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
