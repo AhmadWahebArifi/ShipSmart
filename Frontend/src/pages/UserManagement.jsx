@@ -166,24 +166,24 @@ function UserManagement() {
         }`}
       >
         <div
-          className={`rounded-xl p-8 shadow-lg max-w-md w-full mx-4 ${
+          className={`rounded-xl p-4 sm:p-6 lg:p-8 shadow-lg max-w-md w-full mx-3 sm:mx-4 ${
             isDark ? "bg-gray-800" : "bg-white"
           }`}
         >
           <div className="text-center">
             <HiXMark
-              className={`w-16 h-16 mx-auto mb-4 ${
+              className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 ${
                 isDark ? "text-red-400" : "text-red-500"
               }`}
             />
             <h2
-              className={`text-2xl font-bold mb-2 ${
+              className={`text-lg sm:text-2xl font-bold mb-2 ${
                 isDark ? "text-white" : "text-gray-800"
               }`}
             >
               {t("users.accessDeniedTitle")}
             </h2>
-            <p className={`${isDark ? "text-gray-400" : "text-gray-600"}`}>
+            <p className={`text-sm sm:text-base ${isDark ? "text-gray-400" : "text-gray-600"}`}>
               {t("users.accessDeniedMessage")}
             </p>
           </div>
@@ -215,21 +215,21 @@ function UserManagement() {
           sidebarOpen || !sidebarCollapsed ? "lg:ml-64" : "lg:ml-20"
         }`}
       >
-        <div className="p-4 sm:p-6 lg:p-8">
+        <div className="p-3 sm:p-4 lg:p-6 xl:p-8">
           <Header title={t("users.title")} subtitle={t("users.subtitle")} />
 
           {/* Add User Button */}
-          <div className="mb-6">
+          <div className="mb-4 sm:mb-6">
             <button
               onClick={() => setShowCreateForm(true)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                 isDark
                   ? "bg-blue-600 text-white hover:bg-blue-700"
                   : "bg-blue-600 text-white hover:bg-blue-700"
               } shadow-lg`}
             >
-              <HiUserPlus className="w-5 h-5" />
-              <span>{t("users.addUser")}</span>
+              <HiUserPlus className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="text-xs sm:text-sm">{t("users.addUser")}</span>
             </button>
           </div>
 
@@ -249,15 +249,15 @@ function UserManagement() {
           {/* Create User Form */}
           {showCreateForm && (
             <div
-              className={`rounded-xl shadow-lg border p-6 mb-8 transition-all duration-300 ${
+              className={`rounded-xl shadow-lg border p-4 sm:p-6 mb-6 sm:mb-8 transition-all duration-300 ${
                 isDark
                   ? "bg-gray-800 border-gray-700"
                   : "bg-white border-gray-200"
               }`}
             >
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
                 <h2
-                  className={`text-xl font-semibold ${
+                  className={`text-lg sm:text-xl font-semibold ${
                     isDark ? "text-white" : "text-gray-800"
                   }`}
                 >
@@ -271,14 +271,14 @@ function UserManagement() {
                       : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
                   }`}
                 >
-                  <HiXMark className="w-5 h-5" />
+                  <HiXMark className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
-              <form onSubmit={handleCreateUser} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <form onSubmit={handleCreateUser} className="space-y-3 sm:space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <label
-                      className={`block text-sm font-medium mb-2 ${
+                      className={`block text-xs sm:text-sm font-medium mb-1 sm:mb-2 ${
                         isDark ? "text-gray-300" : "text-gray-700"
                       }`}
                     >
@@ -290,7 +290,7 @@ function UserManagement() {
                       value={formData.username}
                       onChange={handleInputChange}
                       required
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm ${
                         isDark
                           ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                           : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
@@ -299,7 +299,7 @@ function UserManagement() {
                   </div>
                   <div>
                     <label
-                      className={`block text-sm font-medium mb-2 ${
+                      className={`block text-xs sm:text-sm font-medium mb-1 sm:mb-2 ${
                         isDark ? "text-gray-300" : "text-gray-700"
                       }`}
                     >
@@ -311,7 +311,7 @@ function UserManagement() {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm ${
                         isDark
                           ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                           : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
@@ -320,7 +320,7 @@ function UserManagement() {
                   </div>
                   <div>
                     <label
-                      className={`block text-sm font-medium mb-2 ${
+                      className={`block text-xs sm:text-sm font-medium mb-1 sm:mb-2 ${
                         isDark ? "text-gray-300" : "text-gray-700"
                       }`}
                     >
@@ -332,7 +332,7 @@ function UserManagement() {
                       value={formData.password}
                       onChange={handleInputChange}
                       required
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm ${
                         isDark
                           ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                           : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
@@ -341,7 +341,7 @@ function UserManagement() {
                   </div>
                   <div>
                     <label
-                      className={`block text-sm font-medium mb-2 ${
+                      className={`block text-xs sm:text-sm font-medium mb-1 sm:mb-2 ${
                         isDark ? "text-gray-300" : "text-gray-700"
                       }`}
                     >
@@ -352,7 +352,7 @@ function UserManagement() {
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm ${
                         isDark
                           ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                           : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
@@ -361,7 +361,7 @@ function UserManagement() {
                   </div>
                   <div>
                     <label
-                      className={`block text-sm font-medium mb-2 ${
+                      className={`block text-xs sm:text-sm font-medium mb-1 sm:mb-2 ${
                         isDark ? "text-gray-300" : "text-gray-700"
                       }`}
                     >
@@ -371,7 +371,7 @@ function UserManagement() {
                       name="role"
                       value={formData.role}
                       onChange={handleInputChange}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm ${
                         isDark
                           ? "bg-gray-700 border-gray-600 text-white"
                           : "bg-white border-gray-300 text-gray-900"
@@ -388,7 +388,7 @@ function UserManagement() {
                   </div>
                   <div>
                     <label
-                      className={`block text-sm font-medium mb-2 ${
+                      className={`block text-xs sm:text-sm font-medium mb-1 sm:mb-2 ${
                         isDark ? "text-gray-300" : "text-gray-700"
                       }`}
                     >
@@ -399,7 +399,7 @@ function UserManagement() {
                       name="branch"
                       value={formData.branch}
                       onChange={handleInputChange}
-                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none ${
+                      className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm ${
                         isDark
                           ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                           : "bg-white border-gray-300 text-gray-900 placeholder-gray-500"
@@ -407,11 +407,11 @@ function UserManagement() {
                     />
                   </div>
                 </div>
-                <div className="flex justify-end gap-3 pt-4">
+                <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-3 sm:pt-4">
                   <button
                     type="button"
                     onClick={() => setShowCreateForm(false)}
-                    className={`px-4 py-2 rounded-lg font-medium ${
+                    className={`w-full sm:w-auto px-4 py-2 rounded-lg font-medium text-xs sm:text-sm ${
                       isDark
                         ? "bg-gray-700 text-white hover:bg-gray-600"
                         : "bg-gray-200 text-gray-700 hover:bg-gray-300"
@@ -421,7 +421,7 @@ function UserManagement() {
                   </button>
                   <button
                     type="submit"
-                    className={`px-4 py-2 rounded-lg font-medium text-white ${
+                    className={`w-full sm:w-auto px-4 py-2 rounded-lg font-medium text-white text-xs sm:text-sm ${
                       isDark
                         ? "bg-blue-600 hover:bg-blue-700"
                         : "bg-blue-600 hover:bg-blue-700"
@@ -456,52 +456,54 @@ function UserManagement() {
             ) : (
               <>
                 <div
-                  className={`px-6 py-4 border-b ${
+                  className={`px-4 sm:px-6 py-3 sm:py-4 border-b ${
                     isDark ? "border-gray-700" : "border-gray-200"
                   }`}
                 >
                   <h2
-                    className={`text-lg font-semibold ${
+                    className={`text-base sm:text-lg font-semibold ${
                       isDark ? "text-white" : "text-gray-800"
                     }`}
                   >
                     {t("users.users")} ({users.length})
                   </h2>
                 </div>
-                <div className="overflow-x-auto">
+
+                {/* Desktop & Large Tablet Table View */}
+                <div className="hidden md:block overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead className={isDark ? "bg-gray-700" : "bg-gray-50"}>
                       <tr>
                         <th
-                          className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          className={`px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                             isDark ? "text-gray-300" : "text-gray-500"
                           }`}
                         >
                           {t("users.table.user")}
                         </th>
                         <th
-                          className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          className={`px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                             isDark ? "text-gray-300" : "text-gray-500"
                           }`}
                         >
                           {t("users.table.role")}
                         </th>
                         <th
-                          className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          className={`hidden sm:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                             isDark ? "text-gray-300" : "text-gray-500"
                           }`}
                         >
                           {t("users.table.branch")}
                         </th>
                         <th
-                          className={`px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
+                          className={`hidden lg:table-cell px-3 sm:px-6 py-3 text-left text-xs font-medium uppercase tracking-wider ${
                             isDark ? "text-gray-300" : "text-gray-500"
                           }`}
                         >
                           {t("users.table.status")}
                         </th>
                         <th
-                          className={`px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
+                          className={`px-3 sm:px-6 py-3 text-right text-xs font-medium uppercase tracking-wider ${
                             isDark ? "text-gray-300" : "text-gray-500"
                           }`}
                         >
@@ -523,10 +525,10 @@ function UserManagement() {
                             isDark ? "hover:bg-gray-700/50" : "hover:bg-gray-50"
                           }
                         >
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <div
-                                className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center font-semibold ${
+                                className={`flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 rounded-full flex items-center justify-center font-semibold text-xs sm:text-sm ${
                                   isDark
                                     ? "bg-blue-600/20 text-blue-400"
                                     : "bg-blue-100 text-blue-600"
@@ -536,16 +538,16 @@ function UserManagement() {
                                   ? user.name.charAt(0).toUpperCase()
                                   : user.username.charAt(0).toUpperCase()}
                               </div>
-                              <div className="ml-4">
+                              <div className="ml-2 sm:ml-4">
                                 <div
-                                  className={`text-sm font-medium ${
+                                  className={`text-xs sm:text-sm font-medium ${
                                     isDark ? "text-white" : "text-gray-900"
                                   }`}
                                 >
                                   {user.name || user.username}
                                 </div>
                                 <div
-                                  className={`text-sm ${
+                                  className={`text-xs sm:text-sm ${
                                     isDark ? "text-gray-400" : "text-gray-500"
                                   }`}
                                 >
@@ -554,7 +556,7 @@ function UserManagement() {
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                             <span
                               className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                                 user.role === "superadmin"
@@ -571,7 +573,7 @@ function UserManagement() {
                                 : t("users.roles.user")}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <td className={`hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm`}>
                             <span
                               className={`${
                                 isDark ? "text-gray-300" : "text-gray-700"
@@ -580,7 +582,7 @@ function UserManagement() {
                               {user.branch || "N/A"}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className={`hidden lg:table-cell px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap`}>
                             <span
                               className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                                 isDark
@@ -591,39 +593,39 @@ function UserManagement() {
                               {t("users.table.active")}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div className="flex items-center justify-end gap-2">
+                          <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-right text-xs sm:text-sm font-medium">
+                            <div className="flex items-center justify-end gap-1 sm:gap-2">
                               <button
-                                className={`p-2 rounded-lg ${
+                                className={`p-1.5 sm:p-2 rounded-lg ${
                                   isDark
                                     ? "text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
                                     : "text-blue-600 hover:text-blue-900 hover:bg-blue-50"
                                 }`}
                                 title="View"
                               >
-                                <HiEye className="w-4 h-4" />
+                                <HiEye className="w-3 h-3 sm:w-4 sm:h-4" />
                               </button>
                               <button
-                                className={`p-2 rounded-lg ${
+                                className={`p-1.5 sm:p-2 rounded-lg ${
                                   isDark
                                     ? "text-yellow-400 hover:text-yellow-300 hover:bg-yellow-900/20"
                                     : "text-yellow-600 hover:text-yellow-900 hover:bg-yellow-50"
                                 }`}
                                 title="Edit"
                               >
-                                <HiPencil className="w-4 h-4" />
+                                <HiPencil className="w-3 h-3 sm:w-4 sm:h-4" />
                               </button>
                               {user.id !== authUser.id && (
                                 <button
                                   onClick={() => handleDeleteUser(user.id)}
-                                  className={`p-2 rounded-lg ${
+                                  className={`p-1.5 sm:p-2 rounded-lg ${
                                     isDark
                                       ? "text-red-400 hover:text-red-300 hover:bg-red-900/20"
                                       : "text-red-600 hover:text-red-900 hover:bg-red-50"
                                   }`}
                                   title="Delete"
                                 >
-                                  <HiTrash className="w-4 h-4" />
+                                  <HiTrash className="w-3 h-3 sm:w-4 sm:h-4" />
                                 </button>
                               )}
                             </div>
@@ -632,6 +634,137 @@ function UserManagement() {
                       ))}
                     </tbody>
                   </table>
+                </div>
+
+                {/* Tablet & Mobile Card View */}
+                <div className="md:hidden space-y-3 sm:space-y-4 p-3 sm:p-4">
+                  {users.map((user) => (
+                    <div
+                      key={user.id}
+                      className={`rounded-lg border p-3 sm:p-4 transition-all hover:shadow-md ${
+                        isDark
+                          ? "bg-gray-800 border-gray-700 hover:bg-gray-750"
+                          : "bg-white border-gray-200 hover:bg-gray-50"
+                      }`}
+                    >
+                      {/* Header with user info and role */}
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <div
+                            className={`flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 rounded-full flex items-center justify-center font-semibold text-xs sm:text-sm ${
+                              isDark
+                                ? "bg-blue-600/20 text-blue-400"
+                                : "bg-blue-100 text-blue-600"
+                            }`}
+                          >
+                            {user.name
+                              ? user.name.charAt(0).toUpperCase()
+                              : user.username.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className={`font-semibold text-xs sm:text-sm truncate ${
+                              isDark ? "text-gray-200" : "text-gray-900"
+                            }`}>
+                              {user.name || user.username}
+                            </div>
+                            <div className={`text-xs truncate ${
+                              isDark ? "text-gray-400" : "text-gray-500"
+                            }`}>
+                              {user.email}
+                            </div>
+                          </div>
+                        </div>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-semibold flex-shrink-0 ${
+                            user.role === "superadmin"
+                              ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
+                              : user.role === "admin"
+                              ? "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300"
+                              : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                          }`}
+                        >
+                          {user.role === "superadmin"
+                            ? t("users.roles.superadmin")
+                            : user.role === "admin"
+                            ? t("users.roles.admin")
+                            : t("users.roles.user")}
+                        </span>
+                      </div>
+
+                      {/* User Details - Responsive Grid */}
+                      <div className="grid grid-cols-2 gap-3 mb-3 text-xs">
+                        <div className="min-w-0">
+                          <span className={`block ${
+                            isDark ? "text-gray-400" : "text-gray-600"
+                          }`}>
+                            {t("users.table.branch")}
+                          </span>
+                          <span className={`block font-medium truncate ${
+                            isDark ? "text-gray-300" : "text-gray-700"
+                          }`}>
+                            {user.branch || "N/A"}
+                          </span>
+                        </div>
+                        <div className="min-w-0">
+                          <span className={`block ${
+                            isDark ? "text-gray-400" : "text-gray-600"
+                          }`}>
+                            {t("users.table.status")}
+                          </span>
+                          <span className={`block font-medium truncate ${
+                            isDark ? "text-gray-300" : "text-gray-700"
+                          }`}>
+                            {t("users.table.active")}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex gap-1 sm:gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
+                        {/* View Button */}
+                        <button
+                          className={`flex-1 flex items-center justify-center gap-1 p-2 rounded text-xs ${
+                            isDark
+                              ? "text-blue-400 hover:bg-gray-600"
+                              : "text-blue-600 hover:bg-gray-200"
+                          }`}
+                          title="View"
+                        >
+                          <HiEye className="w-4 h-4" />
+                          <span className="hidden sm:inline">View</span>
+                        </button>
+
+                        {/* Edit Button */}
+                        <button
+                          className={`flex-1 flex items-center justify-center gap-1 p-2 rounded text-xs ${
+                            isDark
+                              ? "text-yellow-400 hover:bg-gray-600"
+                              : "text-yellow-600 hover:bg-gray-200"
+                          }`}
+                          title="Edit"
+                        >
+                          <HiPencil className="w-4 h-4" />
+                          <span className="hidden sm:inline">Edit</span>
+                        </button>
+
+                        {/* Delete Button */}
+                        {user.id !== authUser.id && (
+                          <button
+                            onClick={() => handleDeleteUser(user.id)}
+                            className={`flex-1 flex items-center justify-center gap-1 p-2 rounded text-xs ${
+                              isDark
+                                ? "text-red-400 hover:bg-gray-600"
+                                : "text-red-600 hover:bg-gray-200"
+                            }`}
+                            title="Delete"
+                          >
+                            <HiTrash className="w-4 h-4" />
+                            <span className="hidden sm:inline">Delete</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </>
             )}
