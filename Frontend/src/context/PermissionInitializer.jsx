@@ -10,12 +10,19 @@ const PermissionInitializer = ({ children }) => {
   useEffect(() => {
     if (user) {
       // Set permissions based on user role
-      setPermissionsForRole(user.role);
+      if (user.role) {
+        // If user has custom permissions, use them
+        if (user.permissions && Array.isArray(user.permissions)) {
+          setPermissionsForRole(user.role, user.permissions);
+        } else {
+          setPermissionsForRole(user.role);
+        }
+      }
     } else {
       // Clear permissions when user logs out
       setPermissionsForRole(null);
     }
-  }, [user]);
+  }, [user, setPermissionsForRole]);
 
   return children;
 };
