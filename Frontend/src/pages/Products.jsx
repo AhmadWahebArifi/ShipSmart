@@ -4,6 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
 import { useTranslation } from "react-i18next";
 import { useLoader } from "../context/LoaderContext";
+import { usePermission } from "../context/PermissionContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
 import Header from "../components/Header";
@@ -28,6 +29,7 @@ const Products = () => {
   const { t } = useTranslation();
   const { isDark } = useTheme();
   const { showLoaderWithText } = useLoader();
+  const { hasPermission } = usePermission();
   const { trackNumber } = useParams();
   const { sidebarOpen, closeSidebar, sidebarCollapsed, toggleSidebar } =
     useSidebar();
@@ -105,6 +107,19 @@ const Products = () => {
   };
 
   const handleAddProduct = (newProduct) => {
+    // Check if user has permission to create products
+    if (!hasPermission('create_product')) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: t("common.noPermission"),
+        showConfirmButton: false,
+        timer: 3000,
+      });
+      return;
+    }
+    
     setProducts([newProduct, ...products]);
     setShowAddForm(false);
     Swal.fire({
@@ -118,6 +133,19 @@ const Products = () => {
   };
 
   const handleUpdateProduct = (updatedProduct) => {
+    // Check if user has permission to update products
+    if (!hasPermission('update_product')) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: t("common.noPermission"),
+        showConfirmButton: false,
+        timer: 3000,
+      });
+      return;
+    }
+    
     setProducts(
       products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
     );
@@ -133,6 +161,19 @@ const Products = () => {
   };
 
   const handleDeleteProduct = async (productId) => {
+    // Check if user has permission to delete products
+    if (!hasPermission('delete_product')) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: t("common.noPermission"),
+        showConfirmButton: false,
+        timer: 3000,
+      });
+      return;
+    }
+    
     const result = await Swal.fire({
       title: t("products.confirmDeleteTitle"),
       text: t("products.confirmDelete"),
@@ -361,16 +402,18 @@ const Products = () => {
           </div>
 
           {/* Add Product Button */}
-          <div className="mb-4 sm:mb-6">
-            <button
-              onClick={() => setShowAddForm(!showAddForm)}
-              className="inline-flex items-center px-3 sm:px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              <FiPlus className="-ml-1 mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">{t("products.addProduct")}</span>
-              <span className="sm:hidden">{t("common.add")}</span>
-            </button>
-          </div>
+          {hasPermission('create_product') && (
+            <div className="mb-4 sm:mb-6">
+              <button
+                onClick={() => setShowAddForm(!showAddForm)}
+                className="inline-flex items-center px-3 sm:px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                <FiPlus className="-ml-1 mr-2 h-4 w-4" />
+                <span className="hidden sm:inline">{t("products.addProduct")}</span>
+                <span className="sm:hidden">{t("common.add")}</span>
+              </button>
+            </div>
+          )}
 
           {/* Add/Edit Product Form */}
           {(showAddForm || editingProduct) && (
@@ -762,20 +805,24 @@ const Products = () => {
                           }`}
                         >
                           <div className="flex justify-end flex-wrap gap-1 sm:gap-2">
-                            <button
-                              onClick={() => setEditingProduct(product)}
-                              className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
-                              title={t("common.edit")}
-                            >
-                              <FiEdit2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteProduct(product.id)}
-                              className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                              title={t("common.delete")}
-                            >
-                              <FiTrash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                            </button>
+                            {hasPermission('update_product') && (
+                              <button
+                                onClick={() => setEditingProduct(product)}
+                                className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                                title={t("common.edit")}
+                              >
+                                <FiEdit2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                              </button>
+                            )}
+                            {hasPermission('delete_product') && (
+                              <button
+                                onClick={() => handleDeleteProduct(product.id)}
+                                className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                title={t("common.delete")}
+                              >
+                                <FiTrash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                              </button>
+                            )}
                             <button
                               onClick={() => setPrintProduct(product)}
                               className="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300"
@@ -1017,30 +1064,34 @@ const Products = () => {
                       {/* Action Buttons */}
                       <div className="flex gap-1">
                         {/* Edit Button */}
-                        <button
-                          onClick={() => setEditingProduct(product)}
-                          className={`p-2 rounded text-xs ${
-                            isDark
-                              ? "text-blue-400 hover:bg-gray-600"
-                              : "text-blue-600 hover:bg-gray-200"
-                          }`}
-                          title={t("common.edit")}
+                        {hasPermission('update_product') && (
+                          <button
+                            onClick={() => setEditingProduct(product)}
+                            className={`p-2 rounded text-xs ${
+                              isDark
+                                ? "text-blue-400 hover:bg-gray-600"
+                                : "text-blue-600 hover:bg-gray-200"
+                            }`}
+                            title={t("common.edit")}
                         >
                           <FiEdit2 className="w-4 h-4" />
                         </button>
+                        )}
 
                         {/* Delete Button */}
-                        <button
-                          onClick={() => handleDeleteProduct(product.id)}
-                          className={`p-2 rounded text-xs ${
-                            isDark
-                              ? "text-red-400 hover:bg-gray-600"
+                        {hasPermission('delete_product') && (
+                          <button
+                            onClick={() => handleDeleteProduct(product.id)}
+                            className={`p-2 rounded text-xs ${
+                              isDark
+                                ? "text-red-400 hover:bg-gray-600"
                               : "text-red-600 hover:bg-gray-200"
                           }`}
                           title={t("common.delete")}
                         >
                           <FiTrash2 className="w-4 h-4" />
                         </button>
+                        )}
 
                         {/* Print Button */}
                         <button
