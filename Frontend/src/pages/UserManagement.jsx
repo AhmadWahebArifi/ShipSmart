@@ -25,6 +25,7 @@ const MySwal = withReactContent(Swal);
 
 function UserManagement() {
   const { user: authUser } = useAuth();
+  const { hasPermission } = usePermission();
   const { isDark } = useTheme();
   const { showLoaderWithText } = useLoader();
   const { t } = useTranslation();
@@ -45,13 +46,10 @@ function UserManagement() {
     email: "",
     password: "",
     role: "user",
-    branch: "",
-    name: "",
   });
 
   // Check if user has permission to manage users
-  const canManageUsers =
-    authUser && (authUser.role === "admin" || authUser.role === "superadmin");
+  const canManageUsers = hasPermission('manage_users');
 
   useEffect(() => {
     if (canManageUsers) {
@@ -99,6 +97,13 @@ function UserManagement() {
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
+    
+    // Check if user has permission to create users
+    if (!hasPermission('create_user')) {
+      showAlert(t("common.error"), t("common.noPermission"), "error");
+      return;
+    }
+    
     try {
       const response = await axiosInstance.post("/users", formData);
       if (response.data && response.data.success) {
@@ -126,6 +131,12 @@ function UserManagement() {
   };
 
   const handleDeleteUser = async (userId) => {
+    // Check if user has permission to delete users
+    if (!hasPermission('delete_user')) {
+      showAlert(t("common.error"), t("common.noPermission"), "error");
+      return;
+    }
+    
     try {
       const result = await MySwal.fire({
         title: t("users.confirmDeleteTitle"),
@@ -220,19 +231,21 @@ function UserManagement() {
           <Header title={t("users.title")} subtitle={t("users.subtitle")} />
 
           {/* Add User Button */}
-          <div className="mb-4 sm:mb-6">
-            <button
-              onClick={() => setShowCreateForm(true)}
-              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
-                isDark
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
-              } shadow-lg`}
-            >
-              <HiUserPlus className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="text-xs sm:text-sm">{t("users.addUser")}</span>
-            </button>
-          </div>
+          {hasPermission('create_user') && (
+            <div className="mb-4 sm:mb-6">
+              <button
+                onClick={() => setShowCreateForm(true)}
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                  isDark
+                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    : "bg-blue-600 text-white hover:bg-blue-700"
+                } shadow-lg`}
+              >
+                <HiUserPlus className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-xs sm:text-sm">{t("users.addUser")}</span>
+              </button>
+            </div>
+          )}
 
           {/* Error Message */}
           {error && (
