@@ -15,6 +15,7 @@ import Loader from "./components/Loader";
 import AppLoader from "./components/AppLoader";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AccessDenied from "./components/AccessDenied";
+import RoleBasedRedirect from "./components/RoleBasedRedirect";
 import "./i18n/config"; // Initialize i18n
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -140,7 +141,12 @@ function App() {
                     />
                     <Route
                       path="/"
-                      element={<Navigate to="/dashboard" replace />}
+                      element={
+                        // Redirect based on user role
+                        <ProtectedRoute>
+                          <RoleBasedRedirect />
+                        </ProtectedRoute>
+                      }
                     />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
