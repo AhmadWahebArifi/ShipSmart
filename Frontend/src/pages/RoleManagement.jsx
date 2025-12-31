@@ -52,9 +52,18 @@ function RoleManagement() {
   const [newRolePermissions, setNewRolePermissions] = useState([]);
   const [showRoleAssignmentModal, setShowRoleAssignmentModal] = useState(false);
   const [selectedRole, setSelectedRole] = useState("");
+  const [isAssigningRole, setIsAssigningRole] = useState(false);
 
   // Check if user can manage roles
   const canManageRoles = hasPermission('manage_roles') || authUser?.role === 'superadmin';
+  
+  // Check if current user is superadmin (can assign any role including superadmin)
+  const isSuperAdmin = authUser?.role === 'superadmin';
+  
+  // Available roles based on current user's role
+  const availableRoles = isSuperAdmin 
+    ? ['user', 'admin', 'superadmin']
+    : ['user', 'admin']; // Admin can only assign user and admin roles
 
   // Don't render anything until auth user is loaded
   if (!authUser) {
@@ -79,14 +88,21 @@ function RoleManagement() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
+      console.log('Fetching users from backend...');
       const response = await axiosInstance.get("/users");
+      console.log('Users response:', response);
+      
       if (response.data && response.data.success) {
+        console.log('Users data from backend:', response.data.users);
         // Add permissions to each user based on their role
         const usersWithPermissions = response.data.users.map(user => ({
           ...user,
           permissions: ROLE_PERMISSIONS[user.role] || []
         }));
+        console.log('Users with permissions:', usersWithPermissions);
         setUsers(usersWithPermissions);
+      } else {
+        console.error('Failed to fetch users:', response.data);
       }
     } catch (err) {
       setError("Failed to fetch users");
@@ -122,6 +138,12 @@ function RoleManagement() {
   };
 
   const handleManagePermissions = (user) => {
+    // Prevent admins from managing permissions for other admins or superadmins
+    if (!isSuperAdmin && (user.role === 'admin' || user.role === 'superadmin')) {
+      showAlert("Access Denied", "You cannot manage permissions for administrators", "error");
+      return;
+    }
+    
     console.log('handleManagePermissions called for user:', user);
     setSelectedUser(user);
     // Get current user permissions (default role permissions + any custom ones)
@@ -133,37 +155,123 @@ function RoleManagement() {
   };
 
   const handleAssignRole = (user) => {
+    // Prevent admins from managing other admins or superadmins
+    if (!isSuperAdmin && (user.role === 'admin' || user.role === 'superadmin')) {
+      showAlert("Access Denied", "You cannot manage roles for administrators", "error");
+      return;
+    }
+    
     setSelectedUser(user);
     setSelectedRole(user.role);
     setShowRoleAssignmentModal(true);
   };
 
   const handleSaveRoleAssignment = async () => {
+    // Prevent multiple simultaneous role assignments
+    if (isAssigningRole) {
+      console.log('Role assignment already in progress, ignoring...');
+      return;
+    }
+    
     try {
+      setIsAssigningRole(true);
+      
+      // Check if user is trying to change their own role
+      const isChangingOwnRole = selectedUser.id === authUser?.id;
+      
+      // If changing own role to a lower privilege, ask for confirmation
+      if (isChangingOwnRole) {
+        const roleHierarchy = { superadmin: 3, admin: 2, user: 1 };
+        const currentLevel = roleHierarchy[authUser?.role] || 0;
+        const newLevel = roleHierarchy[selectedRole] || 0;
+        
+        if (newLevel < currentLevel) {
+          const result = await Swal.fire({
+            title: "Confirm Role Change",
+            html: `You are changing your own role from <strong>${authUser?.role}</strong> to <strong>${selectedRole}</strong>.<br><br>This will log you out and you may lose access to some features.<br><br>Do you want to continue?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Change Role",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#ef4444",
+          });
+          
+          if (!result.isConfirmed) {
+            return;
+          }
+        }
+      }
+      
+      console.log('Assigning role:', {
+        userId: selectedUser.id,
+        currentRole: selectedUser.role,
+        newRole: selectedRole,
+        isChangingOwnRole
+      });
+      
       const response = await axiosInstance.put(`/roles/users/${selectedUser.id}/role`, {
         role: selectedRole,
       });
 
+      console.log('Role assignment response:', response);
+
       if (response.data && response.data.success) {
         showAlert("Success", "Role assigned successfully", "success");
         
-        // Update the user's role and permissions in the local state
-        const newPermissions = ROLE_PERMISSIONS[selectedRole] || [];
-        setUsers(prevUsers => 
-          prevUsers.map(user => 
-            user.id === selectedUser.id 
-              ? { ...user, role: selectedRole, permissions: newPermissions }
-              : user
-          )
-        );
-        
+        // Close modal and reset state
         setShowRoleAssignmentModal(false);
         setSelectedUser(null);
         setSelectedRole("");
+        
+        // Refetch users to get updated data from backend
+        console.log('Refetching users after role assignment...');
+        await fetchUsers();
+        
+        // Double-check if the role was actually updated
+        setTimeout(() => {
+          const updatedUser = users.find(u => u.id === selectedUser.id);
+          if (updatedUser && updatedUser.role !== selectedRole) {
+            console.log('Role not updated in frontend, forcing refresh...');
+            window.location.reload();
+          }
+        }, 1000);
+        
+        // Also refresh current user data if we changed our own role
+        console.log('Checking if role change affects current user:', {
+          selectedUserId: selectedUser.id,
+          authUserId: authUser?.id,
+          isOwnRole: selectedUser.id === authUser?.id
+        });
+        
+        if (selectedUser.id === authUser?.id) {
+          console.log('Role changed for current user, logging out for re-authentication...');
+          
+          // Show informative message
+          await showAlert(
+            "Role Changed", 
+            "Your role has been changed. You will be logged out for security.", 
+            "info"
+          );
+          
+          // Clear all auth data completely
+          localStorage.clear();
+          sessionStorage.clear();
+          
+          // Force redirect to login with timestamp to prevent caching
+          const timestamp = new Date().getTime();
+          window.location.href = `/login?t=${timestamp}`;
+        } else {
+          console.log('Role changed for different user, no logout needed');
+        }
+      } else {
+        console.error('Role assignment failed:', response.data);
+        showAlert("Error", response.data?.message || "Failed to assign role", "error");
       }
     } catch (err) {
-      showAlert("Error", "Failed to assign role", "error");
       console.error("Error assigning role:", err);
+      showAlert("Error", "Failed to assign role", "error");
+    } finally {
+      setIsAssigningRole(false);
     }
   };
 
@@ -415,19 +523,28 @@ function RoleManagement() {
                           </td>
                           <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-right text-xs sm:text-sm font-medium">
                             <div className="flex items-center justify-end gap-1 sm:gap-2">
-                              <button
-                                onClick={() => handleAssignRole(user)}
-                                className={`p-1.5 sm:p-2 rounded-lg ${
-                                  isDark
-                                    ? "text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
-                                    : "text-blue-600 hover:text-blue-900 hover:bg-blue-50"
-                                }`}
-                                title="Assign Role"
-                              >
-                                <HiUserGroup className="w-3 h-3 sm:w-4 sm:h-4" />
-                              </button>
-                              <button
-                                onClick={() => handleManagePermissions(user)}
+                              {/* Only show role assignment button for non-admins or if current user is superadmin */}
+                              {isSuperAdmin || (user.role !== 'admin' && user.role !== 'superadmin') ? (
+                                <button
+                                  onClick={() => handleAssignRole(user)}
+                                  className={`p-1.5 sm:p-2 rounded-lg ${
+                                    isDark
+                                      ? "text-blue-400 hover:text-blue-300 hover:bg-blue-900/20"
+                                      : "text-blue-600 hover:text-blue-900 hover:bg-blue-50"
+                                  }`}
+                                  title="Assign Role"
+                                >
+                                  <HiUserGroup className="w-3 h-3 sm:w-4 sm:h-4" />
+                                </button>
+                              ) : (
+                                <div className="p-1.5 sm:p-2">
+                                  <HiUserGroup className="w-3 h-3 sm:w-4 sm:h-4 opacity-30" />
+                                </div>
+                              )}
+                              {/* Only show permission management button for non-admins or if current user is superadmin */}
+                              {isSuperAdmin || (user.role !== 'admin' && user.role !== 'superadmin') ? (
+                                <button
+                                  onClick={() => handleManagePermissions(user)}
                                 className={`p-1.5 sm:p-2 rounded-lg ${
                                   isDark
                                     ? "text-purple-400 hover:text-purple-300 hover:bg-purple-900/20"
@@ -436,7 +553,12 @@ function RoleManagement() {
                                 title="Manage Permissions"
                               >
                                 <HiKey className="w-3 h-3 sm:w-4 sm:h-4" />
-                              </button>
+                                </button>
+                              ) : (
+                                <div className="p-1.5 sm:p-2">
+                                  <HiKey className="w-3 h-3 sm:w-4 sm:h-4 opacity-30" />
+                                </div>
+                              )}
                             </div>
                           </td>
                         </tr>
@@ -519,11 +641,12 @@ function RoleManagement() {
                       {/* Actions */}
                       <div className="flex gap-1 sm:gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
                         {/* Assign Role Button */}
-                        <button
-                          onClick={() => handleAssignRole(user)}
-                          className={`flex-1 flex items-center justify-center gap-1 p-2 rounded text-xs ${
-                            isDark
-                              ? "text-blue-400 hover:bg-gray-600"
+                        {isSuperAdmin || (user.role !== 'admin' && user.role !== 'superadmin') ? (
+                          <button
+                            onClick={() => handleAssignRole(user)}
+                            className={`flex-1 flex items-center justify-center gap-1 p-2 rounded text-xs ${
+                              isDark
+                                ? "text-blue-400 hover:bg-gray-600"
                               : "text-blue-600 hover:bg-gray-200"
                           }`}
                           title="Assign Role"
@@ -531,20 +654,33 @@ function RoleManagement() {
                           <HiUserGroup className="w-4 h-4" />
                           <span className="hidden sm:inline">Role</span>
                         </button>
+                        ) : (
+                          <div className="flex-1 flex items-center justify-center gap-1 p-2 rounded text-xs opacity-50">
+                            <HiUserGroup className="w-4 h-4" />
+                            <span className="hidden sm:inline">Role</span>
+                          </div>
+                        )}
 
                         {/* Manage Permissions Button */}
-                        <button
-                          onClick={() => handleManagePermissions(user)}
-                          className={`flex-1 flex items-center justify-center gap-1 p-2 rounded text-xs ${
-                            isDark
-                              ? "text-purple-400 hover:bg-gray-600"
-                              : "text-purple-600 hover:bg-gray-200"
-                          }`}
-                          title="Manage Permissions"
-                        >
-                          <HiKey className="w-4 h-4" />
-                          <span className="hidden sm:inline">Permissions</span>
-                        </button>
+                        {isSuperAdmin || (user.role !== 'admin' && user.role !== 'superadmin') ? (
+                          <button
+                            onClick={() => handleManagePermissions(user)}
+                            className={`flex-1 flex items-center justify-center gap-1 p-2 rounded text-xs ${
+                              isDark
+                                ? "text-purple-400 hover:bg-gray-600"
+                                : "text-purple-600 hover:bg-gray-200"
+                            }`}
+                            title="Manage Permissions"
+                          >
+                            <HiKey className="w-4 h-4" />
+                            <span className="hidden sm:inline">Permissions</span>
+                          </button>
+                        ) : (
+                          <div className="flex-1 flex items-center justify-center gap-1 p-2 rounded text-xs opacity-50">
+                            <HiKey className="w-4 h-4" />
+                            <span className="hidden sm:inline">Permissions</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -829,9 +965,12 @@ function RoleManagement() {
                     } focus:outline-none focus:ring-2 focus:ring-purple-500`}
                   >
                     <option value="">Select a role...</option>
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                    <option value="superadmin">SuperAdmin</option>
+                    {availableRoles.map(role => (
+                      <option key={role} value={role}>
+                        {role === 'superadmin' ? 'SuperAdmin' : 
+                         role === 'admin' ? 'Admin' : 'User'}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -863,9 +1002,9 @@ function RoleManagement() {
               </button>
               <button
                 onClick={handleSaveRoleAssignment}
-                disabled={!selectedRole || selectedRole === selectedUser.role}
+                disabled={!selectedRole || selectedRole === selectedUser.role || isAssigningRole}
                 className={`w-full sm:w-auto px-4 py-2 rounded-lg font-medium text-xs sm:text-sm ${
-                  !selectedRole || selectedRole === selectedUser.role
+                  !selectedRole || selectedRole === selectedUser.role || isAssigningRole
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                     : "bg-blue-600 text-white hover:bg-blue-700"
                 }`}
