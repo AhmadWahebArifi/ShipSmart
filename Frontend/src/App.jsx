@@ -13,6 +13,9 @@ import { PermissionProvider } from "./context/PermissionContext";
 import PermissionInitializer from "./context/PermissionInitializer";
 import Loader from "./components/Loader";
 import AppLoader from "./components/AppLoader";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AccessDenied from "./components/AccessDenied";
+import RoleBasedRedirect from "./components/RoleBasedRedirect";
 import "./i18n/config"; // Initialize i18n
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -27,24 +30,6 @@ import Vehicles from "./pages/Vehicles";
 import RoutesPage from "./pages/Routes";
 import Analytics from "./pages/Analytics";
 import AuditLogs from "./pages/AuditLogs";
-
-// Protected Route Component
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f5f5f5]">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return user ? children : <Navigate to="/login" replace />;
-};
 
 function App() {
   return (
@@ -61,7 +46,7 @@ function App() {
                     <Route
                       path="/dashboard"
                       element={
-                        <ProtectedRoute>
+                        <ProtectedRoute requiredPermission="view_dashboard">
                           <Dashboard />
                         </ProtectedRoute>
                       }
@@ -69,7 +54,7 @@ function App() {
                     <Route
                       path="/settings"
                       element={
-                        <ProtectedRoute>
+                        <ProtectedRoute requiredPermission="manage_settings">
                           <Settings />
                         </ProtectedRoute>
                       }
@@ -77,7 +62,7 @@ function App() {
                     <Route
                       path="/admin"
                       element={
-                        <ProtectedRoute>
+                        <ProtectedRoute requiredPermission="view_profile">
                           <Admin />
                         </ProtectedRoute>
                       }
@@ -85,7 +70,7 @@ function App() {
                     <Route
                       path="/role-management"
                       element={
-                        <ProtectedRoute>
+                        <ProtectedRoute requiredPermission="manage_roles">
                           <RoleManagement />
                         </ProtectedRoute>
                       }
@@ -93,7 +78,7 @@ function App() {
                     <Route
                       path="/shipments"
                       element={
-                        <ProtectedRoute>
+                        <ProtectedRoute requiredPermission="view_shipments">
                           <Shipments />
                         </ProtectedRoute>
                       }
@@ -101,7 +86,7 @@ function App() {
                     <Route
                       path="/shipments/:id"
                       element={
-                        <ProtectedRoute>
+                        <ProtectedRoute requiredPermission="view_shipments">
                           <Shipments />
                         </ProtectedRoute>
                       }
@@ -109,7 +94,7 @@ function App() {
                     <Route
                       path="/products"
                       element={
-                        <ProtectedRoute>
+                        <ProtectedRoute requiredPermission="view_products">
                           <Products />
                         </ProtectedRoute>
                       }
@@ -117,7 +102,7 @@ function App() {
                     <Route
                       path="/vehicles"
                       element={
-                        <ProtectedRoute>
+                        <ProtectedRoute requiredPermission="view_vehicles">
                           <Vehicles />
                         </ProtectedRoute>
                       }
@@ -125,7 +110,7 @@ function App() {
                     <Route
                       path="/users"
                       element={
-                        <ProtectedRoute>
+                        <ProtectedRoute requiredPermission="view_users">
                           <UserManagement />
                         </ProtectedRoute>
                       }
@@ -133,7 +118,7 @@ function App() {
                     <Route
                       path="/routes"
                       element={
-                        <ProtectedRoute>
+                        <ProtectedRoute requiredPermission="view_routes">
                           <RoutesPage />
                         </ProtectedRoute>
                       }
@@ -141,7 +126,7 @@ function App() {
                     <Route
                       path="/analytics"
                       element={
-                        <ProtectedRoute>
+                        <ProtectedRoute requiredPermission="view_analytics">
                           <Analytics />
                         </ProtectedRoute>
                       }
@@ -149,14 +134,19 @@ function App() {
                     <Route
                       path="/admin/audit-logs"
                       element={
-                        <ProtectedRoute>
+                        <ProtectedRoute requiredPermission="view_audit_logs">
                           <AuditLogs />
                         </ProtectedRoute>
                       }
                     />
                     <Route
                       path="/"
-                      element={<Navigate to="/dashboard" replace />}
+                      element={
+                        // Redirect based on user role
+                        <ProtectedRoute>
+                          <RoleBasedRedirect />
+                        </ProtectedRoute>
+                      }
                     />
                     <Route path="*" element={<NotFound />} />
                   </Routes>

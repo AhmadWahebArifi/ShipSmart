@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
+import { usePermission } from "../context/PermissionContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
@@ -72,6 +73,7 @@ const PROVINCES = [
 const Shipments = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const { hasPermission } = usePermission();
   const { isDark } = useTheme();
   const { showLoaderWithText } = useLoader(); // Added loader hook
   const { id } = useParams();
@@ -112,6 +114,12 @@ const Shipments = () => {
 
   // Handle adding a new shipment from the form
   const handleAddShipmentFromForm = (newShipment) => {
+    // Check if user has permission to create shipments
+    if (!hasPermission('create_shipment')) {
+      showAlert(t("common.error"), t("common.noPermission"), "error");
+      return;
+    }
+    
     setShipments([newShipment, ...shipments]);
     setShowAddForm(false);
     showAlert(t("common.success"), t("shipments.success.added"), "success");
@@ -148,6 +156,12 @@ const Shipments = () => {
 
   // Handle updating a shipment
   const handleUpdateShipment = async (updatedShipment) => {
+    // Check if user has permission to update shipments
+    if (!hasPermission('update_shipment')) {
+      showAlert(t("common.error"), t("common.noPermission"), "error");
+      return;
+    }
+    
     try {
       setShipments(
         shipments.map((s) =>
@@ -215,6 +229,12 @@ const Shipments = () => {
 
   // Handle status change
   const handleStatusChange = async (shipmentId, newStatus) => {
+    // Check if user has permission to modify shipment status
+    if (!hasPermission('modify_shipment_status')) {
+      showAlert(t("common.error"), t("common.noPermission"), "error");
+      return;
+    }
+    
     try {
       const result = await MySwal.fire({
         title: t("shipments.confirmStatusChangeTitle"),
@@ -352,6 +372,12 @@ const Shipments = () => {
 
   // Handle delete shipment
   const handleDeleteShipment = async (shipmentId) => {
+    // Check if user has permission to delete shipments
+    if (!hasPermission('delete_shipment')) {
+      showAlert(t("common.error"), t("common.noPermission"), "error");
+      return;
+    }
+    
     try {
       const result = await MySwal.fire({
         title: t("shipments.confirmDeleteTitle"),
@@ -454,15 +480,17 @@ const Shipments = () => {
             <Header title={`📦 ${t("shipments.title")}`} />
 
             {/* Add Shipment Button */}
-            <div className="mb-6">
-              <button
-                onClick={() => setShowAddForm(!showAddForm)}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                <HiCube className="-ml-1 mr-2 h-4 w-4" />
-                {t("shipments.addNewShipment")}
-              </button>
-            </div>
+            {hasPermission('create_shipment') && (
+              <div className="mb-6">
+                <button
+                  onClick={() => setShowAddForm(!showAddForm)}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <HiCube className="-ml-1 mr-2 h-4 w-4" />
+                  {t("shipments.addNewShipment")}
+                </button>
+              </div>
+            )}
 
             {/* Error Message */}
             {error && (
@@ -815,7 +843,8 @@ const Shipments = () => {
                                       {/* Edit Button */}
                                       {shipment.status !== "delivered" &&
                                         shipment.status !== "on_route" &&
-                                        shipment.status !== "canceled" && (
+                                        shipment.status !== "canceled" &&
+                                        hasPermission('update_shipment') && (
                                           <button
                                             onClick={() => openEditModal(shipment)}
                                             className={`p-1.5 rounded ${
@@ -830,19 +859,21 @@ const Shipments = () => {
                                         )}
 
                                       {/* Delete Button */}
-                                      <button
-                                        onClick={() =>
-                                          handleDeleteShipment(shipment.id)
-                                        }
-                                        className={`p-1.5 rounded ${
-                                          isDark
-                                            ? "text-red-400 hover:bg-gray-600"
-                                            : "text-red-600 hover:bg-gray-200"
-                                        }`}
-                                        title={t("common.delete")}
-                                      >
-                                        <HiTrash className="w-4 h-4" />
-                                      </button>
+                                      {hasPermission('delete_shipment') && (
+                                        <button
+                                          onClick={() =>
+                                            handleDeleteShipment(shipment.id)
+                                          }
+                                          className={`p-1.5 rounded ${
+                                            isDark
+                                              ? "text-red-400 hover:bg-gray-600"
+                                              : "text-red-600 hover:bg-gray-200"
+                                          }`}
+                                          title={t("common.delete")}
+                                        >
+                                          <HiTrash className="w-4 h-4" />
+                                        </button>
+                                      )}
                                     </div>
                                   </div>
                                 </td>
@@ -982,10 +1013,11 @@ const Shipments = () => {
                             {/* Actions */}
                             <div className="flex flex-wrap gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
                               {/* Status Change Dropdown */}
-                              <select
-                                value={shipment.status}
-                                onChange={(e) =>
-                                  handleStatusChange(shipment.id, e.target.value)
+                              {hasPermission('modify_shipment_status') && (
+                                <select
+                                  value={shipment.status}
+                                  onChange={(e) =>
+                                    handleStatusChange(shipment.id, e.target.value)
                                 }
                                 className={`flex-1 min-w-[120px] border rounded px-2 py-1.5 text-xs ${
                                   isDark
@@ -1009,6 +1041,7 @@ const Shipments = () => {
                                   {t("shipments.status.canceled")}
                                 </option>
                               </select>
+                              )}
 
                               {/* Action Buttons */}
                               <div className="flex gap-1">
@@ -1041,7 +1074,8 @@ const Shipments = () => {
                                 {/* Edit Button */}
                                 {shipment.status !== "delivered" &&
                                   shipment.status !== "on_route" &&
-                                  shipment.status !== "canceled" && (
+                                  shipment.status !== "canceled" &&
+                                  hasPermission('update_shipment') && (
                                     <button
                                       onClick={() => openEditModal(shipment)}
                                       className={`p-2 rounded text-xs ${
@@ -1056,8 +1090,9 @@ const Shipments = () => {
                                   )}
 
                                 {/* Delete Button */}
-                                <button
-                                  onClick={() => handleDeleteShipment(shipment.id)}
+                                {hasPermission('delete_shipment') && (
+                                  <button
+                                    onClick={() => handleDeleteShipment(shipment.id)}
                                   className={`p-2 rounded text-xs ${
                                     isDark
                                       ? "text-red-400 hover:bg-gray-600"
@@ -1067,7 +1102,8 @@ const Shipments = () => {
                                 >
                                   <HiTrash className="w-4 h-4" />
                                 </button>
-                              </div>
+                              )}
+                            </div>
                             </div>
                           </div>
                         ))}
