@@ -3,6 +3,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useSidebar } from "../context/SidebarContext";
 import { useTranslation } from "react-i18next";
 import { useLoader } from "../context/LoaderContext";
+import { usePermission } from "../context/PermissionContext";
 import Sidebar from "../components/Sidebar";
 import MobileMenuButton from "../components/MobileMenuButton";
 import Header from "../components/Header";
@@ -22,6 +23,7 @@ const Vehicles = () => {
   const { t } = useTranslation();
   const { isDark } = useTheme();
   const { showLoaderWithText } = useLoader();
+  const { hasPermission } = usePermission();
   const { sidebarOpen, closeSidebar, sidebarCollapsed, toggleSidebar } =
     useSidebar();
 
@@ -54,6 +56,19 @@ const Vehicles = () => {
   };
 
   const handleAddVehicle = (newVehicle) => {
+    // Check if user has permission to create vehicles
+    if (!hasPermission('create_vehicle')) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: t("common.noPermission"),
+        showConfirmButton: false,
+        timer: 3000,
+      });
+      return;
+    }
+    
     setVehicles([newVehicle, ...vehicles]);
     setShowAddForm(false);
     Swal.fire({
@@ -67,6 +82,19 @@ const Vehicles = () => {
   };
 
   const handleUpdateVehicle = async (updatedVehicle) => {
+    // Check if user has permission to update vehicles
+    if (!hasPermission('update_vehicle')) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: t("common.noPermission"),
+        showConfirmButton: false,
+        timer: 3000,
+      });
+      return;
+    }
+    
     try {
       const response = await axiosInstance.put(
         `/vehicles/${updatedVehicle.id}`,
@@ -102,6 +130,19 @@ const Vehicles = () => {
   };
 
   const handleDeleteVehicle = async (vehicleId) => {
+    // Check if user has permission to delete vehicles
+    if (!hasPermission('delete_vehicle')) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: t("common.noPermission"),
+        showConfirmButton: false,
+        timer: 3000,
+      });
+      return;
+    }
+    
     const result = await Swal.fire({
       title: t("vehicles.confirmDeleteTitle"),
       text: t("vehicles.confirmDelete"),
@@ -238,7 +279,7 @@ const Vehicles = () => {
           </div>
 
           {/* Add Vehicle Button Above List */}
-          {!showAddForm && !editingVehicle && (
+          {!showAddForm && !editingVehicle && hasPermission('create_vehicle') && (
             <div className="mb-4 sm:mb-6">
               <button
                 onClick={() => setShowAddForm(!showAddForm)}
@@ -534,20 +575,24 @@ const Vehicles = () => {
                             }`}
                           >
                             <div className="flex justify-end space-x-1 sm:space-x-2">
-                              <button
-                                onClick={() => setEditingVehicle(vehicle)}
-                                className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
-                                title={t("common.edit")}
-                              >
-                                <FiEdit2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteVehicle(vehicle.id)}
-                                className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                title={t("common.delete")}
-                              >
-                                <FiTrash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                              </button>
+                              {hasPermission('update_vehicle') && (
+                                <button
+                                  onClick={() => setEditingVehicle(vehicle)}
+                                  className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                                  title={t("common.edit")}
+                                >
+                                  <FiEdit2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                                </button>
+                              )}
+                              {hasPermission('delete_vehicle') && (
+                                <button
+                                  onClick={() => handleDeleteVehicle(vehicle.id)}
+                                  className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                  title={t("common.delete")}
+                                >
+                                  <FiTrash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                                </button>
+                              )}
                             </div>
                           </td>
                         </tr>
@@ -642,32 +687,36 @@ const Vehicles = () => {
                       {/* Actions */}
                       <div className="flex gap-2 pt-3 border-t border-gray-200 dark:border-gray-700">
                         {/* Edit Button */}
-                        <button
-                          onClick={() => setEditingVehicle(vehicle)}
-                          className={`flex-1 flex items-center justify-center gap-1 p-2 rounded text-xs ${
-                            isDark
-                              ? "text-blue-400 hover:bg-gray-600"
-                              : "text-blue-600 hover:bg-gray-200"
-                          }`}
-                          title={t("common.edit")}
-                        >
-                          <FiEdit2 className="w-4 h-4" />
-                          <span>{t("common.edit")}</span>
-                        </button>
+                        {hasPermission('update_vehicle') && (
+                          <button
+                            onClick={() => setEditingVehicle(vehicle)}
+                            className={`flex-1 flex items-center justify-center gap-1 p-2 rounded text-xs ${
+                              isDark
+                                ? "text-blue-400 hover:bg-gray-600"
+                                : "text-blue-600 hover:bg-gray-200"
+                            }`}
+                            title={t("common.edit")}
+                          >
+                            <FiEdit2 className="w-4 h-4" />
+                            <span>{t("common.edit")}</span>
+                          </button>
+                        )}
 
                         {/* Delete Button */}
-                        <button
-                          onClick={() => handleDeleteVehicle(vehicle.id)}
-                          className={`flex-1 flex items-center justify-center gap-1 p-2 rounded text-xs ${
-                            isDark
-                              ? "text-red-400 hover:bg-gray-600"
-                              : "text-red-600 hover:bg-gray-200"
-                          }`}
-                          title={t("common.delete")}
-                        >
-                          <FiTrash2 className="w-4 h-4" />
-                          <span>{t("common.delete")}</span>
-                        </button>
+                        {hasPermission('delete_vehicle') && (
+                          <button
+                            onClick={() => handleDeleteVehicle(vehicle.id)}
+                            className={`flex-1 flex items-center justify-center gap-1 p-2 rounded text-xs ${
+                              isDark
+                                ? "text-red-400 hover:bg-gray-600"
+                                : "text-red-600 hover:bg-gray-200"
+                            }`}
+                            title={t("common.delete")}
+                          >
+                            <FiTrash2 className="w-4 h-4" />
+                            <span>{t("common.delete")}</span>
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
