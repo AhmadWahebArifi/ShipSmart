@@ -74,6 +74,10 @@ export const AuthProvider = ({ children }) => {
         const { token: newToken, user: userData } = response.data;
         
         console.log('✅ Login successful, setting token and user');
+        console.log('📋 User data received:', userData);
+        console.log('🔐 User permissions:', userData.permissions);
+        console.log('👤 User role:', userData.role);
+        
         localStorage.setItem('token', newToken);
         setToken(newToken);
         setUser(userData);
