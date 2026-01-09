@@ -20,15 +20,24 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        console.log('🔍 AuthContext: Fetching user with token...');
+        console.log('🔍 AuthContext: Token exists:', !!token);
+        console.log('🔍 AuthContext: Token length:', token?.length);
+        
         const response = await axiosInstance.get('/auth/me');
         
+        console.log('🔍 AuthContext: User fetch response:', response.data);
+        
         if (response.data && response.data.success) {
+          console.log('✅ AuthContext: User fetched successfully:', response.data.user);
           setUser(response.data.user);
         } else {
+          console.error('❌ AuthContext: User fetch failed:', response.data);
           throw new Error('Failed to fetch user');
         }
       } catch (error) {
-        console.error('Error fetching user:', error);
+        console.error('❌ AuthContext: Error fetching user:', error);
+        console.error('❌ AuthContext: Error response:', error.response?.data);
         logout();
       } finally {
         setLoading(false);
@@ -36,8 +45,10 @@ export const AuthProvider = ({ children }) => {
     };
 
     if (token) {
+      console.log('🔍 AuthContext: Token found, fetching user...');
       fetchUser();
     } else {
+      console.log('🔍 AuthContext: No token found, staying logged out');
       setLoading(false);
     }
   }, [token]);
@@ -178,6 +189,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    console.log('🔍 AuthContext: Logging out user...');
+    console.log('🔍 AuthContext: Clearing token and user data');
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
