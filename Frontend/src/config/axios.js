@@ -14,6 +14,10 @@ axiosInstance.interceptors.request.use(
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log('🔍 Axios: Adding token to request:', config.method?.toUpperCase(), config.url);
+      console.log('🔍 Axios: Token length:', token.length);
+    } else {
+      console.log('🔍 Axios: No token found for request:', config.method?.toUpperCase(), config.url);
     }
     return config;
   },
@@ -30,6 +34,8 @@ axiosInstance.interceptors.response.use(
   (error) => {
     // Handle 401 unauthorized - logout user
     if (error.response?.status === 401) {
+      console.log('🔍 Axios: 401 Unauthorized detected, logging out...');
+      console.log('🔍 Axios: Error response:', error.response?.data);
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
