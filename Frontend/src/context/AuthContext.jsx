@@ -14,7 +14,15 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  
+  // Get token and log immediately
+  const storedToken = localStorage.getItem('token');
+  console.log('🚀 IMMEDIATE: Page loading...');
+  console.log('🚀 IMMEDIATE: Token in localStorage:', !!storedToken);
+  console.log('🚀 IMMEDIATE: Token length:', storedToken?.length);
+  console.log('🚀 IMMEDIATE: Token preview:', storedToken?.substring(0, 20) + '...');
+  
+  const [token, setToken] = useState(storedToken);
 
   // Debug localStorage on mount
   useEffect(() => {
