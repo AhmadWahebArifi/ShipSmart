@@ -16,6 +16,14 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(localStorage.getItem('token'));
 
+  // Debug localStorage on mount
+  useEffect(() => {
+    console.log('🔍 AuthContext: Initial mount');
+    console.log('🔍 AuthContext: localStorage token:', localStorage.getItem('token'));
+    console.log('🔍 AuthContext: localStorage keys:', Object.keys(localStorage));
+    console.log('🔍 AuthContext: Initial token state:', token);
+  }, []);
+
   // Fetch user info if token exists
   useEffect(() => {
     const fetchUser = async () => {
@@ -23,6 +31,7 @@ export const AuthProvider = ({ children }) => {
         console.log('🔍 AuthContext: Fetching user with token...');
         console.log('🔍 AuthContext: Token exists:', !!token);
         console.log('🔍 AuthContext: Token length:', token?.length);
+        console.log('🔍 AuthContext: Token preview:', token?.substring(0, 20) + '...');
         
         const response = await axiosInstance.get('/auth/me');
         
@@ -38,6 +47,7 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         console.error('❌ AuthContext: Error fetching user:', error);
         console.error('❌ AuthContext: Error response:', error.response?.data);
+        console.error('❌ AuthContext: Error status:', error.response?.status);
         logout();
       } finally {
         setLoading(false);
@@ -195,6 +205,36 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setUser(null);
   };
+
+  // Test function to manually check auth endpoint
+  const testAuthEndpoint = async () => {
+    console.log('🧪 Testing auth endpoint manually...');
+    try {
+      const token = localStorage.getItem('token');
+      console.log('🧪 Manual test - Token exists:', !!token);
+      
+      // Make a direct fetch request to see what happens
+      const response = await fetch('/api/auth/me', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      const data = await response.json();
+      console.log('🧪 Manual test - Response status:', response.status);
+      console.log('🧪 Manual test - Response data:', data);
+      
+    } catch (error) {
+      console.error('🧪 Manual test - Error:', error);
+    }
+  };
+
+  // Add test function to window for manual testing
+  useEffect(() => {
+    window.testAuth = testAuthEndpoint;
+  }, []);
 
   // Function to refresh user data
   const refreshUser = async () => {
