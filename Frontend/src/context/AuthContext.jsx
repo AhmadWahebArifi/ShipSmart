@@ -48,7 +48,14 @@ export const AuthProvider = ({ children }) => {
         console.error('❌ AuthContext: Error fetching user:', error);
         console.error('❌ AuthContext: Error response:', error.response?.data);
         console.error('❌ AuthContext: Error status:', error.response?.status);
-        logout();
+        
+        // TEMPORARY: Don't logout on 401 to debug the issue
+        if (error.response?.status !== 401) {
+          logout();
+        } else {
+          console.warn('⚠️ AuthContext: 401 error detected but NOT logging out for debugging');
+          setLoading(false);
+        }
       } finally {
         setLoading(false);
       }
@@ -234,6 +241,13 @@ export const AuthProvider = ({ children }) => {
   // Add test function to window for manual testing
   useEffect(() => {
     window.testAuth = testAuthEndpoint;
+    
+    // TEMPORARY: Add bypass function for debugging
+    window.bypassAuth = (userData) => {
+      console.log('🔧 Bypassing auth with user:', userData);
+      setUser(userData);
+      setLoading(false);
+    };
   }, []);
 
   // Function to refresh user data
