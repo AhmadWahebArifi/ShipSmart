@@ -116,7 +116,12 @@ export const PermissionProvider = ({ children }) => {
 
   // Check if user has specific permission
   const hasPermission = (permission) => {
-    return userPermissions.includes(permission);
+    const result = userPermissions.includes(permission);
+    console.log('🔍 PermissionContext: hasPermission check');
+    console.log('🔍 PermissionContext: Permission:', permission);
+    console.log('🔍 PermissionContext: User permissions:', userPermissions);
+    console.log('🔍 PermissionContext: Result:', result);
+    return result;
   };
 
   // Check if user has any of the specified permissions
