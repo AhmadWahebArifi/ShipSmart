@@ -32,12 +32,12 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    // Handle 401 unauthorized - logout user
+    // TEMPORARY: Don't auto-logout on 401 to debug the issue
     if (error.response?.status === 401) {
-      console.log('🔍 Axios: 401 Unauthorized detected, logging out...');
+      console.log('🔍 Axios: 401 Unauthorized detected - NOT logging out for debugging');
       console.log('🔍 Axios: Error response:', error.response?.data);
-      localStorage.removeItem('token');
-      window.location.href = '/login';
+      // localStorage.removeItem('token');
+      // window.location.href = '/login';
     }
     return Promise.reject(error);
   }
