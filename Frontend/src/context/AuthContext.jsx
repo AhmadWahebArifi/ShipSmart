@@ -49,12 +49,12 @@ export const AuthProvider = ({ children }) => {
         console.error('❌ AuthContext: Error response:', error.response?.data);
         console.error('❌ AuthContext: Error status:', error.response?.status);
         
-        // TEMPORARY: Don't logout on 401 to debug the issue
+        // TEMPORARY: Completely disable logout to debug the issue
         if (error.response?.status !== 401) {
           logout();
         } else {
           console.warn('⚠️ AuthContext: 401 error detected but NOT logging out for debugging');
-          setLoading(false);
+          // Don't set loading to false - keep app in loading state to see what happens
         }
       } finally {
         setLoading(false);
@@ -206,7 +206,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    console.log('🔍 AuthContext: Logging out user...');
+    console.log('🔍 AuthContext: LOGOUT FUNCTION CALLED!!!');
+    console.log('🔍 AuthContext: Call stack:', new Error().stack);
     console.log('🔍 AuthContext: Clearing token and user data');
     localStorage.removeItem('token');
     setToken(null);
